@@ -3,17 +3,14 @@ package controller
 package controllerComponent
 package controllerImpl
 
-import scala.util.{Success, Failure}
-
 import Default.given
-
-import util._
-import util.moveState.{EdgeState, MidState}
 import model.fieldComponent.FieldInterface
 import model.fieldComponent.fieldImpl.Move
-import model.matrixComponent.matrixImpl.Player
 import model.fileIoComponent.FileIOInterface
-
+import model.matrixComponent.matrixImpl.Player
+import scala.util.{Failure, Success}
+import util._
+import util.moveState.{EdgeState, MidState}
 
 class Controller(using var field: FieldInterface, val fileIO: FileIOInterface) extends ControllerInterface:
   /* setup chain */
@@ -33,7 +30,7 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface) e
     fileIO.save(field)
     if !gameEnded then notifyObservers(Event.Move)
     field
-  override def load: FieldInterface = 
+  override def load: FieldInterface =
     field = fileIO.load
     notifyObservers(Event.Move)
     if gameEnded then notifyObservers(Event.End)

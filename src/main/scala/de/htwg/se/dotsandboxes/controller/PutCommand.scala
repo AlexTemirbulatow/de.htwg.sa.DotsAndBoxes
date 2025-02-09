@@ -1,9 +1,8 @@
 package de.htwg.se.dotsandboxes
 package controller
 
-import model.fieldComponent.fieldImpl.Move
 import model.fieldComponent.FieldInterface
-
+import model.fieldComponent.fieldImpl.Move
 
 /*command pattern*/
 trait Command:

@@ -1,6 +1,5 @@
 package de.htwg.se.dotsandboxes.model.fieldComponent.fieldImpl
 
-
 /*factory pattern*/
 trait Connectors:
   val stringRepresentation: String
@@ -32,7 +31,7 @@ private class ConnectedColumn extends Connectors:
 
 object Connectors:
   def apply(stringRepresentation: String): String = stringRepresentation match
-    case "" => new Empty().toString
+    case ""  => new Empty().toString
     case "O" => new Dot().toString
     case "-" => new EmptyRow().toString
     case "=" => new ConnectedRow().toString

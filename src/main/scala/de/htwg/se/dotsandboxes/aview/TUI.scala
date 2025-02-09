@@ -39,7 +39,7 @@ class TUI(using controller: ControllerInterface) extends Template(controller):
     Try(vec.toString.toInt, x.toString.toInt, y.toString.toInt)
 
   override def finalStats: String =
-    "\n" +
+      "\n" +
       controller.winner + "\n" +
       "_________________________" + "\n\n" +
       controller.stats +
