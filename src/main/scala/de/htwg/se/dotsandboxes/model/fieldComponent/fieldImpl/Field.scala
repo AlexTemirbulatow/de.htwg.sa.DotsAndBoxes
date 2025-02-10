@@ -13,8 +13,7 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
   override def cells(rowSize: Int, length: Int = 7, height: Int = 2): String =
     ((0 to maxPosY).map(columns(rowSize, _, length)).mkString + "\n") * height
   override def mesh(length: Int = 7, height: Int = 2): String =
-    ((0 until maxPosX)
-    .map(x => bar(length, maxPosY, x) + cells(x, length, height))).mkString + bar(length, maxPosY, maxPosX)
+    ((0 until maxPosX).map(x => bar(length, maxPosY, x) + cells(x, length, height))).mkString + bar(length, maxPosY, maxPosX)
   override def rows(rowIndex: Int, colIndex: Int, length: Int): String = getRowCell(rowIndex, colIndex) match
     case false => Connectors("-") * length
     case true  => Connectors("=") * length

@@ -92,7 +92,7 @@ class FileIO extends FileIOInterface:
     }
 
     val scoreResult: JsLookupResult = (json \ "field" \ "playerList")
-      val fieldAfterScores = (0 until playerSize).foldLeft(fieldAfterCols) { (field, player) =>
+    val fieldAfterScores = (0 until playerSize).foldLeft(fieldAfterCols) { (field, player) =>
       val index = (scoreResult \\ "index")(player).as[Int]
       val score = (scoreResult \\ "points")(player).as[Int]
       field.addPoints(index, score)
