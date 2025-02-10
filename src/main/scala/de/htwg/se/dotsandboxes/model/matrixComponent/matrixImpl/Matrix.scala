@@ -3,6 +3,7 @@ package matrixComponent.matrixImpl
 
 import fieldComponent.fieldImpl.Move
 import matrixComponent.MatrixInterface
+import de.htwg.se.dotsandboxes.util.moveState.SquareState
 
 case class Matrix(
   vecStatus: Vector[Vector[Status]],
@@ -39,20 +40,20 @@ case class Matrix(
     copy(vecRow = vectorRow.updated(row, vectorRow(row).updated(col, value)))
   override def replaceColCell(row: Int, col: Int, value: Boolean): Matrix =
     copy(vecCol = vectorCol.updated(row, vectorCol(row).updated(col, value)))
-  override def checkSquare(thisCase: String, x: Int, y: Int): Matrix = thisCase match
-    case "downcase" =>
+  override def checkSquare(squareCase: SquareState, x: Int, y: Int): Matrix = squareCase match
+    case SquareState.DownCase =>
       if ((rowCell(x + 1, y), colCell(x, y), colCell(x, y + 1)).toList.forall(_ == true))
         replaceStatusCell(x, y, currentPlayer.status)
       else copy()
-    case "upcase" =>
+    case SquareState.UpCase =>
       if ((rowCell(x - 1, y), colCell(x - 1, y), colCell(x - 1, y + 1)).toList.forall(_ == true))
         replaceStatusCell(x - 1, y, currentPlayer.status)
       else copy()
-    case "rightcase" =>
+    case SquareState.RightCase =>
       if ((colCell(x, y + 1), rowCell(x, y), rowCell(x + 1, y)).toList.forall(_ == true))
         replaceStatusCell(x, y, currentPlayer.status)
       else copy()
-    case "leftcase" =>
+    case SquareState.LeftCase =>
       if ((colCell(x, y - 1), rowCell(x, y - 1), rowCell(x + 1, y - 1)).toList.forall(_ == true))
         replaceStatusCell(x, y - 1, currentPlayer.status)
       else copy()

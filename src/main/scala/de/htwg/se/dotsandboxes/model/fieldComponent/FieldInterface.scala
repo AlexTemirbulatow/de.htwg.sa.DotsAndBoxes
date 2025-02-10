@@ -1,9 +1,10 @@
 package de.htwg.se.dotsandboxes.model
 package fieldComponent
 
+import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
+import de.htwg.se.dotsandboxes.util.moveState.SquareState
 import matrixComponent.MatrixInterface
 import matrixComponent.matrixImpl.Player
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
 
 trait FieldInterface:
   val maxPosX: Int
@@ -24,7 +25,7 @@ trait FieldInterface:
   def putCol(row: Int, col: Int, value: Boolean): FieldInterface
   def isFinished: Boolean
   def isEdge(move: fieldImpl.Move): Boolean
-  def checkSquare(thisCase: String, x: Int, y: Int): FieldInterface
+  def checkSquare(squareCase: SquareState, x: Int, y: Int): FieldInterface
   def currentPlayerId: String
   def currentPlayerIndex: Int
   def currentStatus: Vector[Vector[Status]]

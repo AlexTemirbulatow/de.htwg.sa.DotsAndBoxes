@@ -6,8 +6,8 @@ import model.fieldComponent.fieldImpl.Move
 
 object MidState extends MoveState:
   override def handle(move: Move, field: FieldInterface): FieldInterface =
-    def horizontalState(move: Move): FieldInterface = field.checkSquare("downcase", move.x, move.y).checkSquare("upcase", move.x, move.y)
-    def verticalState(move: Move): FieldInterface = field.checkSquare("rightcase", move.x, move.y).checkSquare("leftcase", move.x, move.y)
+    def horizontalState(move: Move): FieldInterface = field.checkSquare(SquareState.DownCase, move.x, move.y).checkSquare(SquareState.UpCase, move.x, move.y)
+    def verticalState(move: Move): FieldInterface = field.checkSquare(SquareState.RightCase, move.x, move.y).checkSquare(SquareState.LeftCase, move.x, move.y)
 
     move.vec match
       case 1 => horizontalState(move)

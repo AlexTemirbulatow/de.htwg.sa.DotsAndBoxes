@@ -5,6 +5,7 @@ import fieldComponent.FieldInterface
 import matrixComponent.MatrixInterface
 import matrixComponent.matrixImpl.{Matrix, Player}
 import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
+import de.htwg.se.dotsandboxes.util.moveState.SquareState
 
 case class Field(matrix: MatrixInterface) extends FieldInterface:
   def this(rowSize: Int, colSize: Int, status: Status, playerSize: Int = 2) = this(new Matrix(rowSize, colSize, status, playerSize))
@@ -34,7 +35,7 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
   override def putCol(row: Int, col: Int, value: Boolean): Field = copy(matrix.replaceColCell(row, col, value))
   override def isFinished: Boolean = (matrix.vectorRow ++ matrix.vectorCol).forall(_.forall(_.equals(true)))
   override def isEdge(move: Move): Boolean = matrix.isEdge(move)
-  override def checkSquare(thisCase: String, x: Int, y: Int): Field = copy(matrix.checkSquare(thisCase, x, y))
+  override def checkSquare(squareCase: SquareState, x: Int, y: Int): Field = copy(matrix.checkSquare(squareCase, x, y))
   override def currentPlayerId: String = matrix.currentPlayerInfo._1
   override def currentPlayerIndex: Int = matrix.currentPlayerInfo._2
   override def currentStatus: Vector[Vector[Status]] = matrix.vectorStatus

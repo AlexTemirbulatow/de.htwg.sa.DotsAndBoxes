@@ -3,6 +3,7 @@ package matrixComponent
 
 import fieldComponent.fieldImpl.Move
 import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
+import de.htwg.se.dotsandboxes.util.moveState.SquareState
 
 trait MatrixInterface:
   val vectorStatus: Vector[Vector[Status]]
@@ -18,7 +19,7 @@ trait MatrixInterface:
   def replaceStatusCell(row: Int, col: Int, status: Status): MatrixInterface
   def replaceRowCell(row: Int, col: Int, value: Boolean): MatrixInterface
   def replaceColCell(row: Int, col: Int, value: Boolean): MatrixInterface
-  def checkSquare(thisCase: String, x: Int, y: Int): MatrixInterface
+  def checkSquare(squareCase: SquareState, x: Int, y: Int): MatrixInterface
   def isEdge(move: Move): Boolean
   def currentPlayerInfo: (String, Int)
   def currentPoints: Int
