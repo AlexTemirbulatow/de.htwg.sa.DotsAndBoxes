@@ -11,7 +11,10 @@ trait Command:
   def redoStep(field: FieldInterface): FieldInterface
 
 class PutCommand(move: Move, var field: FieldInterface) extends Command:
-  override def doStep(field: FieldInterface): FieldInterface = field.putCell(move.vec, move.x, move.y, move.status)
+  override def doStep(field: FieldInterface): FieldInterface =
+    move.vec match
+      case 1 => field.putRow(move.x, move.y, move.value)
+      case 2 => field.putCol(move.x, move.y, move.value)
   override def undoStep(field: FieldInterface): FieldInterface =
     val temp = this.field
     this.field = field

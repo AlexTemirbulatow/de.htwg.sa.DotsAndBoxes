@@ -4,39 +4,45 @@ package fileIoComponent.jsonImpl
 import fieldComponent.FieldInterface
 import fieldComponent.fieldImpl.Field
 import fileIoComponent.FileIOInterface
+import java.io._
 import matrixComponent.matrixImpl.Status
 import play.api.libs.json._
 import scala.io.Source
 
 class FileIO extends FileIOInterface:
-  override def save(field: FieldInterface): Unit =
-    import java.io._
-    val printWriter = new PrintWriter(new File("field.json"))
-    printWriter.write(Json.prettyPrint(fieldToJson(field)))
-    printWriter.close
+  override def save(field: FieldInterface): Either[String, String] =
+    try {
+      val filename: String = "field.json"
+      val printWriter = new PrintWriter(new File(filename))
+      printWriter.write(Json.prettyPrint(fieldToJson(field)))
+      printWriter.close
+      Right(filename)
+    } catch {
+      case e: Exception => Left(e.getMessage())
+    }
 
   def fieldToJson(field: FieldInterface): JsObject =
     Json.obj(
       "field" -> Json.obj(
-        "rowSize" -> field.colSize(1, 0),
-        "colSize" -> field.rowSize(2),
+        "rowSize" -> field.maxPosY,
+        "colSize" -> field.maxPosX,
         "status" -> Json.toJson(
           for
-            row <- 0 until field.rowSize(0)
-            col <- 0 until field.colSize(0, 0)
-          yield Json.obj("row" -> row, "col" -> col, "value" -> Json.toJson(field.getCell(0, row, col).toString))
+            row <- 0 until field.maxPosX
+            col <- 0 until field.maxPosY
+          yield Json.obj("row" -> row, "col" -> col, "value" -> Json.toJson(field.getStatusCell(row, col).toString))
         ),
         "rows" -> Json.toJson(
           for
-            row <- 0 until field.rowSize(1)
-            col <- 0 until field.colSize(1, 0)
-          yield Json.obj("row" -> row, "col" -> col, "value" -> Json.toJson(field.getCell(1, row, col).toString.toBoolean))
+            row <- 0 until field.maxPosX
+            col <- 0 until field.maxPosY
+          yield Json.obj("row" -> row, "col" -> col, "value" -> Json.toJson(field.getRowCell(row, col).toString.toBoolean))
         ),
         "cols" -> Json.toJson(
           for
-            row <- 0 until field.rowSize(2)
-            col <- 0 until field.colSize(2, 0)
-          yield Json.obj("row" -> row, "col" -> col, "value" -> Json.toJson(field.getCell(2, row, col).toString.toBoolean))
+            row <- 0 until field.maxPosX
+            col <- 0 until field.maxPosY
+          yield Json.obj("row" -> row, "col" -> col, "value" -> Json.toJson(field.getColCell(row, col).toString.toBoolean))
         ),
         "playerList" -> Json.toJson(
           for playerIndex <- 0 until field.playerList.size
@@ -53,10 +59,10 @@ class FileIO extends FileIOInterface:
     val rowSize = (json \ "field" \ "rowSize").as[Int]
     val colSize = (json \ "field" \ "colSize").as[Int]
     val playerSize = (json \ "field" \ "playerSize").as[Int]
-    var field: FieldInterface = new Field(rowSize, colSize, Status.Empty, playerSize)
+    val initialField: FieldInterface = new Field(rowSize, colSize, Status.Empty, playerSize)
 
     val statusResult: JsLookupResult = (json \ "field" \ "status")
-    for (index <- 0 until rowSize * colSize)
+    val fieldAfterStatus = (0 until rowSize * colSize).foldLeft(initialField) { (field, index) =>
       val row = (statusResult \\ "row")(index).as[Int]
       val col = (statusResult \\ "col")(index).as[Int]
       val value = (statusResult \\ "value")(index).as[String]
@@ -66,28 +72,32 @@ class FileIO extends FileIOInterface:
         case "G" => Status.Green
         case "Y" => Status.Yellow
         case _   => Status.Empty
-      field = field.putCell(0, row, col, player)
+      field.putStatus(row, col, player)
+    }
 
     val rowResult: JsLookupResult = (json \ "field" \ "rows")
-    for (index <- 0 until rowSize * (colSize + 1))
+    val fieldAfterRows = (0 until rowSize * colSize).foldLeft(fieldAfterStatus) { (field, index) =>
       val row = (rowResult \\ "row")(index).as[Int]
       val col = (rowResult \\ "col")(index).as[Int]
       val value = (rowResult \\ "value")(index).as[Boolean]
-      field = field.putCell(1, row, col, value)
+      field.putRow(row, col, value)
+    }
 
     val colResult: JsLookupResult = (json \ "field" \ "cols")
-    for (index <- 0 until (rowSize + 1) * colSize)
+    val fieldAfterCols = (0 until rowSize * colSize).foldLeft(fieldAfterRows) { (field, index) =>
       val row = (colResult \\ "row")(index).as[Int]
       val col = (colResult \\ "col")(index).as[Int]
       val value = (colResult \\ "value")(index).as[Boolean]
-      field = field.putCell(2, row, col, value)
+      field.putCol(row, col, value)
+    }
 
     val scoreResult: JsLookupResult = (json \ "field" \ "playerList")
-    for (player <- 0 until playerSize)
+      val fieldAfterScores = (0 until playerSize).foldLeft(fieldAfterCols) { (field, player) =>
       val index = (scoreResult \\ "index")(player).as[Int]
       val score = (scoreResult \\ "points")(player).as[Int]
-      field = field.addPoints(index, score)
+      field.addPoints(index, score)
+    }
 
-    val curPlayerIndex: Int = (json \ "field" \ "currentPlayer").as[Int]
-    field = field.updatePlayer(curPlayerIndex)
-    field
+    val curPlayerIndex = (json \ "field" \ "currentPlayer").as[Int]
+    val finalField = fieldAfterScores.updatePlayer(curPlayerIndex)
+    finalField

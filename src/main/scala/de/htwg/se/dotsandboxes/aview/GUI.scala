@@ -16,7 +16,7 @@ import util.{Event, Observer}
 class GUI(using controller: ControllerInterface) extends Frame with Observer:
   controller.add(this)
 
-  val fieldSize: (Int, Int) = (controller.colSize(1, 0), controller.rowSize(2))
+  val fieldSize: (Int, Int) = (controller.colSize() - 1, controller.rowSize() - 1)
   val gridSize: (Int, Int) = ((fieldSize._1 + fieldSize._1 + 1), (fieldSize._2 + fieldSize._2 + 1))
   val panelSize: Dimension = new Dimension(830, 750)
 
@@ -172,13 +172,13 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
 
     private def bar(row: Int, col: Int) =
       contents += dotImg
-      contents += CellButton(1, row, col, controller.get(1, row, col).toString.toBoolean)
+      contents += CellButton(1, row, col, controller.getRowCell(row, col))
 
     private def cell(row: Int, col: Int) =
-      contents += CellButton(2, row, col, controller.get(2, row, col).toString.toBoolean)
+      contents += CellButton(2, row, col, controller.getColCell(row, col))
       if col != x then
         contents += new Label {
-          icon = controller.get(0, row, col).toString match
+          icon = controller.getStatusCell(row, col).toString match
             case "-" => takenNone
             case "B" => takenBlue
             case "R" => takenRed

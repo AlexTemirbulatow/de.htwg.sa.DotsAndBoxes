@@ -4,39 +4,45 @@ package fileIoComponent.xmlImpl
 import fieldComponent.FieldInterface
 import fieldComponent.fieldImpl.Field
 import fileIoComponent.FileIOInterface
+import java.io._
 import matrixComponent.matrixImpl.Status
 import scala.xml.{Elem, NodeSeq, PrettyPrinter}
 
 class FileIO extends FileIOInterface:
-  override def save(field: FieldInterface): Unit =
-    import java.io._
-    val prettyPrinter = new PrettyPrinter(120, 4)
-    val xml = prettyPrinter.format(fieldToXml(field))
-    val printWriter = new PrintWriter(new File("field.xml"))
-    printWriter.write(xml)
-    printWriter.close
-
+  override def save(field: FieldInterface): Either[String, String] =
+    try {
+      val filename: String = "field.xml"
+      val prettyPrinter = new PrettyPrinter(120, 4)
+      val xml = prettyPrinter.format(fieldToXml(field))
+      val printWriter = new PrintWriter(new File(filename))
+      printWriter.write(xml)
+      printWriter.close
+      Right(filename)
+    } catch {
+      case e: Exception => Left(e.getMessage())
+    }
+    
   def fieldToXml(field: FieldInterface): Elem =
-    <field rowSize={field.colSize(1, 0).toString} colSize={field.rowSize(2).toString}>
+    <field rowSize={field.maxPosY.toString} colSize={field.maxPosX.toString}>
             <status> {
       for
-        row <- 0 until field.rowSize(0)
-        col <- 0 until field.colSize(0, 0)
-      yield cellToXml(field, 0, row, col)
+        row <- 0 until field.maxPosX
+        col <- 0 until field.maxPosY
+      yield statusCellToXml(field, row, col)
     }
             </status>
             <rows> {
       for
-        row <- 0 until field.rowSize(1)
-        col <- 0 until field.colSize(1, 0)
-      yield cellToXml(field, 1, row, col)
+        row <- 0 until field.maxPosX
+        col <- 0 until field.maxPosY
+      yield rowCellToXml(field, row, col)
     }
             </rows>
             <cols> {
       for
-        row <- 0 until field.rowSize(2)
-        col <- 0 until field.colSize(2, 0)
-      yield cellToXml(field, 2, row, col)
+        row <- 0 until field.maxPosX
+        col <- 0 until field.maxPosY
+      yield colCellToXml(field, row, col)
     }
             </cols>
             <playerList playerSize={field.playerList.size.toString} currentPlayer={field.currentPlayerIndex.toString}>
@@ -44,10 +50,20 @@ class FileIO extends FileIOInterface:
             </playerList>
         </field>
 
-  def cellToXml(field: FieldInterface, vec: Int, row: Int, col: Int): Elem =
+  def statusCellToXml(field: FieldInterface, row: Int, col: Int): Elem =
     <value row={row.toString} col={col.toString}>
-            {field.getCell(vec, row, col)}
-        </value>
+      {field.getStatusCell(row, col)}
+    </value>
+
+  def rowCellToXml(field: FieldInterface, row: Int, col: Int): Elem =
+    <value row={row.toString} col={col.toString}>
+      {field.getRowCell(row, col)}
+    </value>
+
+  def colCellToXml(field: FieldInterface, row: Int, col: Int): Elem =
+    <value row={row.toString} col={col.toString}>
+      {field.getColCell(row, col)}
+    </value>
 
   def playerToXml(field: FieldInterface, index: Int): Elem =
     <value index={index.toString}>
@@ -59,10 +75,10 @@ class FileIO extends FileIOInterface:
     val rowSize: Int = (file \\ "field" \ "@rowSize").text.toInt
     val colSize: Int = (file \\ "field" \ "@colSize").text.toInt
     val playerSize: Int = (file \\ "field" \ "playerList" \ "@playerSize").text.toInt
-    var field: FieldInterface = new Field(rowSize, colSize, Status.Empty, playerSize)
+    val initialField: FieldInterface = new Field(rowSize, colSize, Status.Empty, playerSize)
 
     val statusSeq: NodeSeq = (file \\ "field" \ "status" \ "value")
-    for (rowNode <- statusSeq)
+    val fieldAfterStatus = statusSeq.foldLeft(initialField) { (field, rowNode) =>
       val row = (rowNode \ "@row").text.toInt
       val col = (rowNode \ "@col").text.toInt
       val value = rowNode.text.trim
@@ -72,28 +88,32 @@ class FileIO extends FileIOInterface:
         case "G" => Status.Green
         case "Y" => Status.Yellow
         case _   => Status.Empty
-      field = field.putCell(0, row, col, status)
+      field.putStatus(row, col, status)
+    }
 
     val rowSeq: NodeSeq = (file \\ "field" \ "rows" \ "value")
-    for (rowNode <- rowSeq)
+    val fieldAfterRows = rowSeq.foldLeft(fieldAfterStatus) { (field, rowNode) =>
       val row = (rowNode \ "@row").text.toInt
       val col = (rowNode \ "@col").text.toInt
       val value = rowNode.text.trim.toBoolean
-      field = field.putCell(1, row, col, value)
+      field.putRow(row, col, value)
+    }
 
     val colSeq: NodeSeq = (file \\ "field" \ "cols" \ "value")
-    for (rowNode <- colSeq)
+    val fieldAfterCols = colSeq.foldLeft(fieldAfterRows) { (field, rowNode) =>
       val row = (rowNode \ "@row").text.toInt
       val col = (rowNode \ "@col").text.toInt
       val value = rowNode.text.trim.toBoolean
-      field = field.putCell(2, row, col, value)
+      field.putCol(row, col, value)
+    }
 
     val scoreSeq: NodeSeq = (file \\ "field" \ "playerList" \ "value")
-    for (player <- scoreSeq)
+    val fieldAfterScores = scoreSeq.foldLeft(fieldAfterCols) { (field, player) =>
       val index = (player \ "@index").text.toInt
       val score = player.text.trim.toInt
-      field = field.addPoints(index, score)
+      field.addPoints(index, score)
+    }
 
     val curPlayerIndex: Int = (file \\ "field" \ "playerList" \ "@currentPlayer").text.toInt
-    field = field.updatePlayer(curPlayerIndex)
-    field
+    val finalField = fieldAfterScores.updatePlayer(curPlayerIndex)
+    finalField

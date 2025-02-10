@@ -3,8 +3,11 @@ package fieldComponent
 
 import matrixComponent.MatrixInterface
 import matrixComponent.matrixImpl.Player
+import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
 
 trait FieldInterface:
+  val maxPosX: Int
+  val maxPosY: Int
   def bar(length: Int = 7, cellNum: Int = 5, rowIndex: Int): String
   def cells(rowSize: Int, length: Int = 7, height: Int = 2): String
   def mesh(length: Int = 7, height: Int = 2): String
@@ -13,25 +16,26 @@ trait FieldInterface:
   def status(rowIndex: Int, colIndex: Int, length: Int): String
   def winner: String
   def stats: String
-  def getCell(vecIndex: Int, x: Int, y: Int): Any
-  def putCell(vecIndex: Int, x: Int, y: Int, status: Any): FieldInterface
+  def getStatusCell(row: Int, col: Int): Status
+  def getRowCell(row: Int, col: Int): Boolean
+  def getColCell(row: Int, col: Int): Boolean
+  def putStatus(row: Int, col: Int, status: Status): FieldInterface
+  def putRow(row: Int, col: Int, value: Boolean): FieldInterface
+  def putCol(row: Int, col: Int, value: Boolean): FieldInterface
   def isFinished: Boolean
   def isEdge(move: fieldImpl.Move): Boolean
   def checkSquare(thisCase: String, x: Int, y: Int): FieldInterface
   def currentPlayerId: String
   def currentPlayerIndex: Int
-  def currentStatus: Vector[Vector[Any]]
+  def currentStatus: Vector[Vector[Status]]
   def currentPoints: Int
   def nextPlayer: FieldInterface
   def updatePlayer(curPlayerIndex: Int = playerIndex): FieldInterface
   def playerIndex: Int
   def addPoints(curPlayerIndex: Int = playerIndex, points: Int): FieldInterface
   def playerList: Vector[Player]
-  def getMatrix: MatrixInterface[Any]
   def getPoints(index: Int): Int
-  def rowSize(row: Int = 0): Int
-  def colSize(row: Int = 0, col: Int = 0): Int
+  def rowSize(): Int
+  def colSize(): Int
   def space(length: Int): String
-  val maxPosX: Int
-  val maxPosY: Int
   override def toString: String

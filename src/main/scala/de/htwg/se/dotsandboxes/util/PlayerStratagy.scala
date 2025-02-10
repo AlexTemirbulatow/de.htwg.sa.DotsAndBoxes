@@ -1,14 +1,14 @@
 package de.htwg.se.dotsandboxes
 package util
 
-import playerState.{AddOnePoint, AddTwoPoints, NextPlayer}
 import model.fieldComponent.FieldInterface
+import playerState.{AddOnePoint, AddTwoPoints, NextPlayer}
+import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
 
-
-/* stratagy pattern */
+/* strategy pattern */
 object PlayerStratagy:
-  def updatePlayer(field: FieldInterface, preStatus: Vector[Vector[Any]], postStatus: Vector[Vector[Any]]): FieldInterface =
+  def updatePlayer(field: FieldInterface, preStatus: Vector[Vector[Status]], postStatus: Vector[Vector[Status]]): FieldInterface =
     val difference = preStatus.indices.map(x => preStatus(x).zip(postStatus(x)).count(x => x._1 != x._2)).sum
-    if(difference.equals(1)) AddOnePoint.handle(field)
-    else if(difference.equals(2)) AddTwoPoints.handle(field)
+    if (difference.equals(1)) AddOnePoint.handle(field)
+    else if (difference.equals(2)) AddTwoPoints.handle(field)
     else NextPlayer.handle(field)

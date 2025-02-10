@@ -4,7 +4,6 @@ package util
 import controller.Command
 import model.fieldComponent.FieldInterface
 
-
 class UndoManager:
   private var undoStack: List[Command] = Nil
   private var redoStack: List[Command] = Nil
