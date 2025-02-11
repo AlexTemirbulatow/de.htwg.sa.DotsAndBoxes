@@ -2,7 +2,6 @@ package de.htwg.se.dotsandboxes
 package util
 
 import model.fieldComponent.FieldInterface
-import model.fieldComponent.fieldImpl.Move
 import moveState.MoveState
 
 /* strategy pattern */

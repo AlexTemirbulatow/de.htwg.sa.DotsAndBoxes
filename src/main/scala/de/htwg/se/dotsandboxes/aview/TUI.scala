@@ -3,7 +3,7 @@ package aview
 
 import Default.given
 import controller.controllerComponent.ControllerInterface
-import model.fieldComponent.fieldImpl.Move
+import util.Move
 import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}
 import util.Event
@@ -15,12 +15,12 @@ class TUI(using controller: ControllerInterface) extends Template(controller):
     case Event.Move  => print(controller.toString)
 
   override def gameLoop =
-    analyseInput(readLine) match
+    analyzeInput(readLine) match
       case Some(move) => controller.publish(controller.put, move)
       case None       =>
     gameLoop
 
-  override def analyseInput(input: String): Option[Move] = input match
+  override def analyzeInput(input: String): Option[Move] = input match
     case "q" => update(Event.Abort); None
     case "z" => controller.publish(controller.undo); None
     case "y" => controller.publish(controller.redo); None

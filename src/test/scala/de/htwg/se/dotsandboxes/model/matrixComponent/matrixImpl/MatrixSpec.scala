@@ -4,7 +4,7 @@ package matrixComponent.matrixImpl
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
 
-import fieldComponent.fieldImpl.Move
+import de.htwg.se.dotsandboxes.util.Move
 
 
 class MatrixSpec extends AnyWordSpec {

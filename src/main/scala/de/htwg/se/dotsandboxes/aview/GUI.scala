@@ -8,7 +8,7 @@ import java.io.File
 import javax.imageio.ImageIO
 import javax.swing.border.LineBorder
 import javax.swing.{ImageIcon, UIManager}
-import model.fieldComponent.fieldImpl.Move
+import util.Move
 import scala.swing._
 import scala.swing.event._
 import util.{Event, Observer}

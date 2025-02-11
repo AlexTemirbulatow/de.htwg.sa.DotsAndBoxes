@@ -3,7 +3,7 @@ package controller.controllerComponent
 
 import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
 import model.fieldComponent.FieldInterface
-import model.fieldComponent.fieldImpl.Move
+import util.Move
 import model.matrixComponent.matrixImpl.Player
 import scala.util.Try
 import util.Observable

@@ -2,7 +2,8 @@ package de.htwg.se.dotsandboxes
 package controller.controllerComponent.controllerImpl
 
 import de.htwg.se.dotsandboxes.model.fileIoComponent._
-import model.fieldComponent.fieldImpl.{Field, Move}
+import model.fieldComponent.fieldImpl.{Field}
+import util.Move
 import model.matrixComponent.matrixImpl.{Player, Status}
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec

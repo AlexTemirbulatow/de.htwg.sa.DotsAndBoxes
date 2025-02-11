@@ -2,8 +2,11 @@ package de.htwg.se.dotsandboxes
 package util
 
 import model.fieldComponent.FieldInterface
-import model.fieldComponent.fieldImpl.Move
 import scala.util.{Failure, Success, Try}
+
+object MoveValidator:
+  private val chain: MoveHandler = CheckLine(Some(CheckX(Some(CheckY(Some(CheckAvailable(None)))))))
+  def validate(move: Move, field: FieldInterface): Try[String] = chain.handle(move, field)
 
 trait MoveHandler:
   val next: Option[MoveHandler]

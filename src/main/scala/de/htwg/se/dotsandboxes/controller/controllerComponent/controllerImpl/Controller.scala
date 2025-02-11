@@ -6,7 +6,7 @@ package controllerImpl
 import Default.given
 import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
 import model.fieldComponent.FieldInterface
-import model.fieldComponent.fieldImpl.Move
+import util.Move
 import model.fileIoComponent.FileIOInterface
 import model.matrixComponent.matrixImpl.Player
 import scala.util.Try
@@ -15,11 +15,6 @@ import util._
 import util.moveState.{EdgeState, MidState}
 
 class Controller(using var field: FieldInterface, val fileIO: FileIOInterface) extends ControllerInterface:
-  val moveCheck_Available = CheckAvailable(None)
-  val moveCheck_Y = CheckY(Some(moveCheck_Available))
-  val moveCheck_X = CheckX(Some(moveCheck_Y))
-  val moveCheck_Line = CheckLine(Some(moveCheck_X))
-
   val undoManager = new UndoManager
 
   override def put(move: Move): FieldInterface = undoManager.doStep(field, PutCommand(move, field))
@@ -53,7 +48,7 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface) e
     if gameEnded then notifyObservers(Event.End)
     field
   override def publish(doThis: Move => FieldInterface, move: Move): Try[FieldInterface] =
-    moveCheck_Line.handle(move, field) match
+    MoveValidator.validate(move, field) match
       case Failure(exception) =>
         print(exception.getMessage.dropRight(28))
         Failure(exception)
