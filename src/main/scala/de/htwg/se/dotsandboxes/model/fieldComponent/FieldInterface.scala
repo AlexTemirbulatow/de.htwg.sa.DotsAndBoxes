@@ -9,8 +9,8 @@ import matrixComponent.matrixImpl.Player
 trait FieldInterface:
   val maxPosX: Int
   val maxPosY: Int
-  def bar(length: Int = 7, cellNum: Int = 5, rowIndex: Int): String
-  def cells(rowSize: Int, length: Int = 7, height: Int = 2): String
+  def bar(length: Int = 7, cellNum: Int = 5, rowIndex: Int, rowFunc: (Int, Int, Int) => String): String
+  def cells(rowSize: Int, length: Int = 7, height: Int = 2, colFunc: (Int, Int, Int) => String): String
   def mesh(length: Int = 7, height: Int = 2): String
   def rows(rowIndex: Int, colIndex: Int, length: Int): String
   def columns(rowIndex: Int, colIndex: Int, length: Int): String

@@ -15,13 +15,11 @@ import util._
 import util.moveState.{EdgeState, MidState}
 
 class Controller(using var field: FieldInterface, val fileIO: FileIOInterface) extends ControllerInterface:
-  /* setup chain */
   val moveCheck_Available = CheckAvailable(None)
   val moveCheck_Y = CheckY(Some(moveCheck_Available))
   val moveCheck_X = CheckX(Some(moveCheck_Y))
   val moveCheck_Line = CheckLine(Some(moveCheck_X))
 
-  /* setup undo manager */
   val undoManager = new UndoManager
 
   override def put(move: Move): FieldInterface = undoManager.doStep(field, PutCommand(move, field))

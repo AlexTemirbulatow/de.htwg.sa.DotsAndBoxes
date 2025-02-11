@@ -9,12 +9,12 @@ import scala.util.{Failure, Success, Try}
 import util.Event
 
 class TUI(using controller: ControllerInterface) extends Template(controller):
-  override def update(event: Event): Unit = event match
+  override def update(event: Event) = event match
     case Event.Abort => sys.exit
     case Event.End   => print(finalStats)
     case Event.Move  => print(controller.toString)
 
-  override def gameLoop: Unit =
+  override def gameLoop =
     analyseInput(readLine) match
       case Some(move) => controller.publish(controller.put, move)
       case None       =>

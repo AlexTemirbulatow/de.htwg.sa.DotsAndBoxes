@@ -5,7 +5,6 @@ import model.fieldComponent.FieldInterface
 import model.fieldComponent.fieldImpl.Move
 import scala.util.{Failure, Success, Try}
 
-/* chain of responsibility */
 trait MoveHandler:
   val next: Option[MoveHandler]
   def handle(move: Move, field: FieldInterface): Try[String]

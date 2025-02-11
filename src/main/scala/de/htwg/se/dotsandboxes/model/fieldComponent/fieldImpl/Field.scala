@@ -8,13 +8,36 @@ import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
 import de.htwg.se.dotsandboxes.util.moveState.SquareState
 
 case class Field(matrix: MatrixInterface) extends FieldInterface:
-  def this(rowSize: Int, colSize: Int, status: Status, playerSize: Int = 2) = this(new Matrix(rowSize, colSize, status, playerSize))
-  override def bar(length: Int = 7, cellNum: Int = 5, rowIndex: Int): String = (0 until cellNum).map(rows(rowIndex, _, length)).mkString(Connectors("O"), Connectors("O"), Connectors("O")) + "\n"
-  override def cells(rowSize: Int, length: Int = 7, height: Int = 2): String =
-    ((0 to maxPosY).map(columns(rowSize, _, length)).mkString + "\n") * height
+  def this(rowSize: Int, colSize: Int, status: Status, playerSize: Int = 2) =
+    this(new Matrix(rowSize, colSize, status, playerSize))
+  
+  override def bar(
+    length: Int = 7,
+    cellNum: Int = 5,
+    rowIndex: Int,
+    rowFunc: (Int, Int, Int) => String
+  ): String =
+    List
+      .tabulate(cellNum)(colIndex => rowFunc(rowIndex, colIndex, length))
+      .mkString(Connectors("O"), Connectors("O"), Connectors("O")) + "\n"
+
+  override def cells(
+    rowSize: Int,
+    length: Int = 7,
+    height: Int = 2,
+    colFunc: (Int, Int, Int) => String
+  ): String =
+    List.fill(height)(
+      List
+        .tabulate(maxPosY + 1)(colIndex => colFunc(rowSize, colIndex, length))
+        .mkString + "\n"
+    ).mkString
+
   override def mesh(length: Int = 7, height: Int = 2): String =
-    ((0 until maxPosX)
-    .map(x => bar(length, maxPosY, x) + cells(x, length, height))).mkString + bar(length, maxPosY, maxPosX)
+    List
+      .tabulate(maxPosX)(x => bar(length, maxPosY, x, rows) + cells(x, length, height, columns))
+      .mkString + bar(length, maxPosY, maxPosX, rows)
+      
   override def rows(rowIndex: Int, colIndex: Int, length: Int): String = getRowCell(rowIndex, colIndex) match
     case false => Connectors("-") * length
     case true  => Connectors("=") * length
