@@ -40,23 +40,20 @@ case class Matrix(
     copy(vecRow = vectorRow.updated(row, vectorRow(row).updated(col, value)))
   override def replaceColCell(row: Int, col: Int, value: Boolean): Matrix =
     copy(vecCol = vectorCol.updated(row, vectorCol(row).updated(col, value)))
-  override def checkSquare(squareCase: SquareState, x: Int, y: Int): Matrix = squareCase match
-    case SquareState.DownCase =>
-      if ((rowCell(x + 1, y), colCell(x, y), colCell(x, y + 1)).toList.forall(_ == true))
-        replaceStatusCell(x, y, currentPlayer.status)
-      else copy()
-    case SquareState.UpCase =>
-      if ((rowCell(x - 1, y), colCell(x - 1, y), colCell(x - 1, y + 1)).toList.forall(_ == true))
-        replaceStatusCell(x - 1, y, currentPlayer.status)
-      else copy()
-    case SquareState.RightCase =>
-      if ((colCell(x, y + 1), rowCell(x, y), rowCell(x + 1, y)).toList.forall(_ == true))
-        replaceStatusCell(x, y, currentPlayer.status)
-      else copy()
-    case SquareState.LeftCase =>
-      if ((colCell(x, y - 1), rowCell(x, y - 1), rowCell(x + 1, y - 1)).toList.forall(_ == true))
-        replaceStatusCell(x, y - 1, currentPlayer.status)
-      else copy()
+  override def checkSquare(squareCase: SquareState, x: Int, y: Int): Matrix =
+    val cellsToCheck: List[Boolean] = squareCase match
+      case SquareState.DownCase  => List(rowCell(x + 1, y), colCell(x, y), colCell(x, y + 1))
+      case SquareState.UpCase    => List(rowCell(x - 1, y), colCell(x - 1, y), colCell(x - 1, y + 1))
+      case SquareState.RightCase => List(colCell(x, y + 1), rowCell(x, y), rowCell(x + 1, y))
+      case SquareState.LeftCase  => List(colCell(x, y - 1), rowCell(x, y - 1), rowCell(x + 1, y - 1))
+    if cellsToCheck.forall(identity) then
+      val (newX, newY) = squareCase match
+        case SquareState.UpCase  => (x - 1, y)
+        case SquareState.LeftCase => (x, y - 1)
+        case _                    => (x, y)
+      replaceStatusCell(newX, newY, currentPlayer.status)
+    else 
+      copy()
   override def isEdge(move: Move): Boolean = move.vec match
     case 1 => if (move.x == 0 || move.x == maxPosX) true else false
     case 2 => if (move.y == 0 || move.y == maxPosY) true else false

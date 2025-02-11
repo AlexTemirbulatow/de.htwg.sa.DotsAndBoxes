@@ -24,31 +24,37 @@ class FileIO extends FileIOInterface:
     
   def fieldToXml(field: FieldInterface): Elem =
     <field rowSize={field.maxPosY.toString} colSize={field.maxPosX.toString}>
-            <status> {
-      for
-        row <- 0 until field.maxPosX
-        col <- 0 until field.maxPosY
-      yield statusCellToXml(field, row, col)
-    }
-            </status>
-            <rows> {
-      for
-        row <- 0 until field.maxPosX
-        col <- 0 until field.maxPosY
-      yield rowCellToXml(field, row, col)
-    }
-            </rows>
-            <cols> {
-      for
-        row <- 0 until field.maxPosX
-        col <- 0 until field.maxPosY
-      yield colCellToXml(field, row, col)
-    }
-            </cols>
-            <playerList playerSize={field.playerList.size.toString} currentPlayer={field.currentPlayerIndex.toString}>
-            {field.playerList.indices.map(playerToXml(field, _))}
-            </playerList>
-        </field>
+      <status>
+        {
+          for
+            row <- 0 until field.maxPosX
+            col <- 0 until field.maxPosY
+          yield statusCellToXml(field, row, col)
+        }
+      </status>
+
+      <rows>
+        {
+          for
+            row <- 0 until field.maxPosX
+            col <- 0 until field.maxPosY
+          yield rowCellToXml(field, row, col)
+        }
+      </rows>
+
+      <cols>
+        {
+          for
+            row <- 0 until field.maxPosX
+            col <- 0 until field.maxPosY
+          yield colCellToXml(field, row, col)
+        }
+      </cols>
+
+      <playerList playerSize={field.playerList.size.toString} currentPlayer={field.currentPlayerIndex.toString}>
+        {field.playerList.indices.map(playerToXml(field, _))}
+      </playerList>
+    </field>
 
   def statusCellToXml(field: FieldInterface, row: Int, col: Int): Elem =
     <value row={row.toString} col={col.toString}>
@@ -67,8 +73,8 @@ class FileIO extends FileIOInterface:
 
   def playerToXml(field: FieldInterface, index: Int): Elem =
     <value index={index.toString}>
-            {field.getPoints(index)}
-        </value>
+      {field.getPoints(index)}
+    </value>
 
   override def load: FieldInterface =
     val file: Elem = scala.xml.XML.loadFile("field.xml")
