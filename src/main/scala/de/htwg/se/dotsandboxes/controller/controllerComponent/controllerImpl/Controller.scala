@@ -6,13 +6,12 @@ package controllerImpl
 import Default.given
 import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
 import model.fieldComponent.FieldInterface
-import util.Move
 import model.fileIoComponent.FileIOInterface
 import model.matrixComponent.matrixImpl.Player
 import scala.util.Try
 import scala.util.{Failure, Success}
-import util._
 import util.moveState.{EdgeState, MidState}
+import util.{Event, Move, MoveStrategy, MoveValidator, PackT, PlayerStrategy, UndoManager}
 
 class Controller(using var field: FieldInterface, val fileIO: FileIOInterface) extends ControllerInterface:
   val undoManager = new UndoManager
@@ -52,16 +51,42 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface) e
       case Failure(exception) =>
         print(exception.getMessage.dropRight(28))
         Failure(exception)
-      case Success(value) =>
+      case Success(_) =>
         field = doThis(move)
         val preStatus = field.currentStatus
         val movePosition = if field.isEdge(move) then EdgeState else MidState
-        field = MoveStratagy.executeStrategy(movePosition, move, field)
+        field = MoveStrategy.executeStrategy(movePosition, move, field)
         val postStatus = field.currentStatus
-        field = PlayerStratagy.updatePlayer(field, preStatus, postStatus)
+        field = PlayerStrategy.updatePlayer(field, preStatus, postStatus)
         notifyObservers(Event.Move)
         if gameEnded then notifyObservers(Event.End)
         Success(field)
+  override def publishCheat(doThis: Move => FieldInterface, pack: PackT[Option[Move]]): Try[FieldInterface] =
+    val results = for {
+      (moveOpt, index) <- pack.moves.zipWithIndex
+      isLast = index == pack.moves.length - 1
+    } yield moveOpt match {
+      case Some(move) =>
+        MoveValidator.validate(move, field) match {
+          case Failure(exception) =>
+            print(exception.getMessage.dropRight(28))
+            Failure(exception)
+          case Success(_) =>
+            field = doThis(move)
+            val preStatus = field.currentStatus
+            val movePosition = if field.isEdge(move) then EdgeState else MidState
+            field = MoveStrategy.executeStrategy(movePosition, move, field)
+            val postStatus = field.currentStatus
+            if isLast then field = PlayerStrategy.updatePlayer(field, preStatus, postStatus)
+            notifyObservers(Event.Move)
+            if gameEnded then notifyObservers(Event.End)
+            Success(field)
+        }
+      case None =>
+        println(s"Invalid move at index $index")
+        Failure(new Exception("Found None at index $index"))
+    }
+    results.find(_.isFailure).getOrElse(results.lastOption.getOrElse(Failure(new Exception("No valid moves found"))))
 
   override def toString: String =
     def moveString: String = if !gameEnded then "Your Move <Line><X><Y>: " else ""

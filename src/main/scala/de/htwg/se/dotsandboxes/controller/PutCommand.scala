@@ -4,7 +4,6 @@ package controller
 import model.fieldComponent.FieldInterface
 import util.Move
 
-/*command pattern*/
 trait Command:
   def doStep(field: FieldInterface): FieldInterface
   def undoStep(field: FieldInterface): FieldInterface

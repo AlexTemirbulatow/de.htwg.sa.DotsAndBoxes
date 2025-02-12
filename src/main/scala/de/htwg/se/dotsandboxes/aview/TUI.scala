@@ -3,7 +3,7 @@ package aview
 
 import Default.given
 import controller.controllerComponent.ControllerInterface
-import util.Move
+import util.{Move, PackT}
 import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}
 import util.Event
@@ -26,14 +26,22 @@ class TUI(using controller: ControllerInterface) extends Template(controller):
     case "y" => controller.publish(controller.redo); None
     case "s" => controller.save; None
     case "l" => controller.load; None
+    case s if s.startsWith("CHEAT: ") =>
+      val moves: List[String] = s.stripPrefix("CHEAT: ").split("\\s+").toList
+      if moves.exists(_.length != 3) then print(syntaxErr); None
+      val pack: List[Option[Move]] = moves.map(move => {
+        checkSyntax(move(0), move(1), move(2)) match
+          case Success(move) => Some(Move(move(0), move(1), move(2), true))
+          case Failure(_)    => None 
+      })
+      controller.publishCheat(controller.put, PackT(pack))
+      None
+    case _ if input.length == 3 =>
+      checkSyntax(input(0), input(1), input(2)) match
+        case Success(move) => Some(Move(move(0), move(1), move(2), true))
+        case Failure(_)    => print(syntaxErr); None
     case _ =>
-      val chars = input.toCharArray
-      chars.size match
-        case 3 =>
-          checkSyntax(chars(0), chars(1), chars(2)) match
-            case Success(move) => Some(Move(move(0), move(1), move(2), true))
-            case Failure(_)    => print(syntaxErr); None
-        case _ => print(syntaxErr); None
+      print(syntaxErr); None
 
   override def checkSyntax(vec: Char, x: Char, y: Char): Try[(Int, Int, Int)] =
     Try(vec.toString.toInt, x.toString.toInt, y.toString.toInt)
