@@ -3,10 +3,11 @@ package controller.controllerComponent
 
 import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
 import model.fieldComponent.FieldInterface
-import model.fieldComponent.fieldImpl.Move
+import util.Move
 import model.matrixComponent.matrixImpl.Player
 import scala.util.Try
 import util.Observable
+import de.htwg.se.dotsandboxes.util.PackT
 
 trait ControllerInterface extends Observable:
   def put(move: Move): FieldInterface
@@ -27,4 +28,5 @@ trait ControllerInterface extends Observable:
   def stats: String
   def publish(doThis: => FieldInterface): FieldInterface
   def publish(doThis: Move => FieldInterface, move: Move): Try[FieldInterface]
+  def publishCheat(doThis: Move => FieldInterface, pack: PackT[Option[Move]]): Try[FieldInterface]
   override def toString: String

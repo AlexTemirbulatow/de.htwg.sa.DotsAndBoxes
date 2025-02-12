@@ -7,20 +7,21 @@ import fileIoComponent.FileIOInterface
 import java.io._
 import matrixComponent.matrixImpl.Status
 import scala.xml.{Elem, NodeSeq, PrettyPrinter}
+import scala.util.Try
+import scala.util.{Success, Failure}
 
 class FileIO extends FileIOInterface:
   override def save(field: FieldInterface): Either[String, String] =
-    try {
-      val filename: String = "field.xml"
-      val prettyPrinter = new PrettyPrinter(120, 4)
-      val xml = prettyPrinter.format(fieldToXml(field))
+    val filename = "field.xml"
+    val prettyPrinter = new PrettyPrinter(120, 4)
+    val xml = prettyPrinter.format(fieldToXml(field))
+    Try {
       val printWriter = new PrintWriter(new File(filename))
       printWriter.write(xml)
-      printWriter.close
-      Right(filename)
-    } catch {
-      case e: Exception => Left(e.getMessage())
-    }
+      printWriter.close()
+    } match
+      case Success(_) => Right(s"Saved as $filename")
+      case Failure(e) => Left(e.getMessage)
     
   def fieldToXml(field: FieldInterface): Elem =
     <field rowSize={field.maxPosY.toString} colSize={field.maxPosX.toString}>

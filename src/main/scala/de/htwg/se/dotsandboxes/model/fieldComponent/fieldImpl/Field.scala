@@ -6,6 +6,7 @@ import matrixComponent.MatrixInterface
 import matrixComponent.matrixImpl.{Matrix, Player}
 import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
 import de.htwg.se.dotsandboxes.util.moveState.SquareState
+import de.htwg.se.dotsandboxes.util.Move
 
 case class Field(matrix: MatrixInterface) extends FieldInterface:
   def this(rowSize: Int, colSize: Int, status: Status, playerSize: Int = 2) =

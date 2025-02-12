@@ -5,6 +5,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
 
 import matrixComponent.matrixImpl.{Matrix, Player, Status}
+import de.htwg.se.dotsandboxes.util.Move
 
 
 class FieldSpec extends AnyWordSpec {
