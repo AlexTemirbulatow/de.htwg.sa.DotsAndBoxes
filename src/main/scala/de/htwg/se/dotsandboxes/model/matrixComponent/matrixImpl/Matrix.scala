@@ -1,7 +1,7 @@
 package de.htwg.se.dotsandboxes.model
 package matrixComponent.matrixImpl
 
-import fieldComponent.fieldImpl.Move
+import de.htwg.se.dotsandboxes.util.Move
 import matrixComponent.MatrixInterface
 import de.htwg.se.dotsandboxes.util.moveState.SquareState
 
@@ -48,12 +48,11 @@ case class Matrix(
       case SquareState.LeftCase  => List(colCell(x, y - 1), rowCell(x, y - 1), rowCell(x + 1, y - 1))
     if cellsToCheck.forall(identity) then
       val (newX, newY) = squareCase match
-        case SquareState.UpCase  => (x - 1, y)
+        case SquareState.UpCase   => (x - 1, y)
         case SquareState.LeftCase => (x, y - 1)
         case _                    => (x, y)
       replaceStatusCell(newX, newY, currentPlayer.status)
-    else 
-      copy()
+    else copy()
   override def isEdge(move: Move): Boolean = move.vec match
     case 1 => if (move.x == 0 || move.x == maxPosX) true else false
     case 2 => if (move.y == 0 || move.y == maxPosY) true else false

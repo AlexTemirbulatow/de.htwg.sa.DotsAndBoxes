@@ -2,11 +2,10 @@ package de.htwg.se.dotsandboxes
 package aview
 
 import controller.controllerComponent.ControllerInterface
-import model.fieldComponent.fieldImpl.Move
+import util.Move
 import scala.util.Try
 import util.{Event, Observer}
 
-/* template pattern */
 trait Template(controller: ControllerInterface) extends Observer:
   controller.add(this)
   def run: Unit =
@@ -27,7 +26,7 @@ trait Template(controller: ControllerInterface) extends Observer:
     update(Event.Move)
     gameLoop
   def gameLoop: Unit
-  def analyseInput(input: String): Option[Move]
+  def analyzeInput(input: String): Option[Move]
   def finalStats: String
   def checkSyntax(vec: Char, x: Char, y: Char): Try[(Int, Int, Int)]
   def syntaxErr: String

@@ -5,7 +5,7 @@ import model.fieldComponent.FieldInterface
 import playerState.{AddOnePoint, AddTwoPoints, NextPlayer}
 import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
 
-object PlayerStratagy:
+object PlayerStrategy:
   def updatePlayer(field: FieldInterface, preStatus: Vector[Vector[Status]], postStatus: Vector[Vector[Status]]): FieldInterface =
     val difference = preStatus
       .zip(postStatus)

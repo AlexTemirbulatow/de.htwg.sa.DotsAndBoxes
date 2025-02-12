@@ -8,18 +8,19 @@ import java.io._
 import matrixComponent.matrixImpl.Status
 import play.api.libs.json._
 import scala.io.Source
+import scala.util.Try
+import scala.util.{Success, Failure}
 
 class FileIO extends FileIOInterface:
   override def save(field: FieldInterface): Either[String, String] =
-    try {
-      val filename: String = "field.json"
+    val filename = "field.json"
+    Try {
       val printWriter = new PrintWriter(new File(filename))
       printWriter.write(Json.prettyPrint(fieldToJson(field)))
-      printWriter.close
-      Right(filename)
-    } catch {
-      case e: Exception => Left(e.getMessage())
-    }
+      printWriter.close()
+    } match
+      case Success(_) => Right(s"Saved as $filename")
+      case Failure(e) => Left(e.getMessage)
 
   def fieldToJson(field: FieldInterface): JsObject =
     Json.obj(

@@ -3,7 +3,8 @@ package model
 package fileIoComponent.xmlImpl
 
 import controller.controllerComponent.controllerImpl.Controller
-import fieldComponent.fieldImpl.{Field, Move}
+import fieldComponent.fieldImpl.{Field}
+import util.Move
 import fileIoComponent.xmlImpl.FileIO
 import matrixComponent.matrixImpl.Status
 import org.scalatest.matchers.should.Matchers._

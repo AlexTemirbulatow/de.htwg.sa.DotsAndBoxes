@@ -1,7 +1,7 @@
 package de.htwg.se.dotsandboxes.model
 package matrixComponent
 
-import fieldComponent.fieldImpl.Move
+import de.htwg.se.dotsandboxes.util.Move
 import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
 import de.htwg.se.dotsandboxes.util.moveState.SquareState
 

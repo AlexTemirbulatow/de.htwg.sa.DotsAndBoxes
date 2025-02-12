@@ -2,9 +2,8 @@ package de.htwg.se.dotsandboxes
 package controller
 
 import model.fieldComponent.FieldInterface
-import model.fieldComponent.fieldImpl.Move
+import util.Move
 
-/*command pattern*/
 trait Command:
   def doStep(field: FieldInterface): FieldInterface
   def undoStep(field: FieldInterface): FieldInterface
