@@ -26,8 +26,8 @@ class TUI(using controller: ControllerInterface) extends Template(controller):
     case "y" => controller.publish(controller.redo); None
     case "s" => controller.save; None
     case "l" => controller.load; None
-    case s if s.startsWith("CHEAT: ") =>
-      val moves: List[String] = s.stripPrefix("CHEAT: ").split("\\s+").toList
+    case cheat if cheat.startsWith("CHEAT: ") =>
+      val moves: List[String] = cheat.stripPrefix("CHEAT: ").split("\\s+").toList
       if moves.exists(_.length != 3) then print(syntaxErr); None
       val pack: List[Option[Move]] = moves.map(move => {
         checkSyntax(move(0), move(1), move(2)) match

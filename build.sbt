@@ -12,6 +12,7 @@ lazy val root = project
     .cross(CrossVersion.for3Use2_13),
     libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "2.1.0",
     libraryDependencies += ("com.typesafe.play" %% "play-json" % "2.10.0-RC5"),
+    libraryDependencies += "org.scalatestplus" %% "mockito-5-12" % "3.2.19.0" % "test",
     jacocoCoverallsServiceName := "github-actions",
     jacocoCoverallsBranch := sys.env.get("CI_BRANCH").orElse(Some("main")),
     jacocoCoverallsPullRequest := sys.env.get("GITHUB_EVENT_NAME").orElse(Some("false")),
