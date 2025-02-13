@@ -2,6 +2,7 @@ package de.htwg.se.dotsandboxes.aview
 
 import de.htwg.se.dotsandboxes.controller.controllerComponent.ControllerInterface
 import de.htwg.se.dotsandboxes.controller.controllerComponent.controllerImpl.Controller
+import de.htwg.se.dotsandboxes.model.fieldComponent.FieldInterface
 import de.htwg.se.dotsandboxes.model.fieldComponent.fieldImpl.Field
 import de.htwg.se.dotsandboxes.model.fileIoComponent._
 import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
@@ -49,10 +50,19 @@ class TUISpec extends AnyWordSpec with BeforeAndAfterEach {
       }
       "allow a cheat keyword with following cheat moves" in {
         tui.analyzeInput("CHEAT: 100 110 200") shouldBe None
+
+        val commandCaptor: ArgumentCaptor[Move => FieldInterface] =
+          ArgumentCaptor.forClass(classOf[Move => FieldInterface])
+
         val packCaptor: ArgumentCaptor[PackT[Option[Move]]] =
           ArgumentCaptor.forClass(classOf[PackT[?]]).asInstanceOf[ArgumentCaptor[PackT[Option[Move]]]]
 
-        verify(mockController).publishCheat(any(), packCaptor.capture())
+        verify(mockController).publishCheat(commandCaptor.capture(), packCaptor.capture())
+
+        val move = Move(1, 0, 0, true)
+        val capturedFunc = commandCaptor.getValue
+        capturedFunc(move) shouldBe mockController.put(move)
+
         packCaptor.getValue shouldBe PackT(
           List(
             Some(Move(1, 0, 0, true)),
@@ -63,10 +73,19 @@ class TUISpec extends AnyWordSpec with BeforeAndAfterEach {
       }
       "allow cheat moves and have Nones" in {
         tui.analyzeInput("CHEAT: 122 abc 222") shouldBe None
+
+        val commandCaptor: ArgumentCaptor[Move => FieldInterface] =
+          ArgumentCaptor.forClass(classOf[Move => FieldInterface])
+
         val packCaptor: ArgumentCaptor[PackT[Option[Move]]] =
           ArgumentCaptor.forClass(classOf[PackT[?]]).asInstanceOf[ArgumentCaptor[PackT[Option[Move]]]]
 
-        verify(mockController).publishCheat(any(), packCaptor.capture())
+        verify(mockController).publishCheat(commandCaptor.capture(), packCaptor.capture())
+
+        val move = Move(1, 2, 2, true)
+        val capturedFunc = commandCaptor.getValue
+        capturedFunc(move) shouldBe mockController.put(move)
+
         packCaptor.getValue shouldBe PackT(
           List(
             Some(Move(1, 2, 2, true)),
