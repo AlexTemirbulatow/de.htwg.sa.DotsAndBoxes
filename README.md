@@ -1,8 +1,8 @@
 # Dots And Boxes
 
 
-[![Scala CI](https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/actions/workflows/scala.yml/badge.svg?branch=developer)](https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/actions/workflows/scala.yml)
-[![Coverage Status](https://coveralls.io/repos/github/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/badge.svg?branch=developer)](https://coveralls.io/github/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes?branch=developer)
+[![Scala CI](https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/actions/workflows/scala.yml/badge.svg?branch=SA02-Monads)](https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/actions/workflows/scala.yml)
+[![Coverage Status](https://coveralls.io/repos/github/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/badge.svg?branch=SA02-Monads)](https://coveralls.io/github/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes?branch=SA02-Monads)
 
 
 ## Usage
