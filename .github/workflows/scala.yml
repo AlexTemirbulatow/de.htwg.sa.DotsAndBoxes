@@ -14,6 +14,7 @@ jobs:
       - name: Set up sbt
         run: |
           echo "Setting up sbt"
+          mkdir -p $HOME/.sbt
           curl -sL https://github.com/sbt/sbt/releases/download/v1.8.2/sbt-1.8.2.tgz | tar xz -C $HOME/.sbt
           export PATH=$HOME/.sbt/bin:$PATH
           sbt --version
