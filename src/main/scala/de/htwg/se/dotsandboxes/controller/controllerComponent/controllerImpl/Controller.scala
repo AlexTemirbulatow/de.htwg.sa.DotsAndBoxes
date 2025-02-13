@@ -22,6 +22,7 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface) e
   override def getColCell(row: Int, col: Int): Boolean = field.getColCell(row, col)
   override def undo: FieldInterface = undoManager.undoStep(field)
   override def redo: FieldInterface = undoManager.redoStep(field)
+
   override def save: FieldInterface =
     fileIO.save(field)
     if !gameEnded then notifyObservers(Event.Move)
@@ -84,7 +85,7 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface) e
             Success(field)
         }
       case None =>
-        println(s"Invalid move at position ${index+1}")
+        println(s"Invalid move at position ${index + 1}")
         Failure(new Exception(s"Found None at index $index"))
     }
     results.find(_.isFailure).getOrElse(results.lastOption.getOrElse(Failure(new Exception("No valid moves found"))))

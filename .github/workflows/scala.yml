@@ -2,9 +2,9 @@ name: Scala CI
 
 on:
   push:
-    branches: [ "developer" ]
+    branches: [ "developer", "main" ]
   pull_request:
-    branches: [ "developer" ]
+    branches: [ "developer", "main" ]
 
 jobs:
   build:
@@ -20,8 +20,6 @@ jobs:
 
       - name: Set up sbt
         uses: sbt/setup-sbt@v1
-        with:
-          version: '1.8.2'
 
       - name: compile
         run: sbt clean compile
@@ -39,8 +37,6 @@ jobs:
 
       - name: Set up sbt
         uses: sbt/setup-sbt@v1
-        with:
-          version: '1.8.2'
 
       - name: Build Project and Run Tests
         env:
@@ -48,3 +44,12 @@ jobs:
         run: |
           export CI_BRANCH="${GITHUB_REF#refs/heads/}"
           sbt clean jacoco jacocoCoveralls
+
+  refresh_badge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Refresh coverage badge
+        uses: fjogeleit/http-request-action@master
+        with:
+          url: https://camo.githubusercontent.com/12c4fcb3b21fbb2a725fc61449fb1b91e972c4c8a2baaf5904936d8e334bdbe8/68747470733a2f2f636f766572616c6c732e696f2f7265706f732f6769746875622f62336230302f63736c792f62616467652e7376673f6272616e63683d64657626736572766963653d676974687562
+          method: PURGE
