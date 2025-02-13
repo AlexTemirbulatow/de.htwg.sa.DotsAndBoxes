@@ -20,8 +20,6 @@ jobs:
 
       - name: Set up sbt
         uses: sbt/setup-sbt@v1
-        with:
-          version: '1.8.2'
 
       - name: compile
         run: sbt clean compile
@@ -39,8 +37,6 @@ jobs:
 
       - name: Set up sbt
         uses: sbt/setup-sbt@v1
-        with:
-          version: '1.8.2'
 
       - name: Build Project and Run Tests
         env:
