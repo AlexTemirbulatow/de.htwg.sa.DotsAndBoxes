@@ -13,8 +13,8 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
     this(new Matrix(rowSize, colSize, status, playerSize))
   
   override def bar(
-    length: Int = 7,
-    cellNum: Int = 5,
+    length: Int,
+    cellNum: Int,
     rowIndex: Int,
     rowFunc: (Int, Int, Int) => String
   ): String =
@@ -24,8 +24,8 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
 
   override def cells(
     rowSize: Int,
-    length: Int = 7,
-    height: Int = 2,
+    length: Int,
+    height: Int,
     colFunc: (Int, Int, Int) => String
   ): String =
     List.fill(height)(
@@ -34,7 +34,7 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
         .mkString + "\n"
     ).mkString
 
-  override def mesh(length: Int = 7, height: Int = 2): String =
+  override def mesh(length: Int, height: Int): String =
     List
       .tabulate(maxPosX)(x => bar(length, maxPosY, x, rows) + cells(x, length, height, columns))
       .mkString + bar(length, maxPosY, maxPosX, rows)
@@ -65,9 +65,9 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
   override def currentStatus: Vector[Vector[Status]] = matrix.vectorStatus
   override def currentPoints: Int = matrix.currentPoints
   override def nextPlayer: Field = copy(matrix.changePlayer)
-  override def updatePlayer(curPlayerIndex: Int = playerIndex): Field = copy(matrix.updatePlayer(curPlayerIndex))
+  override def updatePlayer(curPlayerIndex: Int): Field = copy(matrix.updatePlayer(curPlayerIndex))
   override def playerIndex: Int = matrix.playerIndex
-  override def addPoints(curPlayerIndex: Int = playerIndex, points: Int): Field = copy(matrix.addPoints(curPlayerIndex, points))
+  override def addPoints(curPlayerIndex: Int, points: Int): Field = copy(matrix.addPoints(curPlayerIndex, points))
   override def playerList: Vector[Player] = matrix.playerList
   override def getPoints(index: Int): Int = matrix.getPoints(index)
   override def rowSize(): Int = matrix.rowSize()
@@ -75,4 +75,4 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
   override def space(length: Int): String = " " * ((length - 1) / 2)
   override val maxPosX = matrix.maxPosX
   override val maxPosY = matrix.maxPosY
-  override def toString = mesh()
+  override def toString = mesh(7, 2)

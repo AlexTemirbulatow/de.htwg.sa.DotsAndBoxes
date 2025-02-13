@@ -23,10 +23,9 @@ trait MatrixInterface:
   def isEdge(move: Move): Boolean
   def currentPlayerInfo: (String, Int)
   def currentPoints: Int
-  def updatePlayer(curPlayerIndex: Int = currentPlayerInfo._2): MatrixInterface
+  def updatePlayer(curPlayerIndex: Int): MatrixInterface
   def playerIndex: Int
   def playerList: Vector[matrixImpl.Player]
-  def getMatrix: MatrixInterface
   def getPoints(index: Int): Int
-  def addPoints(curPlayerIndex: Int = currentPlayerInfo._2, points: Int): MatrixInterface
+  def addPoints(curPlayerIndex: Int, points: Int): MatrixInterface
   def changePlayer: MatrixInterface

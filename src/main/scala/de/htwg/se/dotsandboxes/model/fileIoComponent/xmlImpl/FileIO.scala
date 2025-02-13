@@ -13,9 +13,9 @@ import scala.util.{Success, Failure}
 class FileIO extends FileIOInterface:
   override def save(field: FieldInterface): Either[String, String] =
     val filename = "field.xml"
-    val prettyPrinter = new PrettyPrinter(120, 4)
-    val xml = prettyPrinter.format(fieldToXml(field))
     Try {
+      val prettyPrinter = new PrettyPrinter(120, 4)
+      val xml = prettyPrinter.format(fieldToXml(field))
       val printWriter = new PrintWriter(new File(filename))
       printWriter.write(xml)
       printWriter.close()

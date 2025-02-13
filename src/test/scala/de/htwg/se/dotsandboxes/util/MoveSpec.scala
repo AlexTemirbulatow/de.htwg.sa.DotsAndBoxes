@@ -1,4 +1,4 @@
-package de.htwg.se.dotsandboxes.model.fieldComponent.fieldImpl
+package de.htwg.se.dotsandboxes.util
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
@@ -12,7 +12,7 @@ class MoveSpec extends AnyWordSpec {
             move.vec should be(1)
             move.x should be(1)
             move.y should be(0)
-            move.status shouldBe true
+            move.value shouldBe true
         }
     }
 }

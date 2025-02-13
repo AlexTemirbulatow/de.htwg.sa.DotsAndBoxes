@@ -77,14 +77,15 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface) e
             val movePosition = if field.isEdge(move) then EdgeState else MidState
             field = MoveStrategy.executeStrategy(movePosition, move, field)
             val postStatus = field.currentStatus
-            if isLast then field = PlayerStrategy.updatePlayer(field, preStatus, postStatus)
-            notifyObservers(Event.Move)
+            if isLast then
+              field = PlayerStrategy.updatePlayer(field, preStatus, postStatus)
+              notifyObservers(Event.Move)
             if gameEnded then notifyObservers(Event.End)
             Success(field)
         }
       case None =>
-        println(s"Invalid move at index $index")
-        Failure(new Exception("Found None at index $index"))
+        println(s"Invalid move at position ${index+1}")
+        Failure(new Exception(s"Found None at index $index"))
     }
     results.find(_.isFailure).getOrElse(results.lastOption.getOrElse(Failure(new Exception("No valid moves found"))))
 
