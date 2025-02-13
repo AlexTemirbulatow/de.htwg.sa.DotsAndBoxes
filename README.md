@@ -1,10 +1,6 @@
 # Dots And Boxes
 
 
-[![Scala CI](https://github.com/AlexTemirbulatow/de.htwg.se.DotsAndBoxes/actions/workflows/scala.yml/badge.svg?branch=developer)](https://github.com/AlexTemirbulatow/de.htwg.se.DotsAndBoxes/actions/workflows/scala.yml)
-[![Coverage Status](https://coveralls.io/repos/github/AlexTemirbulatow/de.htwg.se.DotsAndBoxes/badge.svg?branch=developer)](https://coveralls.io/github/AlexTemirbulatow/de.htwg.se.DotsAndBoxes?branch=developer)
-
-
 ## Usage
 You can compile code with `sbt compile`, run it with `sbt run`, and `sbt console` will start a Scala 3 REPL.
 
