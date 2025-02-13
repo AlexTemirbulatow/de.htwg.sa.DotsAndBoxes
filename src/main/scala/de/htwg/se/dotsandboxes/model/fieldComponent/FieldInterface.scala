@@ -10,9 +10,9 @@ import de.htwg.se.dotsandboxes.util.Move
 trait FieldInterface:
   val maxPosX: Int
   val maxPosY: Int
-  def bar(length: Int = 7, cellNum: Int = 5, rowIndex: Int, rowFunc: (Int, Int, Int) => String): String
-  def cells(rowSize: Int, length: Int = 7, height: Int = 2, colFunc: (Int, Int, Int) => String): String
-  def mesh(length: Int = 7, height: Int = 2): String
+  def bar(length: Int, cellNum: Int, rowIndex: Int, rowFunc: (Int, Int, Int) => String): String
+  def cells(rowSize: Int, length: Int, height: Int, colFunc: (Int, Int, Int) => String): String
+  def mesh(length: Int, height: Int): String
   def rows(rowIndex: Int, colIndex: Int, length: Int): String
   def columns(rowIndex: Int, colIndex: Int, length: Int): String
   def status(rowIndex: Int, colIndex: Int, length: Int): String
@@ -32,9 +32,9 @@ trait FieldInterface:
   def currentStatus: Vector[Vector[Status]]
   def currentPoints: Int
   def nextPlayer: FieldInterface
-  def updatePlayer(curPlayerIndex: Int = playerIndex): FieldInterface
+  def updatePlayer(curPlayerIndex: Int): FieldInterface
   def playerIndex: Int
-  def addPoints(curPlayerIndex: Int = playerIndex, points: Int): FieldInterface
+  def addPoints(curPlayerIndex: Int, points: Int): FieldInterface
   def playerList: Vector[Player]
   def getPoints(index: Int): Int
   def rowSize(): Int

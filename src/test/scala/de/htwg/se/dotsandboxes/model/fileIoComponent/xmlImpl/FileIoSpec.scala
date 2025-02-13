@@ -3,12 +3,14 @@ package model
 package fileIoComponent.xmlImpl
 
 import controller.controllerComponent.controllerImpl.Controller
-import fieldComponent.fieldImpl.{Field}
-import util.Move
+import de.htwg.se.dotsandboxes.model.fileIoComponent.FileIOInterface
+import fieldComponent.fieldImpl.Field
 import fileIoComponent.xmlImpl.FileIO
 import matrixComponent.matrixImpl.Status
+import org.mockito.Mockito._
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
+import util.Move
 
 class FileIoSpec extends AnyWordSpec {
   "A game state" when {
@@ -41,6 +43,26 @@ class FileIoSpec extends AnyWordSpec {
 
         controller.save should be(controller.field)
         controller.load should be(controller.field)
+      }
+      "return a finished game state" in {
+        val mockFileIO = mock(classOf[FileIOInterface])
+        val controller = Controller(using new Field(1, 1, Status.Empty, 2), mockFileIO)
+        controller.publish(controller.put, Move(1, 0, 0, true))
+        controller.publish(controller.put, Move(1, 1, 0, true))
+        controller.publish(controller.put, Move(2, 0, 0, true))
+        controller.publish(controller.put, Move(2, 0, 1, true))
+
+        controller.gameEnded shouldBe true
+        controller.save should be(controller.field)
+
+        when(mockFileIO.load).thenReturn(controller.field)
+        controller.load should be(controller.field)
+
+        controller.gameEnded shouldBe true
+      }
+      "return Left if something went wrong" in {
+        val fileIO = new FileIO()
+        fileIO.save(null) should matchPattern { case Left(_) => }
       }
     }
   }

@@ -58,10 +58,9 @@ case class Matrix(
     case 2 => if (move.y == 0 || move.y == maxPosY) true else false
   override def currentPlayerInfo: (String, Int) = (currentPlayer.playerId, list.indexOf(currentPlayer))
   override def currentPoints: Int = currentPlayer.points
-  override def updatePlayer(curPlayerIndex: Int = playerIndex): Matrix = copy(currentPlayer = list(curPlayerIndex))
+  override def updatePlayer(curPlayerIndex: Int): Matrix = copy(currentPlayer = list(curPlayerIndex))
   override def playerIndex: Int = list.indices.map(x => list(x).playerId).indexOf(currentPlayer.playerId)
   override def playerList: Vector[Player] = list
-  override def getMatrix: Matrix = this.asInstanceOf[Matrix]
   override def getPoints(index: Int): Int = list(index).points
-  override def addPoints(curPlayerIndex: Int = currentPlayerInfo._2, points: Int): Matrix = copy(list = list.updated(curPlayerIndex, list(curPlayerIndex).copy(points = list(curPlayerIndex).points + points)))
+  override def addPoints(curPlayerIndex: Int, points: Int): Matrix = copy(list = list.updated(curPlayerIndex, list(curPlayerIndex).copy(points = list(curPlayerIndex).points + points)))
   override def changePlayer: Matrix = if (playerIndex == list.size - 1) copy(currentPlayer = list.head) else copy(currentPlayer = list(playerIndex + 1))

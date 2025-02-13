@@ -5,14 +5,15 @@ import model.fieldComponent.FieldInterface
 import scala.util.{Failure, Success, Try}
 
 object MoveValidator:
-  private val chain: MoveHandler = CheckLine(Some(CheckX(Some(CheckY(Some(CheckAvailable(None)))))))
+  private val chain: MoveHandler =
+    LineHandler(Some(XCoordHandler(Some(YCoordHandler(Some(MoveAvailableHandler(None)))))))
   def validate(move: Move, field: FieldInterface): Try[String] = chain.handle(move, field)
 
 trait MoveHandler:
   val next: Option[MoveHandler]
   def handle(move: Move, field: FieldInterface): Try[String]
 
-private class CheckLine(val next: Option[MoveHandler]) extends MoveHandler:
+private class LineHandler(val next: Option[MoveHandler]) extends MoveHandler:
   override def handle(move: Move, field: FieldInterface): Try[String] =
     (move.vec > 0 && move.vec < 3) match
       case false => Failure(new MatchError("\n<Line> index failed the check. Try again: "))
@@ -21,7 +22,7 @@ private class CheckLine(val next: Option[MoveHandler]) extends MoveHandler:
           case Some(nextHandler: MoveHandler) => nextHandler.handle(move, field)
           case None                           => Failure(new Exception("could not handle."))
 
-private class CheckX(val next: Option[MoveHandler]) extends MoveHandler:
+private class XCoordHandler(val next: Option[MoveHandler]) extends MoveHandler:
   override def handle(move: Move, field: FieldInterface): Try[String] =
     (move.x >= 0 && move.x <= field.maxPosX) match
       case false => Failure(new MatchError("\n<X> coordinate failed the check. Try again: "))
@@ -30,7 +31,7 @@ private class CheckX(val next: Option[MoveHandler]) extends MoveHandler:
           case Some(nextHandler: MoveHandler) => nextHandler.handle(move, field)
           case None                           => Failure(new Exception("could not handle."))
 
-private class CheckY(val next: Option[MoveHandler]) extends MoveHandler:
+private class YCoordHandler(val next: Option[MoveHandler]) extends MoveHandler:
   override def handle(move: Move, field: FieldInterface): Try[String] =
     (move.y >= 0 && move.y <= field.maxPosY) match
       case false => Failure(new MatchError("\n<Y> coordinate failed the check. Try again: "))
@@ -39,7 +40,7 @@ private class CheckY(val next: Option[MoveHandler]) extends MoveHandler:
           case Some(nextHandler: MoveHandler) => nextHandler.handle(move, field)
           case None                           => Failure(new Exception("could not handle."))
 
-private class CheckAvailable(val next: Option[MoveHandler]) extends MoveHandler:
+private class MoveAvailableHandler(val next: Option[MoveHandler]) extends MoveHandler:
   override def handle(move: Move, field: FieldInterface): Try[String] =
     val isTaken = move.vec match
       case 1 => field.getRowCell(move.x, move.y)
