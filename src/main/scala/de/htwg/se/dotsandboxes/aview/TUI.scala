@@ -3,18 +3,18 @@ package aview
 
 import Default.given
 import controller.controllerComponent.ControllerInterface
-import util.{Move, PackT}
 import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}
 import util.Event
+import util.{Move, PackT}
 
 class TUI(using controller: ControllerInterface) extends Template(controller):
-  override def update(event: Event) = event match
+  override def update(event: Event): Unit = event match
     case Event.Abort => sys.exit
     case Event.End   => print(finalStats)
     case Event.Move  => print(controller.toString)
 
-  override def gameLoop =
+  override def gameLoop: Unit =
     analyzeInput(readLine) match
       case Some(move) => controller.publish(controller.put, move)
       case None       =>
@@ -28,11 +28,10 @@ class TUI(using controller: ControllerInterface) extends Template(controller):
     case "l" => controller.load; None
     case cheat if cheat.startsWith("CHEAT: ") =>
       val moves: List[String] = cheat.stripPrefix("CHEAT: ").split("\\s+").toList
-      if moves.exists(_.length != 3) then print(syntaxErr); None
       val pack: List[Option[Move]] = moves.map(move => {
         checkSyntax(move(0), move(1), move(2)) match
           case Success(move) => Some(Move(move(0), move(1), move(2), true))
-          case Failure(_)    => None 
+          case Failure(_)    => None
       })
       controller.publishCheat(controller.put, PackT(pack))
       None
@@ -47,11 +46,11 @@ class TUI(using controller: ControllerInterface) extends Template(controller):
     Try(vec.toString.toInt, x.toString.toInt, y.toString.toInt)
 
   override def finalStats: String =
-      "\n" +
-      controller.winner + "\n" +
-      "_________________________" + "\n\n" +
-      controller.stats +
-      "\n"
+    "\n" +
+    controller.winner + "\n" +
+    "_________________________" + "\n\n" +
+    controller.stats +
+    "\n"
 
   override def syntaxErr: String =
     "\nIncorrect syntax. Try again: "

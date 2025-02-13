@@ -77,8 +77,9 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface) e
             val movePosition = if field.isEdge(move) then EdgeState else MidState
             field = MoveStrategy.executeStrategy(movePosition, move, field)
             val postStatus = field.currentStatus
-            if isLast then field = PlayerStrategy.updatePlayer(field, preStatus, postStatus)
-            notifyObservers(Event.Move)
+            if isLast then
+              field = PlayerStrategy.updatePlayer(field, preStatus, postStatus)
+              notifyObservers(Event.Move)
             if gameEnded then notifyObservers(Event.End)
             Success(field)
         }
