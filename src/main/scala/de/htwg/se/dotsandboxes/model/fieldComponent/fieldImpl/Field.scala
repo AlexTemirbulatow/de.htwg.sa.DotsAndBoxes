@@ -7,10 +7,13 @@ import matrixComponent.matrixImpl.{Matrix, Player}
 import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
 import de.htwg.se.dotsandboxes.util.moveState.SquareState
 import de.htwg.se.dotsandboxes.util.Move
+import de.htwg.se.dotsandboxes.util.PlayerType
+import de.htwg.se.dotsandboxes.util.BoardSize
+import de.htwg.se.dotsandboxes.util.PlayerSize
 
 case class Field(matrix: MatrixInterface) extends FieldInterface:
-  def this(rowSize: Int, colSize: Int, status: Status, playerSize: Int = 2) =
-    this(new Matrix(rowSize, colSize, status, playerSize))
+  def this(boardSize: BoardSize, status: Status, playerSize: PlayerSize, playerType: PlayerType) =
+    this(new Matrix(boardSize, status, playerSize, playerType))
   
   override def bar(
     length: Int,
@@ -45,6 +48,8 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
   override def columns(rowIndex: Int, colIndex: Int, length: Int): String = getColCell(rowIndex, colIndex) match
     case false => Connectors("¦") + status(rowIndex, colIndex, length)
     case true  => Connectors("‖") + status(rowIndex, colIndex, length)
+  override def boardSize: BoardSize = matrix.getBoardSize
+  override def playerSize: PlayerSize = matrix.getPlayerSize
   override def status(rowIndex: Int, colIndex: Int, length: Int): String = (colIndex < maxPosY) match
     case false => Connectors("")
     case true  => space(length) + getStatusCell(rowIndex, colIndex) + space(length)
@@ -54,12 +59,17 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
   override def getStatusCell(row: Int, col: Int): Status = matrix.statusCell(row, col)
   override def getRowCell(row: Int, col: Int): Boolean = matrix.rowCell(row, col)
   override def getColCell(row: Int, col: Int): Boolean = matrix.colCell(row, col)
+  override def checkAllCells(squareCase: SquareState, x: Int, y: Int): Vector[Boolean] = matrix.checkAllCells(squareCase, x, y)
+  override def cellsToCheck(squareCase: SquareState, x: Int, y: Int): Vector[(Int, Int, Int)] = matrix.cellsToCheck(squareCase, x, y)
   override def putStatus(row: Int, col: Int, status: Status): Field = copy(matrix.replaceStatusCell(row, col, status))
   override def putRow(row: Int, col: Int, value: Boolean): Field = copy(matrix.replaceRowCell(row, col, value))
   override def putCol(row: Int, col: Int, value: Boolean): Field = copy(matrix.replaceColCell(row, col, value))
+  override def getUnoccupiedRowCoord(): Vector[(Int, Int, Int)] = matrix.getUnoccupiedRowCoord()
+  override def getUnoccupiedColCoord(): Vector[(Int, Int, Int)] = matrix.getUnoccupiedColCoord()
   override def isFinished: Boolean = (matrix.vectorRow ++ matrix.vectorCol).forall(_.forall(_.equals(true)))
   override def isEdge(move: Move): Boolean = matrix.isEdge(move)
   override def checkSquare(squareCase: SquareState, x: Int, y: Int): Field = copy(matrix.checkSquare(squareCase, x, y))
+  override def currentPlayer: Player = matrix.getCurrentPlayer
   override def currentPlayerId: String = matrix.currentPlayerInfo._1
   override def currentPlayerIndex: Int = matrix.currentPlayerInfo._2
   override def currentStatus: Vector[Vector[Status]] = matrix.vectorStatus
@@ -69,10 +79,13 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
   override def playerIndex: Int = matrix.playerIndex
   override def addPoints(curPlayerIndex: Int, points: Int): Field = copy(matrix.addPoints(curPlayerIndex, points))
   override def playerList: Vector[Player] = matrix.playerList
+  override def playerType: PlayerType = matrix.playerList.last.playerType
   override def getPoints(index: Int): Int = matrix.getPoints(index)
   override def rowSize(): Int = matrix.rowSize()
   override def colSize(): Int = matrix.colSize()
   override def space(length: Int): String = " " * ((length - 1) / 2)
   override val maxPosX = matrix.maxPosX
   override val maxPosY = matrix.maxPosY
+  override val vectorRow = matrix.vectorRow
+  override val vectorCol = matrix.vectorCol
   override def toString = mesh(7, 2)

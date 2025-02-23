@@ -10,7 +10,7 @@ import de.htwg.se.dotsandboxes.model.fieldComponent.fieldImpl.Field
 class PlayerStrategySpec extends AnyWordSpec {
   "PlayerStrategy" should {
     "add one point based on one status difference and keep current player" in {
-      val field: FieldInterface = new Field(2, 2, Status.Empty, 2)
+      val field: FieldInterface = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
 
       val preStatus = Vector(
         Vector(Status.Empty, Status.Empty),
@@ -30,7 +30,7 @@ class PlayerStrategySpec extends AnyWordSpec {
       updatedField.currentPlayerIndex should be(0)
     }
     "add two points based on two status differences and keep current player" in {
-      val field: FieldInterface = new Field(2, 2, Status.Empty, 2)
+      val field: FieldInterface = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
 
       val preStatus = Vector(
         Vector(Status.Empty, Status.Empty),
@@ -50,7 +50,7 @@ class PlayerStrategySpec extends AnyWordSpec {
       updatedField.currentPlayerIndex should be(0)
     }
     "add no points based on no status differences and change current player to next" in {
-      val field: FieldInterface = new Field(2, 2, Status.Empty, 2)
+      val field: FieldInterface = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
 
       val preStatus = Vector(
         Vector(Status.Empty, Status.Empty),
@@ -70,7 +70,7 @@ class PlayerStrategySpec extends AnyWordSpec {
       updatedField.currentPlayerIndex should be(1)
     }
     "add no points based on too many status differences and change current player to next" in {
-      val field: FieldInterface = new Field(2, 2, Status.Empty, 2)
+      val field: FieldInterface = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
 
       val preStatus = Vector(
         Vector(Status.Empty, Status.Empty),

@@ -9,7 +9,7 @@ import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
 
 class MoveValidatorSpec extends AnyWordSpec {
   "MoveHandler" should {
-    val field = new Field(3, 3, Status.Empty, 2)
+    val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
     "handle empty chain scenarios of handlers" in {
       val emptyLineHandler = LineHandler(None)
       val result1 = emptyLineHandler.handle(Move(1, 0, 0, true), field)
@@ -42,31 +42,31 @@ class MoveValidatorSpec extends AnyWordSpec {
   }
   "MoveValidator" should {
     "return Success when move is valid" in {
-      val field = new Field(3, 3, Status.Empty, 2)
+      val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
       val move = Move(1, 2, 2, true)
       MoveValidator.validate(move, field) shouldBe Success("Move was successful!")
     }
 
     "fail when move vector is invalid" in {
-      val field = new Field(3, 3, Status.Empty, 2)
+      val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
       val move = Move(3, 2, 2, true)
       MoveValidator.validate(move, field).failed.get shouldBe a[MatchError]
     }
 
     "fail when x-coordinate is out of bounds" in {
-      val field = new Field(3, 3, Status.Empty, 2)
+      val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
       val move = Move(1, -1, 2, true)
       MoveValidator.validate(move, field).failed.get shouldBe a[MatchError]
     }
 
     "fail when y-coordinate is out of bounds" in {
-      val field = new Field(3, 3, Status.Empty, 2)
+      val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
       val move = Move(1, 2, 6, true)
       MoveValidator.validate(move, field).failed.get shouldBe a[MatchError]
     }
 
     "fail when the move is already taken" in {
-      val field = new Field(3, 3, Status.Empty, 2).putRow(1, 1, true)
+      val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human).putRow(1, 1, true)
       val move = Move(1, 1, 1, true)
       MoveValidator.validate(move, field).failed.get shouldBe a[MatchError]
     }
