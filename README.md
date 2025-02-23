@@ -20,23 +20,25 @@ To run the TUI properly, the terminal must be set to `chcp 65001` and `Unicode U
   </tr>
   <tr>
     <td>
-      You move by taking a horizontal or vertical line <br>
-      between two dots. When you place the last line that <br>
-      forms a box, the box and its content are yours. The <br>
-      players move in turn, but whenever a player takes a <br>
-      box, they must move again. One box is one point. 
+      The game is played by drawing horizontal or vertical <br>
+      lines between two dots. When you place the final line <br>
+      that completes a square, the square and its contents <br>
+      are yours. Players take turns, but whenever a player <br>
+      completes a quare, they get another turn. Each square <br>
+      is worth one point.
       <br><br>
-      The game ends when all boxes have been taken.
+      The game ends once all squares have been claimed.
       <br><br>
-      The player with the highest score wins. <br>
-      It's a tie if two players got the same highest score. 
+      The player with the most points wins. If two players <br>
+      tie for the highest score, the game ends in a draw. <br>
       <br><br>
-      The UIs support 2-4 players, a customizable field <br>
-      size and a GUI only light and dark mode.
+      The game supports 2-4 players, varying board sizes, <br>
+      light and dark mode, and a computer opponent with <br>
+      three difficulty levels: easy, medium and hard.
     </td>
     <td>
       <p align="center">
-        <img src="https://github.com/AlexTemirbulatow/de.htwg.se.DotsAndBoxes/blob/developer/src/resources/5_DotsAndBoxesGUI_Dark.jpg" width="390" height="380" />
+        <img src="https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/blob/developer/src/resources/5_GUI_Dark.png" width="390" height="380" />
     </td>
   </tr>
   <tr>
@@ -45,26 +47,39 @@ To run the TUI properly, the terminal must be set to `chcp 65001` and `Unicode U
   </tr>
   <tr>
     <td>
-        The field consists of two separate 2D vectors: <br>
+        The field consists of three separate 2D vectors: <br>
         <ul>
           <li>The first vector represents all horizontal lines</li>
           <li>The second vector represents all vertical lines</li>
+          <li>The third vector represents all cell states</li>
         </ul>
-        Access in a move:
+        Accessing a move:
         <ul>
           <li>The horizontal vector can be accessed with (1)</li>
           <li>The vertical vector can be accessed with (2)</li>
-          <li>Lines within a vector are accessed with<br>X and Y coordinates, starting at (0,0)</li>
+          <li>Lines within a vector are accessed with<br>
+          X and Y coordinates, starting at (0,0)</li>
         </ul>
         Therefore, a move to occupy a line consists of: <br>
-        &lt;Line&gt;&lt;X&gt;&lt;Y&gt;
+        &lt;Line&gt;&lt;X&gt;&lt;Y&gt; &nbsp;&nbsp;&nbsp; e.g: 132
         <br><br>
-        You can type (q) to quit, (z) to undo, (y) to redo, <br>
-        (s) to save the current game state and (l) to load it.
+        You can type following options: <br>
+        (q) to quit, (z) to undo, (y) to redo, <br>
+        (r) to restart, (h) for help <br>
+        (s) to save the current game state <br>
+        (l) to load the last saved game state
+        <br><br>
+        To start a new game with different settings, type <br>
+        'NEW: ' followed by this space seperated options: <br><br>
+        &lt;board size&gt;: (1) 4x3, (2) 5x4, (3) 8x6 <br>
+        &lt;player size&gt;: (2), (3), (4) <br>
+        &lt;player type&gt;: (1) humans, (2) computers <br>
+        &lt;computer difficulty&gt;: (1) easy, (2) medium, (3) hard <br>
+        e.g: NEW: 2 3 2 1
     </td>
     <td>
       <p align="center">
-        <img src="https://github.com/AlexTemirbulatow/de.htwg.se.DotsAndBoxes/blob/developer/src/resources/5_DotsAndBoxesTUI.png" width="390" height="370" />
+        <img src="https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/blob/developer/src/resources/5_DotsAndBoxesTUI.png" width="390" height="370" />
     </td>
   </tr>
 </table>
