@@ -8,7 +8,7 @@ import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
 class MoveValidator2Spec extends AnyWordSpec {
   "The MoveValidator2" when {
     "handling the line validation" should {
-      val field = new Field(2, 2, Status.Empty, 2)
+      val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
       "return properly with a correct line" in {
         val correctLine = Move(1, 0, 0, true)
         val moveValidator2 = MoveValidator2(Some(correctLine), field).validateLine
@@ -25,7 +25,7 @@ class MoveValidator2Spec extends AnyWordSpec {
       }
     }
     "handling the x coordinate validation" should {
-      val field = new Field(2, 2, Status.Empty, 2)
+      val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
       "return properly with a correct x coordinate" in {
         val correctXCoord = Move(1, 0, 0, true)
         val moveValidator2 = MoveValidator2(Some(correctXCoord), field).validateXCoord
@@ -42,7 +42,7 @@ class MoveValidator2Spec extends AnyWordSpec {
       }
     }
     "handling the y coordinate validation" should {
-      val field = new Field(2, 2, Status.Empty, 2)
+      val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
       "return properly with a correct y coordinate" in {
         val correctYCoord = Move(1, 0, 0, true)
         val moveValidator2 = MoveValidator2(Some(correctYCoord), field).validateYCoord
@@ -59,7 +59,7 @@ class MoveValidator2Spec extends AnyWordSpec {
       }
     }
     "handling the the availability of a move" should {
-      val field = new Field(2, 2, Status.Empty, 2).putRow(0, 0, true).putCol(0, 0, true)
+      val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human).putRow(0, 0, true).putCol(0, 0, true)
       "return properly with a available move" in {
         val availableMove = Move(1, 1, 1, true)
         val moveValidator2 = MoveValidator2(Some(availableMove), field).validateAvailable

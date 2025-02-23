@@ -9,6 +9,9 @@ import matrixComponent.matrixImpl.Status
 import scala.xml.{Elem, NodeSeq, PrettyPrinter}
 import scala.util.Try
 import scala.util.{Success, Failure}
+import de.htwg.se.dotsandboxes.util.PlayerType
+import de.htwg.se.dotsandboxes.util.BoardSize
+import de.htwg.se.dotsandboxes.util.PlayerSize
 
 class FileIO extends FileIOInterface:
   override def save(field: FieldInterface): Either[String, String] =
@@ -25,6 +28,10 @@ class FileIO extends FileIOInterface:
     
   def fieldToXml(field: FieldInterface): Elem =
     <field rowSize={field.maxPosY.toString} colSize={field.maxPosX.toString}>
+      <playerList boardSize={field.boardSize.toString} playerSize={field.playerSize.toString} playerType={field.playerType.toString} currentPlayer={field.currentPlayerIndex.toString}>
+        {field.playerList.indices.map(playerToXml(field, _))}
+      </playerList>
+
       <status>
         {
           for
@@ -51,10 +58,6 @@ class FileIO extends FileIOInterface:
           yield colCellToXml(field, row, col)
         }
       </cols>
-
-      <playerList playerSize={field.playerList.size.toString} currentPlayer={field.currentPlayerIndex.toString}>
-        {field.playerList.indices.map(playerToXml(field, _))}
-      </playerList>
     </field>
 
   def statusCellToXml(field: FieldInterface, row: Int, col: Int): Elem =
@@ -79,10 +82,13 @@ class FileIO extends FileIOInterface:
 
   override def load: FieldInterface =
     val file: Elem = scala.xml.XML.loadFile("field.xml")
-    val rowSize: Int = (file \\ "field" \ "@rowSize").text.toInt
-    val colSize: Int = (file \\ "field" \ "@colSize").text.toInt
-    val playerSize: Int = (file \\ "field" \ "playerList" \ "@playerSize").text.toInt
-    val initialField: FieldInterface = new Field(rowSize, colSize, Status.Empty, playerSize)
+    val boardSize: BoardSize   = Try(BoardSize.valueOf((file \\ "field" \ "playerList" \ "@boardSize").text)).getOrElse(BoardSize.Medium)
+    val playerSize: PlayerSize = Try(PlayerSize.valueOf((file \\ "field" \ "playerList" \ "@playerSize").text)).getOrElse(PlayerSize.Two)
+    val playerType: PlayerType = Try(PlayerType.valueOf((file \\ "field" \ "playerList" \ "@playerType").text)).getOrElse(PlayerType.Human)
+    val initialField: FieldInterface = new Field(boardSize, Status.Empty, playerSize, playerType)
+
+    val rowSize: Int = boardSize.dimensions._1
+    val colSize: Int = boardSize.dimensions._2
 
     val statusSeq: NodeSeq = (file \\ "field" \ "status" \ "value")
     val fieldAfterStatus = statusSeq.foldLeft(initialField) { (field, rowNode) =>

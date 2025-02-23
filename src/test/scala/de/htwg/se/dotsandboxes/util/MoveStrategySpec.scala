@@ -10,7 +10,7 @@ import org.scalatest.wordspec.AnyWordSpec
 class MoveStrategySpec extends AnyWordSpec {
   "MoveStrategy" when {
     "in edge state" should {
-      val field: FieldInterface = new Field(3, 3, Status.Empty, 2)
+      val field: FieldInterface = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
       "return same field bc no square was finished in down case" in {
         val move = Move(1, 0, 0, true)
         val moveState: MoveState = if field.isEdge(move) then EdgeState else MidState
@@ -40,7 +40,7 @@ class MoveStrategySpec extends AnyWordSpec {
         field shouldBe updatedField
       }
       "return field with new status cell in down case" in {
-        val newField: FieldInterface = new Field(2, 2, Status.Empty, 2)
+        val newField: FieldInterface = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
           .putRow(1, 0, true)
           .putCol(0, 0, true)
           .putCol(0, 1, true)
@@ -53,20 +53,20 @@ class MoveStrategySpec extends AnyWordSpec {
         updatedField.getStatusCell(0, 0) should be(Status.Blue)
       }
       "return field with new status cell in up case" in {
-        val newField: FieldInterface = new Field(2, 2, Status.Empty, 2)
-          .putRow(1, 0, true)
-          .putCol(1, 0, true)
-          .putCol(1, 1, true)
+        val newField: FieldInterface = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
+          .putRow(2, 0, true)
+          .putCol(2, 0, true)
+          .putCol(2, 1, true)
 
         val move = Move(1, newField.maxPosX, 0, true)
         val moveState: MoveState = if newField.isEdge(move) then EdgeState else MidState
 
         val updatedField: FieldInterface = MoveStrategy.executeStrategy(moveState, move, newField)
-        newField.getStatusCell(1, 0) should be(Status.Empty)
-        updatedField.getStatusCell(1, 0) should be(Status.Blue)
+        newField.getStatusCell(2, 0) should be(Status.Empty)
+        updatedField.getStatusCell(2, 0) should be(Status.Blue)
       }
       "return field with new status cell in right case" in {
-        val newField: FieldInterface = new Field(2, 2, Status.Empty, 2)
+        val newField: FieldInterface = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
           .putRow(0, 0, true)
           .putRow(1, 0, true)
           .putCol(0, 1, true)
@@ -79,21 +79,21 @@ class MoveStrategySpec extends AnyWordSpec {
         updatedField.getStatusCell(0, 0) should be(Status.Blue)
       }
       "return field with new status cell in left case" in {
-        val newField: FieldInterface = new Field(2, 2, Status.Empty, 2)
-          .putRow(0, 1, true)
-          .putRow(1, 1, true)
-          .putCol(0, 1, true)
+        val newField: FieldInterface = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
+          .putRow(0, 3, true)
+          .putRow(1, 3, true)
+          .putCol(0, 3, true)
 
         val move = Move(2, 0, newField.maxPosY, true)
         val moveState: MoveState = if newField.isEdge(move) then EdgeState else MidState
 
         val updatedField: FieldInterface = MoveStrategy.executeStrategy(moveState, move, newField)
-        newField.getStatusCell(0, 1) should be(Status.Empty)
-        updatedField.getStatusCell(0, 1) should be(Status.Blue)
+        newField.getStatusCell(0, 3) should be(Status.Empty)
+        updatedField.getStatusCell(0, 3) should be(Status.Blue)
       }
     }
     "in mid state" should {
-      val field: FieldInterface = new Field(4, 4, Status.Empty, 2)
+      val field: FieldInterface = new Field(BoardSize.Medium, Status.Empty, PlayerSize.Two, PlayerType.Human)
       "return same field bc no square was finished in horizontal state" in {
         val move = Move(1, 1, 1, true)
         val moveState: MoveState = if field.isEdge(move) then EdgeState else MidState
