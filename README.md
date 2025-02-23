@@ -69,8 +69,8 @@ To run the TUI properly, the terminal must be set to `chcp 65001` and `Unicode U
         (s) to save the current game state <br>
         (l) to load the last saved game state
         <br><br>
-        To start a new game with different settings, type 'NEW: ' <br>
-        followed by this space seperated options: <br><br>
+        To start a new game with different settings, type <br>
+        'NEW: ' followed by this space seperated options: <br><br>
         &lt;board size&gt;: (1) 4x3, (2) 5x4, (3) 8x6 <br>
         &lt;player size&gt;: (2), (3), (4) <br>
         &lt;player type&gt;: (1) humans, (2) computers <br>
