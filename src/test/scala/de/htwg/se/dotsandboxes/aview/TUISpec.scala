@@ -17,6 +17,12 @@ import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 import scala.compiletime.uninitialized
 import scala.util.{Failure, Success}
+import de.htwg.se.dotsandboxes.util.BoardSize
+import de.htwg.se.dotsandboxes.util.PlayerSize
+import de.htwg.se.dotsandboxes.util.PlayerType
+import de.htwg.se.dotsandboxes.model.computerComponent.ComputerInterface
+import de.htwg.se.dotsandboxes.model.computerComponent.computerEasyImpl.ComputerEasy
+import java.io.{ByteArrayOutputStream, PrintStream}
 
 class TUISpec extends AnyWordSpec with BeforeAndAfterEach {
   var mockController: ControllerInterface = uninitialized
@@ -28,6 +34,29 @@ class TUISpec extends AnyWordSpec with BeforeAndAfterEach {
   }
 
   "TUI" when {
+    "having an update" should {
+      "print the field when Event.Moev is received" in {
+        when(mockController.toString).thenReturn("Mocked Field Output")
+        
+        val outputStream = new ByteArrayOutputStream()
+        Console.withOut(new PrintStream(outputStream)) {
+          tui.update(Event.Move)
+        }
+        
+        val output = outputStream.toString.trim
+        output should be("Mocked Field Output")
+      }
+      "print finalStats when Event.End is received" in {
+        val outputStream = new ByteArrayOutputStream()
+        Console.withOut(new PrintStream(outputStream)) {
+          tui.update(Event.End)
+        }
+        verify(mockController).winner
+        verify(mockController).stats
+        val output = outputStream.toString.trim
+        output should be(tui.finalStats.toString.trim)
+      }
+    }
     "given an input" should {
       "properly analyze keywords" in {
         //tui.analyzeInput("q") shouldBe None
@@ -35,6 +64,8 @@ class TUISpec extends AnyWordSpec with BeforeAndAfterEach {
         tui.analyzeInput("y") shouldBe None
         tui.analyzeInput("s") shouldBe None
         tui.analyzeInput("l") shouldBe None
+        tui.analyzeInput("r") shouldBe None
+        tui.analyzeInput("h") shouldBe None
       }
       "properly analyze a correct move" in {
         val expectedMove: Move = Move(1, 0, 0, true)
@@ -47,6 +78,33 @@ class TUISpec extends AnyWordSpec with BeforeAndAfterEach {
       "return None on invalid move" in {
         tui.analyzeInput("xyz123") shouldBe None
         verify(mockController, never()).publish(any(), any())
+      }
+      "start a new game with different settings" in {
+        tui.analyzeInput("NEW: 2 3 2 1") shouldBe None
+
+        val boardSizeCaptor: ArgumentCaptor[BoardSize] =
+          ArgumentCaptor.forClass(classOf[BoardSize])
+
+        val playerSizeCaptor: ArgumentCaptor[PlayerSize] =
+          ArgumentCaptor.forClass(classOf[PlayerSize])
+
+        val playerTypeCaptor: ArgumentCaptor[PlayerType] =
+          ArgumentCaptor.forClass(classOf[PlayerType])
+
+        val computerInterfaceCaptor: ArgumentCaptor[ComputerInterface] =
+          ArgumentCaptor.forClass(classOf[ComputerInterface])
+
+        verify(mockController).initGame(
+          boardSizeCaptor.capture(),
+          playerSizeCaptor.capture(),
+          playerTypeCaptor.capture(),
+          computerInterfaceCaptor.capture()
+        )
+
+        boardSizeCaptor.getValue shouldBe BoardSize.Medium
+        playerSizeCaptor.getValue shouldBe PlayerSize.Three
+        playerTypeCaptor.getValue shouldBe PlayerType.Computer
+        computerInterfaceCaptor.getValue shouldBe a[ComputerEasy]
       }
       "allow a cheat keyword with following cheat moves" in {
         tui.analyzeInput("CHEAT: 100 110 200") shouldBe None
@@ -71,7 +129,7 @@ class TUISpec extends AnyWordSpec with BeforeAndAfterEach {
           )
         )
       }
-      "allow cheat moves and have Nones" in {
+      "allow cheat moves have Nones" in {
         tui.analyzeInput("CHEAT: 122 abc 222") shouldBe None
 
         val commandCaptor: ArgumentCaptor[Move => FieldInterface] =

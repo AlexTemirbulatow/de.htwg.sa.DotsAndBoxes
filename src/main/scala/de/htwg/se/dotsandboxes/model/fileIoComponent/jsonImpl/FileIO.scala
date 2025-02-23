@@ -10,6 +10,9 @@ import play.api.libs.json._
 import scala.io.Source
 import scala.util.Try
 import scala.util.{Success, Failure}
+import de.htwg.se.dotsandboxes.util.PlayerType
+import de.htwg.se.dotsandboxes.util.BoardSize
+import de.htwg.se.dotsandboxes.util.PlayerSize
 
 class FileIO extends FileIOInterface:
   override def save(field: FieldInterface): Either[String, String] =
@@ -25,8 +28,10 @@ class FileIO extends FileIOInterface:
   def fieldToJson(field: FieldInterface): JsObject =
     Json.obj(
       "field" -> Json.obj(
-        "rowSize" -> field.maxPosY,
-        "colSize" -> field.maxPosX,
+        "boardSize" -> Json.toJson(field.boardSize.toString()),
+        "playerSize" -> Json.toJson(field.playerSize.toString()),
+        "playerType" -> Json.toJson(field.playerType.toString()),
+        "currentPlayer" -> Json.toJson(field.currentPlayerIndex),
         "status" -> Json.toJson(
           for
             row <- 0 until field.maxPosX
@@ -48,19 +53,20 @@ class FileIO extends FileIOInterface:
         "playerList" -> Json.toJson(
           for playerIndex <- 0 until field.playerList.size
           yield Json.obj("index" -> playerIndex, "points" -> Json.toJson(field.getPoints(playerIndex)))
-        ),
-        "playerSize" -> Json.toJson(field.playerList.size),
-        "currentPlayer" -> Json.toJson(field.currentPlayerIndex)
+        )
       )
     )
 
   override def load: FieldInterface =
     val source: String = Source.fromFile("field.json").getLines.mkString
     val json: JsValue = Json.parse(source)
-    val rowSize = (json \ "field" \ "rowSize").as[Int]
-    val colSize = (json \ "field" \ "colSize").as[Int]
-    val playerSize = (json \ "field" \ "playerSize").as[Int]
-    val initialField: FieldInterface = new Field(rowSize, colSize, Status.Empty, playerSize)
+    val boardSize: BoardSize   = Try(BoardSize.valueOf((json \ "field" \ "boardSize").as[String])).getOrElse(BoardSize.Medium)
+    val playerSize: PlayerSize = Try(PlayerSize.valueOf((json \ "field" \ "playerSize").as[String])).getOrElse(PlayerSize.Two)
+    val playerType: PlayerType = Try(PlayerType.valueOf((json \ "field" \ "playerType").as[String])).getOrElse(PlayerType.Human)
+    val initialField: FieldInterface = new Field(boardSize, Status.Empty, playerSize, playerType)
+
+    val rowSize: Int = boardSize.dimensions._1
+    val colSize: Int = boardSize.dimensions._2
 
     val statusResult: JsLookupResult = (json \ "field" \ "status")
     val fieldAfterStatus = (0 until rowSize * colSize).foldLeft(initialField) { (field, index) =>
@@ -93,7 +99,7 @@ class FileIO extends FileIOInterface:
     }
 
     val scoreResult: JsLookupResult = (json \ "field" \ "playerList")
-    val fieldAfterScores = (0 until playerSize).foldLeft(fieldAfterCols) { (field, player) =>
+    val fieldAfterScores = (0 until playerSize.size).foldLeft(fieldAfterCols) { (field, player) =>
       val index = (scoreResult \\ "index")(player).as[Int]
       val score = (scoreResult \\ "points")(player).as[Int]
       field.addPoints(index, score)

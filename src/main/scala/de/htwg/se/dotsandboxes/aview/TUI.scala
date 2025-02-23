@@ -7,6 +7,8 @@ import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}
 import util.Event
 import util.{Move, PackT}
+import de.htwg.se.dotsandboxes.util.GameConfig
+import de.htwg.se.dotsandboxes.util.GameConfig.computerImpl
 
 class TUI(using controller: ControllerInterface) extends Template(controller):
   override def update(event: Event): Unit = event match
@@ -26,6 +28,19 @@ class TUI(using controller: ControllerInterface) extends Template(controller):
     case "y" => controller.publish(controller.redo); None
     case "s" => controller.save; None
     case "l" => controller.load; None
+    case "r" => controller.restart; None
+    case "h" => println(help); None
+    case newGame if newGame.startsWith("NEW: ") =>
+      val numbers = newGame.split(": ")(1).split(" ")
+      val (boardSizeNum, playerSizeNum, playerTypeNum, computerDifficultyNum): (String, String, String, String) =
+        (numbers(0), numbers(1), numbers(2), numbers(3))
+      controller.initGame(
+        GameConfig.boardSizes(boardSizeNum),
+        GameConfig.playerSizes(playerSizeNum),
+        GameConfig.playerType(playerTypeNum),
+        GameConfig.computerImpl(GameConfig.computerDifficulty(computerDifficultyNum))
+      )
+      None
     case cheat if cheat.startsWith("CHEAT: ") =>
       val moves: List[String] = cheat.stripPrefix("CHEAT: ").split("\\s+").toList
       val pack: List[Option[Move]] = moves.map(move => {
