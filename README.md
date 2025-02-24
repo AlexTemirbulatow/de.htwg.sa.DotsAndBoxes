@@ -79,7 +79,7 @@ To run the TUI properly, the terminal must be set to `chcp 65001` and `Unicode U
     </td>
     <td>
       <p align="center">
-        <img src="https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/blob/developer/src/resources/5_DotsAndBoxesTUI.png" width="390" height="370" />
+        <img src="https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/blob/developer/src/resources/5_TUI.png" width="390" height="370" />
     </td>
   </tr>
 </table>
