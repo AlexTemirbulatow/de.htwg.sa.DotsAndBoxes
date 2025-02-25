@@ -3,7 +3,7 @@
 
 [![Scala CI](https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/actions/workflows/scala.yml/badge.svg?branch=developer)](https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/actions/workflows/scala.yml)
 [![Coverage Status](https://coveralls.io/repos/github/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/badge.svg?branch=developer)](https://coveralls.io/github/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes?branch=developer)
-
+<br>
 
 ## Usage
 You can compile code with `sbt compile`, run it with `sbt run`, and `sbt console` will start a Scala 3 REPL.
@@ -83,8 +83,7 @@ To run the TUI properly, the terminal must be set to `chcp 65001` and `Unicode U
     </td>
   </tr>
 </table>
-
-
+<br>
 
 ## LICENSE
 This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) License. See the [LICENSE](./LICENSE) file for more details.
