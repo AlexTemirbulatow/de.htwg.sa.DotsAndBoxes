@@ -1,8 +1,9 @@
 # Dots And Boxes
 
 
-[![Scala CI](https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/actions/workflows/scala.yml/badge.svg?branch=main)](https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/actions/workflows/scala.yml)
-[![Coverage Status](https://coveralls.io/repos/github/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/badge.svg?branch=main)](https://coveralls.io/github/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes?branch=main)
+[![Scala CI](https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/actions/workflows/scala.yml/badge.svg?branch=developer)](https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/actions/workflows/scala.yml)
+[![Coverage Status](https://coveralls.io/repos/github/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/badge.svg?branch=developer)](https://coveralls.io/github/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes?branch=developer)
+<br>
 
 ## Usage
 You can compile code with `sbt compile`, run it with `sbt run`, and `sbt console` will start a Scala 3 REPL.
@@ -29,7 +30,7 @@ To run the TUI properly, the terminal must be set to `chcp 65001` and `Unicode U
       The game ends once all squares have been claimed.
       <br><br>
       The player with the most points wins. If two players <br>
-      tie for the highest score, the game ends in a draw. <br>
+      tie for the highest score, the game ends in a draw.
       <br><br>
       The game supports 2-4 players, varying board sizes, <br>
       light and dark mode, and a computer opponent with <br>
@@ -37,7 +38,7 @@ To run the TUI properly, the terminal must be set to `chcp 65001` and `Unicode U
     </td>
     <td>
       <p align="center">
-        <img src="https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/blob/developer/src/resources/5_GUI_Dark.png" width="390" height="380" />
+        <img src="https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/blob/developer/gui/src/main/resources/5_GUI_Dark.png" width="390" height="380" />
     </td>
   </tr>
   <tr>
@@ -78,12 +79,11 @@ To run the TUI properly, the terminal must be set to `chcp 65001` and `Unicode U
     </td>
     <td>
       <p align="center">
-        <img src="https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/blob/developer/src/resources/5_TUI.png" width="390" height="370" />
+        <img src="https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/blob/developer/gui/src/main/resources/5_TUI.png" width="390" height="370" />
     </td>
   </tr>
 </table>
-
-
+<br>
 
 ## LICENSE
 This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) License. See the [LICENSE](./LICENSE) file for more details.
