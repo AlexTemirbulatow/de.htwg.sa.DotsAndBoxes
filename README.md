@@ -30,7 +30,7 @@ To run the TUI properly, the terminal must be set to `chcp 65001` and `Unicode U
       The game ends once all squares have been claimed.
       <br><br>
       The player with the most points wins. If two players <br>
-      tie for the highest score, the game ends in a draw. <br>
+      tie for the highest score, the game ends in a draw.
       <br><br>
       The game supports 2-4 players, varying board sizes, <br>
       light and dark mode, and a computer opponent with <br>
