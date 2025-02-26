@@ -13,6 +13,7 @@ import util.Observable
 
 trait ControllerInterface extends Observable:
   def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, computerDifficulty: ComputerInterface): FieldInterface
+  def getDifficulty(difficulty: ComputerDifficulty): ComputerInterface
   def put(move: Move): FieldInterface
   def getStatusCell(row: Int, col: Int): Status
   def getRowCell(row: Int, col: Int): Boolean

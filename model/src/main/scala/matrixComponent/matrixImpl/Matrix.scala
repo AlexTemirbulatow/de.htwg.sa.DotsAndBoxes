@@ -3,7 +3,7 @@ package matrixComponent.matrixImpl
 
 import de.htwg.se.dotsandboxes.util.Move
 import matrixComponent.MatrixInterface
-import de.htwg.se.dotsandboxes.util.moveState.SquareState
+import de.htwg.se.dotsandboxes.util.moveState.SquareCase
 import de.htwg.se.dotsandboxes.util.{PlayerType, BoardSize, PlayerSize}
 
 case class Matrix(
@@ -59,24 +59,24 @@ case class Matrix(
       (cell, y) <- col.zipWithIndex
       if !cell
     yield (2, x, y)
-  override def checkSquare(squareCase: SquareState, x: Int, y: Int): Matrix =
+  override def checkSquare(squareCase: SquareCase, x: Int, y: Int): Matrix =
     if checkAllCells(squareCase, x, y).forall(identity) then
       val (newX, newY) = squareCase match
-        case SquareState.UpCase   => (x - 1, y)
-        case SquareState.LeftCase => (x, y - 1)
+        case SquareCase.UpCase   => (x - 1, y)
+        case SquareCase.LeftCase => (x, y - 1)
         case _                    => (x, y)
       replaceStatusCell(newX, newY, currentPlayer.status)
     else copy()
-  override def checkAllCells(squareCase: SquareState, x: Int, y: Int): Vector[Boolean] =
+  override def checkAllCells(squareCase: SquareCase, x: Int, y: Int): Vector[Boolean] =
     cellsToCheck(squareCase, x, y).map {
     case (1, row, col) => rowCell(row, col)
     case (2, row, col) => colCell(row, col)
   }
-  override def cellsToCheck(squareCase: SquareState, x: Int, y: Int): Vector[(Int, Int, Int)] = squareCase match
-    case SquareState.DownCase  => Vector((1, x + 1, y), (2, x, y), (2, x, y + 1))
-    case SquareState.UpCase    => Vector((1, x - 1, y), (2, x - 1, y), (2, x - 1, y + 1))
-    case SquareState.RightCase => Vector((2, x, y + 1), (1, x, y), (1, x + 1, y))
-    case SquareState.LeftCase  => Vector((2, x, y - 1), (1, x, y - 1), (1, x + 1, y - 1))
+  override def cellsToCheck(squareCase: SquareCase, x: Int, y: Int): Vector[(Int, Int, Int)] = squareCase match
+    case SquareCase.DownCase  => Vector((1, x + 1, y), (2, x, y), (2, x, y + 1))
+    case SquareCase.UpCase    => Vector((1, x - 1, y), (2, x - 1, y), (2, x - 1, y + 1))
+    case SquareCase.RightCase => Vector((2, x, y + 1), (1, x, y), (1, x + 1, y))
+    case SquareCase.LeftCase  => Vector((2, x, y - 1), (1, x, y - 1), (1, x + 1, y - 1))
   override def isEdge(move: Move): Boolean = move.vec match
     case 1 => move.x == 0 || move.x == maxPosX
     case 2 => move.y == 0 || move.y == maxPosY
