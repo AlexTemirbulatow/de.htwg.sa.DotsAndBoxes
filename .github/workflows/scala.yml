@@ -39,12 +39,12 @@ jobs:
       - name: Set up sbt
         uses: sbt/setup-sbt@v1
 
-      - name: Build Project and Run Tests
+      - name: Run Tests and Generate Coverage Report
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: |
           export CI_BRANCH="${GITHUB_REF#refs/heads/}"
-          sbt clean coverage test coverageAggregate jacocoCoveralls
+          sbt clean coverage test coverageAggregate coverageReport jacocoCoveralls
 
   refresh_badge:
     runs-on: ubuntu-latest

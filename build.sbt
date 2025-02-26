@@ -93,9 +93,8 @@ lazy val root = project
   .in(file("."))
   .settings(
     name := "dotsandboxes",
-    commonSettings
+    commonSettings,
+    coverageAggregate / aggregate := true
   )
   .enablePlugins(JacocoPlugin, JacocoCoverallsPlugin)
   .aggregate(util, core, model, computer, persistence, gui, tui)
-
-jacocoAggregateReport := true
