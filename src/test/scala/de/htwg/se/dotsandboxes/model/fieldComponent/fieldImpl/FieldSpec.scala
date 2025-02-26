@@ -1,13 +1,13 @@
 package de.htwg.se.dotsandboxes.model
 package fieldComponent.fieldImpl
 
-import de.htwg.se.dotsandboxes.util.Move
-import de.htwg.se.dotsandboxes.util.moveState.SquareState
-import matrixComponent.matrixImpl.{Matrix, Player, Status}
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
-import de.htwg.se.dotsandboxes.util.{BoardSize, PlayerSize, PlayerType}
+
+import matrixComponent.matrixImpl.{Matrix, Player, Status}
 import de.htwg.se.dotsandboxes.model.fieldComponent.FieldInterface
+import de.htwg.se.dotsandboxes.util.moveState.SquareState
+import de.htwg.se.dotsandboxes.util.{BoardSize, PlayerSize, PlayerType, Move}
 
 class FieldSpec extends AnyWordSpec {
   "A Dots and Boxes Field" when {

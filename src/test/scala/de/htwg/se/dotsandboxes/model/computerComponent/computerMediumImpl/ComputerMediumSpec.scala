@@ -2,10 +2,10 @@ package de.htwg.se.dotsandboxes.model.computerComponent.computerMediumImpl
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
+
 import de.htwg.se.dotsandboxes.model.fieldComponent.fieldImpl.Field
 import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
-import de.htwg.se.dotsandboxes.util.{BoardSize, PlayerSize, PlayerType}
-import de.htwg.se.dotsandboxes.util.Move
+import de.htwg.se.dotsandboxes.util.{BoardSize, PlayerSize, PlayerType, Move}
 
 class ComputerMediumSpec extends AnyWordSpec {
   "ComputerMedium" when {

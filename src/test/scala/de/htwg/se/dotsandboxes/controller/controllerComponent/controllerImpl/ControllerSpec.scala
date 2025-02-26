@@ -1,25 +1,23 @@
 package de.htwg.se.dotsandboxes
-package controller.controllerComponent.controllerImpl
+package controller
+package controllerComponent
+package controllerImpl
 
-import de.htwg.se.dotsandboxes.Default.given_FieldInterface
-import de.htwg.se.dotsandboxes.Default.given_FileIOInterface
-import de.htwg.se.dotsandboxes.controller.controllerComponent.ControllerInterface
-import de.htwg.se.dotsandboxes.model.computerComponent.computerMediumImpl.ComputerMedium
-import de.htwg.se.dotsandboxes.model.fieldComponent.FieldInterface
-import de.htwg.se.dotsandboxes.model.fileIoComponent._
-import de.htwg.se.dotsandboxes.util.PackT
-import de.htwg.se.dotsandboxes.util.{BoardSize, PlayerSize, PlayerType}
-import model.fieldComponent.fieldImpl.Field
-import model.matrixComponent.matrixImpl.{Player, Status}
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
-import scala.util.Failure
-import util.Move
-import util.{Event, Observer}
-import de.htwg.se.dotsandboxes.model.computerComponent.computerHardImpl.ComputerHard
-import de.htwg.se.dotsandboxes.model.computerComponent.ComputerInterface
-import de.htwg.se.dotsandboxes.model.computerComponent.computerEasyImpl.ComputerEasy
 import org.mockito.Mockito._
+import scala.util.Failure
+
+import Default.given
+import model.fieldComponent.FieldInterface
+import model.fieldComponent.fieldImpl.Field
+import model.fileIoComponent.xmlImpl
+import model.matrixComponent.matrixImpl.{Player, Status}
+import model.computerComponent.computerEasyImpl.ComputerEasy
+import model.computerComponent.computerMediumImpl.ComputerMedium
+import model.computerComponent.computerHardImpl.ComputerHard
+import model.computerComponent.ComputerInterface
+import util.{BoardSize, PlayerSize, PlayerType, PackT, ComputerDifficulty, Event, Observer, Move}
 
 class ControllerSpec extends AnyWordSpec {
   val controller = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Three, PlayerType.Human), new xmlImpl.FileIO(), new ComputerMedium())
@@ -457,37 +455,51 @@ class ControllerSpec extends AnyWordSpec {
       controller.boardSize shouldBe boardSize
       controller.playerSize shouldBe playerSize
       controller.playerType shouldBe playerType
-      controller.computerImpl shouldBe computerImpl
+      controller.computerDifficulty shouldBe ComputerDifficulty.Hard
+    }
+    "return the right computer implementation" in {
+      val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new xmlImpl.FileIO(), new ComputerMedium())
+      controller.getComputerImpl(controller.computerDifficulty) shouldBe a[ComputerMedium]
+      controller.getComputerImpl(ComputerDifficulty.Easy) shouldBe a[ComputerEasy]
+      controller.getComputerImpl(ComputerDifficulty.Medium) shouldBe a[ComputerMedium]
+      controller.getComputerImpl(ComputerDifficulty.Hard) shouldBe a[ComputerHard]
+    }
+    "return the right computer difficulty" in {
+      val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new xmlImpl.FileIO(), new ComputerMedium())
+      controller.getComputerDifficulty(controller.computer) shouldBe ComputerDifficulty.Medium
+      controller.getComputerDifficulty(ComputerEasy()) shouldBe ComputerDifficulty.Easy
+      controller.getComputerDifficulty(ComputerMedium()) shouldBe ComputerDifficulty.Medium
+      controller.getComputerDifficulty(ComputerHard()) shouldBe ComputerDifficulty.Hard
     }
     "init a new game" in {
       val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new xmlImpl.FileIO(), new ComputerMedium())
-      controller.initGame(BoardSize.Medium, PlayerSize.Three, PlayerType.Computer, ComputerEasy())
+      controller.initGame(BoardSize.Medium, PlayerSize.Three, PlayerType.Computer, ComputerDifficulty.Easy)
 
       controller.boardSize shouldBe BoardSize.Medium
       controller.playerSize shouldBe PlayerSize.Three
       controller.playerType shouldBe PlayerType.Computer
-      controller.computerImpl shouldBe a [ComputerEasy]
+      controller.computerDifficulty shouldBe ComputerDifficulty.Easy
     }
     "init a new game and choose computer medium if more than 2 players and computer hard is chosen" in {
       val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new xmlImpl.FileIO(), new ComputerMedium())
-      controller.initGame(BoardSize.Medium, PlayerSize.Three, PlayerType.Computer, ComputerHard())
+      controller.initGame(BoardSize.Medium, PlayerSize.Three, PlayerType.Computer, ComputerDifficulty.Hard)
 
       controller.boardSize shouldBe BoardSize.Medium
       controller.playerSize shouldBe PlayerSize.Three
       controller.playerType shouldBe PlayerType.Computer
-      controller.computerImpl shouldBe a [ComputerMedium]
+      controller.computerDifficulty shouldBe ComputerDifficulty.Medium
 
-      controller.initGame(BoardSize.Medium, PlayerSize.Four, PlayerType.Computer, ComputerHard())
-      controller.computerImpl shouldBe a [ComputerMedium]
+      controller.initGame(BoardSize.Medium, PlayerSize.Four, PlayerType.Computer, ComputerDifficulty.Hard)
+      controller.computerDifficulty shouldBe ComputerDifficulty.Medium
 
-      controller.initGame(BoardSize.Medium, PlayerSize.Four, PlayerType.Computer, ComputerMedium())
-      controller.computerImpl shouldBe a [ComputerMedium]
+      controller.initGame(BoardSize.Medium, PlayerSize.Four, PlayerType.Computer, ComputerDifficulty.Medium)
+      controller.computerDifficulty shouldBe ComputerDifficulty.Medium
 
-      controller.initGame(BoardSize.Medium, PlayerSize.Four, PlayerType.Computer, ComputerEasy())
-      controller.computerImpl shouldBe a [ComputerEasy]
+      controller.initGame(BoardSize.Medium, PlayerSize.Four, PlayerType.Computer, ComputerDifficulty.Easy)
+      controller.computerDifficulty shouldBe ComputerDifficulty.Easy
 
-      controller.initGame(BoardSize.Medium, PlayerSize.Two, PlayerType.Computer, ComputerHard())
-      controller.computerImpl shouldBe a [ComputerHard]
+      controller.initGame(BoardSize.Medium, PlayerSize.Two, PlayerType.Computer, ComputerDifficulty.Hard)
+      controller.computerDifficulty shouldBe ComputerDifficulty.Hard
     }
     "restart a game" in {
       val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new xmlImpl.FileIO(), new ComputerMedium())

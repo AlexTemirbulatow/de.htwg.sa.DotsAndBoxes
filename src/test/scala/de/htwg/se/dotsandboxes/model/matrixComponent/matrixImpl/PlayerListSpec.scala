@@ -3,6 +3,7 @@ package matrixComponent.matrixImpl
 
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
+
 import de.htwg.se.dotsandboxes.util.PlayerType
 import de.htwg.se.dotsandboxes.util.GameConfig.playerType
 

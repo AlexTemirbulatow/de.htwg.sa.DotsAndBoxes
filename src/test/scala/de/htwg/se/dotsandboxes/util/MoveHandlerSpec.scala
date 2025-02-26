@@ -3,6 +3,7 @@ package de.htwg.se.dotsandboxes.util
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 import scala.util.{Failure, Success}
+
 import de.htwg.se.dotsandboxes.model.fieldComponent.FieldInterface
 import de.htwg.se.dotsandboxes.model.fieldComponent.fieldImpl.Field
 import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status

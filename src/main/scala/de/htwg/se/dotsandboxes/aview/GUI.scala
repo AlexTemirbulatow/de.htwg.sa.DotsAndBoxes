@@ -3,11 +3,13 @@ package aview
 
 import Default.given
 import controller.controllerComponent.ControllerInterface
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Player
 import de.htwg.se.dotsandboxes.util.BoardSize
-import de.htwg.se.dotsandboxes.util.GameConfig
 import de.htwg.se.dotsandboxes.util.PlayerType
 import de.htwg.se.dotsandboxes.util.PlayerSize
+import de.htwg.se.dotsandboxes.util.ComputerDifficulty
+import util.Move
+import util.{Event, Observer}
+
 import java.awt.{Color, Font, RenderingHints}
 import java.io.File
 import javax.imageio.ImageIO
@@ -16,18 +18,12 @@ import javax.swing.{ImageIcon, UIManager}
 import scala.annotation.transparentTrait
 import scala.swing._
 import scala.swing.event._
-import util.Move
-import util.{Event, Observer}
-import de.htwg.se.dotsandboxes.util.ComputerDifficulty
 import java.awt.Cursor
 import javax.swing.Timer
 import java.awt.event.ActionListener
 import java.awt.GradientPaint
 import javax.swing.border.EmptyBorder
 import javax.swing.text.AbstractDocument.Content
-import de.htwg.se.dotsandboxes.util.GameConfig.playerSizes
-import de.htwg.se.dotsandboxes.util.GameConfig.playerType
-import de.htwg.se.dotsandboxes.util.GameConfig.computerDifficulty
 import javax.swing.BorderFactory
 import java.awt.Graphics
 import java.util.concurrent.Flow
@@ -321,7 +317,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
     var selectedBoardSize: BoardSize = controller.boardSize
     var selectedPlayerSize: PlayerSize = controller.playerSize
     var selectedPlayerType: PlayerType = controller.playerType
-    var selectedDifficulty: ComputerDifficulty = computerDifficulty(controller.computerImpl)
+    var selectedDifficulty: ComputerDifficulty = controller.computerDifficulty
 
     val boardSelection = createSelectionPanel(
       "Board Size",
@@ -336,7 +332,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       PlayerSize.values.toSeq,
       p => s"${p.size} Players",
       selectedPlayerSize = _,
-      playerSizes(controller.playerList.size.toString()).ordinal
+      controller.playerSize.ordinal
     )
 
     val playerTypeSelection = createSelectionPanel(
@@ -352,7 +348,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       ComputerDifficulty.values.toSeq,
       d => d.toString,
       selectedDifficulty = _,
-      computerDifficulty(controller.computerImpl).ordinal
+      controller.computerDifficulty.ordinal
     )
 
     val returnButton = new Button("Return") {
@@ -390,7 +386,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
             selectedBoardSize,
             selectedPlayerSize,
             selectedPlayerType,
-            GameConfig.computerImpl(selectedDifficulty)
+            selectedDifficulty
           )
       }
     }

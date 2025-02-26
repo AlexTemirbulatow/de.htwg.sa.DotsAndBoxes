@@ -3,7 +3,6 @@ package de.htwg.se.dotsandboxes.model.computerComponent
 import de.htwg.se.dotsandboxes.model.fieldComponent.FieldInterface
 import de.htwg.se.dotsandboxes.util.Move
 import de.htwg.se.dotsandboxes.util.moveState.SquareState
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
 
 trait ComputerInterface:
   def calculateMove(field: FieldInterface): Option[Move]

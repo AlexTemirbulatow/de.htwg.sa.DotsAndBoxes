@@ -1,7 +1,7 @@
 package de.htwg.se.dotsandboxes
 package util
 
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
+import model.matrixComponent.matrixImpl.Status
 import model.fieldComponent.FieldInterface
 import playerState.{AddOnePoint, AddTwoPoints, NextPlayer}
 

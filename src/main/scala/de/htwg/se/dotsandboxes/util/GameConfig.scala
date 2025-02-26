@@ -47,13 +47,3 @@ object GameConfig:
     case "2" => ComputerDifficulty.Medium
     case "3" => ComputerDifficulty.Hard
     case _   => ComputerDifficulty.Medium
-
-  def computerDifficulty(computer: ComputerInterface): ComputerDifficulty = computer match
-    case _: ComputerEasy   => ComputerDifficulty.Easy
-    case _: ComputerMedium => ComputerDifficulty.Medium
-    case _: ComputerHard   => ComputerDifficulty.Hard
-
-  def computerImpl(difficulty: ComputerDifficulty): ComputerInterface = difficulty match
-    case ComputerDifficulty.Easy   => new ComputerEasy()
-    case ComputerDifficulty.Medium => new ComputerMedium()
-    case ComputerDifficulty.Hard   => new ComputerHard()

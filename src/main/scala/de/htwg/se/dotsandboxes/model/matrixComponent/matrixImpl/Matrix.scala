@@ -1,10 +1,9 @@
 package de.htwg.se.dotsandboxes.model
 package matrixComponent.matrixImpl
 
-import de.htwg.se.dotsandboxes.util.Move
 import matrixComponent.MatrixInterface
 import de.htwg.se.dotsandboxes.util.moveState.SquareState
-import de.htwg.se.dotsandboxes.util.{PlayerType, BoardSize, PlayerSize}
+import de.htwg.se.dotsandboxes.util.{PlayerType, BoardSize, PlayerSize, Move}
 
 case class Matrix(
   vecStatus: Vector[Vector[Status]],

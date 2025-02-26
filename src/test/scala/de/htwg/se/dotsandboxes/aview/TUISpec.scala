@@ -1,14 +1,6 @@
-package de.htwg.se.dotsandboxes.aview
+package de.htwg.se.dotsandboxes
+package aview
 
-import de.htwg.se.dotsandboxes.controller.controllerComponent.ControllerInterface
-import de.htwg.se.dotsandboxes.controller.controllerComponent.controllerImpl.Controller
-import de.htwg.se.dotsandboxes.model.fieldComponent.FieldInterface
-import de.htwg.se.dotsandboxes.model.fieldComponent.fieldImpl.Field
-import de.htwg.se.dotsandboxes.model.fileIoComponent._
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
-import de.htwg.se.dotsandboxes.util.Event
-import de.htwg.se.dotsandboxes.util.Move
-import de.htwg.se.dotsandboxes.util.PackT
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
@@ -17,12 +9,12 @@ import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 import scala.compiletime.uninitialized
 import scala.util.{Failure, Success}
-import de.htwg.se.dotsandboxes.util.BoardSize
-import de.htwg.se.dotsandboxes.util.PlayerSize
-import de.htwg.se.dotsandboxes.util.PlayerType
-import de.htwg.se.dotsandboxes.model.computerComponent.ComputerInterface
-import de.htwg.se.dotsandboxes.model.computerComponent.computerEasyImpl.ComputerEasy
 import java.io.{ByteArrayOutputStream, PrintStream}
+
+import controller.controllerComponent.ControllerInterface
+import model.fieldComponent.FieldInterface
+import model.fieldComponent.fieldImpl.Field
+import util.{Event, Move, PackT, PlayerSize, PlayerType, BoardSize, ComputerDifficulty}
 
 class TUISpec extends AnyWordSpec with BeforeAndAfterEach {
   var mockController: ControllerInterface = uninitialized
@@ -91,20 +83,20 @@ class TUISpec extends AnyWordSpec with BeforeAndAfterEach {
         val playerTypeCaptor: ArgumentCaptor[PlayerType] =
           ArgumentCaptor.forClass(classOf[PlayerType])
 
-        val computerInterfaceCaptor: ArgumentCaptor[ComputerInterface] =
-          ArgumentCaptor.forClass(classOf[ComputerInterface])
+        val computerDifficulty: ArgumentCaptor[ComputerDifficulty] =
+          ArgumentCaptor.forClass(classOf[ComputerDifficulty])
 
         verify(mockController).initGame(
           boardSizeCaptor.capture(),
           playerSizeCaptor.capture(),
           playerTypeCaptor.capture(),
-          computerInterfaceCaptor.capture()
+          computerDifficulty.capture()
         )
 
         boardSizeCaptor.getValue shouldBe BoardSize.Medium
         playerSizeCaptor.getValue shouldBe PlayerSize.Three
         playerTypeCaptor.getValue shouldBe PlayerType.Computer
-        computerInterfaceCaptor.getValue shouldBe a[ComputerEasy]
+        computerDifficulty.getValue shouldBe ComputerDifficulty.Easy
       }
       "allow a cheat keyword with following cheat moves" in {
         tui.analyzeInput("CHEAT: 100 110 200") shouldBe None

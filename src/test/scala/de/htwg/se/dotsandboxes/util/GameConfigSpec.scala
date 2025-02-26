@@ -2,6 +2,7 @@ package de.htwg.se.dotsandboxes.util
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
+
 import de.htwg.se.dotsandboxes.model.computerComponent.computerEasyImpl.ComputerEasy
 import de.htwg.se.dotsandboxes.model.computerComponent.computerMediumImpl.ComputerMedium
 import de.htwg.se.dotsandboxes.model.computerComponent.computerHardImpl.ComputerHard
@@ -52,16 +53,6 @@ class GameConfigSpec extends AnyWordSpec {
         GameConfig.computerDifficulty("2") shouldBe ComputerDifficulty.Medium
         GameConfig.computerDifficulty("3") shouldBe ComputerDifficulty.Hard
         GameConfig.computerDifficulty("4") shouldBe ComputerDifficulty.Medium
-      }
-      "have the right computer difficulty based on ComputerInterface" in {
-        GameConfig.computerDifficulty(new ComputerEasy) shouldBe ComputerDifficulty.Easy
-        GameConfig.computerDifficulty(new ComputerMedium) shouldBe ComputerDifficulty.Medium
-        GameConfig.computerDifficulty(new ComputerHard) shouldBe ComputerDifficulty.Hard
-      }
-      "have the right ComputerInterface" in {
-        GameConfig.computerImpl(ComputerDifficulty.Easy) shouldBe a [ComputerEasy]
-        GameConfig.computerImpl(ComputerDifficulty.Medium) shouldBe a [ComputerMedium]
-        GameConfig.computerImpl(ComputerDifficulty.Hard) shouldBe a [ComputerHard]
       }
     }
   }

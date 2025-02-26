@@ -1,18 +1,17 @@
-package de.htwg.se.dotsandboxes
-package model
+package de.htwg.se.dotsandboxes.model
 package fileIoComponent.xmlImpl
 
-import controller.controllerComponent.controllerImpl.Controller
-import de.htwg.se.dotsandboxes.model.fileIoComponent.FileIOInterface
-import fieldComponent.fieldImpl.Field
-import fileIoComponent.xmlImpl.FileIO
-import matrixComponent.matrixImpl.Status
 import org.mockito.Mockito._
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
-import util.Move
-import de.htwg.se.dotsandboxes.util.{BoardSize, PlayerSize, PlayerType}
+
+import fieldComponent.fieldImpl.Field
+import fileIoComponent.xmlImpl.FileIO
+import matrixComponent.matrixImpl.Status
+import de.htwg.se.dotsandboxes.controller.controllerComponent.controllerImpl.Controller
+import de.htwg.se.dotsandboxes.model.fileIoComponent.FileIOInterface
 import de.htwg.se.dotsandboxes.model.computerComponent.computerMediumImpl.ComputerMedium
+import de.htwg.se.dotsandboxes.util.{BoardSize, PlayerSize, PlayerType, Move}
 
 class FileIoSpec extends AnyWordSpec {
   "A game state" when {

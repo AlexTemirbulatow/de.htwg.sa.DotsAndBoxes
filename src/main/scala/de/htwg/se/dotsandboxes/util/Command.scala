@@ -1,8 +1,12 @@
 package de.htwg.se.dotsandboxes
 package util
 
-import controller.Command
 import model.fieldComponent.FieldInterface
+
+trait Command:
+  def doStep(field: FieldInterface): FieldInterface
+  def undoStep(field: FieldInterface): FieldInterface
+  def redoStep(field: FieldInterface): FieldInterface
 
 class UndoManager:
   private var undoStack: List[Command] = Nil

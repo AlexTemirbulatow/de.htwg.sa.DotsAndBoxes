@@ -1,11 +1,11 @@
 package de.htwg.se.dotsandboxes.model
 package matrixComponent.matrixImpl
 
-import de.htwg.se.dotsandboxes.util.Move
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
+
 import de.htwg.se.dotsandboxes.util.moveState.SquareState
-import de.htwg.se.dotsandboxes.util.{BoardSize, PlayerSize, PlayerType}
+import de.htwg.se.dotsandboxes.util.{BoardSize, PlayerSize, PlayerType, Move}
 import de.htwg.se.dotsandboxes.model.matrixComponent.MatrixInterface
 
 class MatrixSpec extends AnyWordSpec {

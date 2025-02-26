@@ -1,13 +1,13 @@
 package de.htwg.se.dotsandboxes.model.computerComponent
 
+import org.scalatest.matchers.should.Matchers._
+import org.scalatest.wordspec.AnyWordSpec
+
 import de.htwg.se.dotsandboxes.model.fieldComponent.FieldInterface
 import de.htwg.se.dotsandboxes.model.fieldComponent.fieldImpl.Field
 import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
-import de.htwg.se.dotsandboxes.util.Move
 import de.htwg.se.dotsandboxes.util.moveState.SquareState
-import de.htwg.se.dotsandboxes.util.{BoardSize, PlayerSize, PlayerType}
-import org.scalatest.matchers.should.Matchers._
-import org.scalatest.wordspec.AnyWordSpec
+import de.htwg.se.dotsandboxes.util.{BoardSize, PlayerSize, PlayerType, Move}
 
 class ComputerInterfaceSpec extends AnyWordSpec {
   "ComputerInterface" when {

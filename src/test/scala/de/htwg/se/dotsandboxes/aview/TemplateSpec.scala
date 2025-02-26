@@ -1,16 +1,16 @@
-package de.htwg.se.dotsandboxes.aview
+package de.htwg.se.dotsandboxes
+package aview
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
-import de.htwg.se.dotsandboxes.util.Move
 import scala.util.Try
-import de.htwg.se.dotsandboxes.util.Event
-import de.htwg.se.dotsandboxes.controller.controllerComponent.controllerImpl.Controller
-import de.htwg.se.dotsandboxes.model.fieldComponent.fieldImpl.Field
-import de.htwg.se.dotsandboxes.util.{BoardSize, PlayerSize, PlayerType}
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
-import de.htwg.se.dotsandboxes.model.computerComponent.computerMediumImpl.ComputerMedium
-import de.htwg.se.dotsandboxes.model.fileIoComponent._
+
+import util.{BoardSize, PlayerSize, PlayerType, Move, Event}
+import controller.controllerComponent.controllerImpl.Controller
+import model.fieldComponent.fieldImpl.Field
+import model.matrixComponent.matrixImpl.Status
+import model.computerComponent.computerMediumImpl.ComputerMedium
+import model.fileIoComponent.xmlImpl
 
 class TemplateSpec extends AnyWordSpec {
   "Template" should {

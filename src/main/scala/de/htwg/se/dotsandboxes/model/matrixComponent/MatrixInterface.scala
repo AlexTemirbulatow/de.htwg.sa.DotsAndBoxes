@@ -1,12 +1,9 @@
 package de.htwg.se.dotsandboxes.model
 package matrixComponent
 
-import de.htwg.se.dotsandboxes.util.Move
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
+import matrixComponent.matrixImpl.{Status, Player}
 import de.htwg.se.dotsandboxes.util.moveState.SquareState
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Player
-import de.htwg.se.dotsandboxes.util.PlayerSize
-import de.htwg.se.dotsandboxes.util.BoardSize
+import de.htwg.se.dotsandboxes.util.{BoardSize, PlayerSize, Move}
 
 trait MatrixInterface:
   val vectorStatus: Vector[Vector[Status]]

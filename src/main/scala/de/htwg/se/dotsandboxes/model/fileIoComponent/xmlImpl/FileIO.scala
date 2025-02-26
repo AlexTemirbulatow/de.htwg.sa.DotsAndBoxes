@@ -3,15 +3,13 @@ package fileIoComponent.xmlImpl
 
 import fieldComponent.FieldInterface
 import fieldComponent.fieldImpl.Field
-import fileIoComponent.FileIOInterface
-import java.io._
 import matrixComponent.matrixImpl.Status
+import fileIoComponent.FileIOInterface
+import de.htwg.se.dotsandboxes.util.{PlayerType, BoardSize, PlayerSize}
+
+import java.io.{PrintWriter, File}
 import scala.xml.{Elem, NodeSeq, PrettyPrinter}
-import scala.util.Try
-import scala.util.{Success, Failure}
-import de.htwg.se.dotsandboxes.util.PlayerType
-import de.htwg.se.dotsandboxes.util.BoardSize
-import de.htwg.se.dotsandboxes.util.PlayerSize
+import scala.util.{Success, Failure, Try}
 
 class FileIO extends FileIOInterface:
   override def save(field: FieldInterface): Either[String, String] =
