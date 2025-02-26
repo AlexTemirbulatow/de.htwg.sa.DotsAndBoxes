@@ -3,12 +3,7 @@ package aview
 
 import Default.given
 import controller.controllerComponent.ControllerInterface
-import de.htwg.se.dotsandboxes.util.BoardSize
-import de.htwg.se.dotsandboxes.util.PlayerType
-import de.htwg.se.dotsandboxes.util.PlayerSize
-import de.htwg.se.dotsandboxes.util.ComputerDifficulty
-import util.Move
-import util.{Event, Observer}
+import util.{BoardSize, PlayerType, PlayerSize, ComputerDifficulty, Move, Event, Observer}
 
 import java.awt.{Color, Font, RenderingHints}
 import java.io.File

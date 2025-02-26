@@ -3,10 +3,10 @@ package de.htwg.se.dotsandboxes.util
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 
+import playerState.{AddOnePoint, AddTwoPoints, NextPlayer}
 import de.htwg.se.dotsandboxes.model.fieldComponent.FieldInterface
 import de.htwg.se.dotsandboxes.model.fieldComponent.fieldImpl.Field
 import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
-import de.htwg.se.dotsandboxes.util.playerState.{AddOnePoint, AddTwoPoints, NextPlayer}
 
 class PlayerStrategySpec extends AnyWordSpec {
   "PlayerStrategy" should {
