@@ -4,12 +4,15 @@ package guiComponent
 import Default.given
 import util.{Event, Observer, Move}
 import controller.controllerComponent.ControllerInterface
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Player
 import de.htwg.se.dotsandboxes.util.{BoardSize, GameConfig, PlayerType, PlayerSize}
 import de.htwg.se.dotsandboxes.util.ComputerDifficulty
 import de.htwg.se.dotsandboxes.util.GameConfig.playerSizes
 import de.htwg.se.dotsandboxes.util.GameConfig.playerType
 import de.htwg.se.dotsandboxes.util.GameConfig.computerDifficulty
+import de.htwg.se.dotsandboxes.model.computerComponent.ComputerInterface
+import de.htwg.se.dotsandboxes.model.computerComponent.computerEasyImpl.ComputerEasy
+import de.htwg.se.dotsandboxes.model.computerComponent.computerMediumImpl.ComputerMedium
+import de.htwg.se.dotsandboxes.model.computerComponent.computerHardImpl.ComputerHard
 
 import scala.annotation.transparentTrait
 import scala.swing._
@@ -318,7 +321,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
     var selectedBoardSize: BoardSize = controller.boardSize
     var selectedPlayerSize: PlayerSize = controller.playerSize
     var selectedPlayerType: PlayerType = controller.playerType
-    var selectedDifficulty: ComputerDifficulty = computerDifficulty(controller.computerImpl)
+    var selectedDifficulty: ComputerDifficulty = getDifficulty(controller.computerImpl)
 
     val boardSelection = createSelectionPanel(
       "Board Size",
@@ -349,7 +352,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       ComputerDifficulty.values.toSeq,
       d => d.toString,
       selectedDifficulty = _,
-      computerDifficulty(controller.computerImpl).ordinal
+      getDifficulty(controller.computerImpl).ordinal
     )
 
     val returnButton = new Button("Return") {
@@ -453,6 +456,11 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
     menuBar.background = currentTheme._1
     menuBar.repaint()
     if inMainMenu then switchContent(setupMainMenu) else update(Event.Move)
+
+  def getDifficulty(computer: ComputerInterface): ComputerDifficulty = computer match
+    case _: ComputerEasy   => ComputerDifficulty.Easy
+    case _: ComputerMedium => ComputerDifficulty.Medium
+    case _: ComputerHard   => ComputerDifficulty.Hard
     
   def fieldSize(): (Int, Int) =
     (controller.colSize() - 1, controller.rowSize() - 1)

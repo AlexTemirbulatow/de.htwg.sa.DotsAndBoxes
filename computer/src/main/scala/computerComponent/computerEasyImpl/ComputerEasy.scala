@@ -4,7 +4,7 @@ package computerComponent.computerEasyImpl
 import de.htwg.se.dotsandboxes.model.computerComponent.ComputerInterface
 import de.htwg.se.dotsandboxes.model.fieldComponent.FieldInterface
 import de.htwg.se.dotsandboxes.util.Move
-import de.htwg.se.dotsandboxes.util.moveState.SquareState
+import de.htwg.se.dotsandboxes.util.moveState.SquareCase
 import scala.util.Random.shuffle
 
 class ComputerEasy extends ComputerInterface:

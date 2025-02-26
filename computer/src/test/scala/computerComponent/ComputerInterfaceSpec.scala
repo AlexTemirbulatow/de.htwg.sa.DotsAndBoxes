@@ -5,7 +5,7 @@ import de.htwg.se.dotsandboxes.model.fieldComponent.FieldInterface
 import de.htwg.se.dotsandboxes.model.fieldComponent.fieldImpl.Field
 import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
 import de.htwg.se.dotsandboxes.util.Move
-import de.htwg.se.dotsandboxes.util.moveState.SquareState
+import de.htwg.se.dotsandboxes.util.moveState.SquareCase
 import de.htwg.se.dotsandboxes.util.{BoardSize, PlayerSize, PlayerType}
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
@@ -265,32 +265,32 @@ class ComputerInterfaceSpec extends AnyWordSpec {
       "return a down case" in {
         val squareCase = computerInterface.getSquareCases(1, 0, 0, field)
         squareCase.size shouldBe 1
-        squareCase.head should be(SquareState.DownCase)
+        squareCase.head should be(SquareCase.DownCase)
       }
       "return a up case" in {
         val squareCase = computerInterface.getSquareCases(1, 3, 0, field)
         squareCase.size shouldBe 1
-        squareCase.head should be(SquareState.UpCase)
+        squareCase.head should be(SquareCase.UpCase)
       }
       "return a right case" in {
         val squareCase = computerInterface.getSquareCases(2, 0, 0, field)
         squareCase.size shouldBe 1
-        squareCase.head should be(SquareState.RightCase)
+        squareCase.head should be(SquareCase.RightCase)
       }
       "return a left case" in {
         val squareCase = computerInterface.getSquareCases(2, 0, 4, field)
         squareCase.size shouldBe 1
-        squareCase.head should be(SquareState.LeftCase)
+        squareCase.head should be(SquareCase.LeftCase)
       }
       "return down and up cases" in {
         val squareCases = computerInterface.getSquareCases(1, 1, 1, field)
         squareCases.size shouldBe 2
-        squareCases should be(Vector(SquareState.DownCase, SquareState.UpCase))
+        squareCases should be(Vector(SquareCase.DownCase, SquareCase.UpCase))
       }
       "return right and left cases" in {
         val squareCases = computerInterface.getSquareCases(2, 0, 2, field)
         squareCases.size shouldBe 2
-        squareCases should be(Vector(SquareState.RightCase, SquareState.LeftCase))
+        squareCases should be(Vector(SquareCase.RightCase, SquareCase.LeftCase))
       }
     }
   }

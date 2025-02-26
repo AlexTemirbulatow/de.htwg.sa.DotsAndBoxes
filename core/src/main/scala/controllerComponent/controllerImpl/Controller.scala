@@ -17,16 +17,19 @@ import util.moveState.{EdgeState, MidState}
 import util.{Event, Move, MoveStrategy, MoveValidator, PackT, PlayerStrategy, PlayerType, UndoManager}
 import de.htwg.se.dotsandboxes.model.computerComponent.computerMediumImpl.ComputerMedium
 import de.htwg.se.dotsandboxes.util.PlayerSize
-import de.htwg.se.dotsandboxes.util.GameConfig.computerDifficulty
 
 class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, var computer: ComputerInterface) extends ControllerInterface:
   val undoManager = new UndoManager
 
   override def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, difficulty: ComputerInterface): FieldInterface =
     field = new Field(boardSize, Status.Empty, playerSize, playerType)
-    computer = if playerSize != PlayerSize.Two && computerDifficulty(difficulty) == ComputerDifficulty.Hard then new ComputerMedium() else difficulty
+    computer = if playerSize != PlayerSize.Two && getDifficulty(difficulty) == ComputerDifficulty.Hard then new ComputerMedium() else difficulty
     notifyObservers(Event.Move)
     field
+  override def getDifficulty(difficulty: ComputerDifficulty): ComputerInterface = difficulty match
+    case ComputerDifficulty.Easy   => new ComputerEasy()
+    case ComputerDifficulty.Medium => new ComputerMedium()
+    case ComputerDifficulty.Hard   => new ComputerHard()
   override def put(move: Move): FieldInterface = undoManager.doStep(field, PutCommand(move, field))
   override def getStatusCell(row: Int, col: Int): Status = field.getStatusCell(row, col)
   override def getRowCell(row: Int, col: Int): Boolean = field.getRowCell(row, col)
