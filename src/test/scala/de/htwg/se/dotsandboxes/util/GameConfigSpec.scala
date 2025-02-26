@@ -3,10 +3,6 @@ package de.htwg.se.dotsandboxes.util
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
 
-import de.htwg.se.dotsandboxes.model.computerComponent.computerEasyImpl.ComputerEasy
-import de.htwg.se.dotsandboxes.model.computerComponent.computerMediumImpl.ComputerMedium
-import de.htwg.se.dotsandboxes.model.computerComponent.computerHardImpl.ComputerHard
-
 class GameConfigSpec extends AnyWordSpec {
   "GameConfig" when {
     "accessing enums" should {

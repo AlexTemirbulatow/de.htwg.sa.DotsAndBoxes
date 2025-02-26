@@ -1,10 +1,5 @@
 package de.htwg.se.dotsandboxes.util
 
-import de.htwg.se.dotsandboxes.model.computerComponent.ComputerInterface
-import de.htwg.se.dotsandboxes.model.computerComponent.computerEasyImpl.ComputerEasy
-import de.htwg.se.dotsandboxes.model.computerComponent.computerMediumImpl.ComputerMedium
-import de.htwg.se.dotsandboxes.model.computerComponent.computerHardImpl.ComputerHard
-
 enum BoardSize(val dimensions: (Int, Int)):
   case Small extends BoardSize((4, 3))
   case Medium extends BoardSize((5, 4))

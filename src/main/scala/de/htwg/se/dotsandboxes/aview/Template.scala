@@ -2,9 +2,8 @@ package de.htwg.se.dotsandboxes
 package aview
 
 import controller.controllerComponent.ControllerInterface
-import util.Move
+import util.{Event, Observer, Move}
 import scala.util.Try
-import util.{Event, Observer}
 
 trait Template(controller: ControllerInterface) extends Observer:
   controller.add(this)

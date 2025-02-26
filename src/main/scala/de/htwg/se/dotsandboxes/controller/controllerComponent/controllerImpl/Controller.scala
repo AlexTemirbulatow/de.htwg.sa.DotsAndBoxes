@@ -9,10 +9,9 @@ import model.computerComponent.computerEasyImpl.ComputerEasy
 import model.computerComponent.computerHardImpl.ComputerHard
 import model.computerComponent.computerMediumImpl.ComputerMedium
 import model.fieldComponent.fieldImpl.Field
-import model.matrixComponent.matrixImpl.Status
 import model.fieldComponent.FieldInterface
+import model.matrixComponent.matrixImpl.{Status, Player}
 import model.fileIoComponent.FileIOInterface
-import model.matrixComponent.matrixImpl.Player
 import util.moveState.{EdgeState, MidState}
 import util.{Event, Move, MoveStrategy, MoveValidator, PackT, PlayerStrategy, PlayerType, UndoManager, BoardSize, ComputerDifficulty, PlayerSize}
 import scala.util.Try

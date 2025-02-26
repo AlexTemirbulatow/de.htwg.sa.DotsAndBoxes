@@ -1,14 +1,11 @@
 package de.htwg.se.dotsandboxes
 package controller.controllerComponent
 
-import de.htwg.se.dotsandboxes.model.computerComponent.ComputerInterface
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
-import de.htwg.se.dotsandboxes.util.{PackT, BoardSize, PlayerSize, PlayerType, ComputerDifficulty}
+import model.computerComponent.ComputerInterface
+import model.matrixComponent.matrixImpl.{Status, Player}
 import model.fieldComponent.FieldInterface
-import model.matrixComponent.matrixImpl.Player
+import util.{PackT, BoardSize, PlayerSize, PlayerType, ComputerDifficulty, Move, Observable}
 import scala.util.Try
-import util.Move
-import util.Observable
 
 trait ControllerInterface extends Observable:
   def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, computerDifficulty: ComputerDifficulty): FieldInterface
