@@ -97,3 +97,5 @@ lazy val root = project
   )
   .enablePlugins(JacocoPlugin, JacocoCoverallsPlugin)
   .aggregate(util, core, model, computer, persistence, gui, tui)
+
+jacocoAggregateReport := true
