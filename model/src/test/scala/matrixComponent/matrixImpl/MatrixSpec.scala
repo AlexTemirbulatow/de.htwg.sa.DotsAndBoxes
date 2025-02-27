@@ -4,7 +4,7 @@ import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 
 import matrixComponent.MatrixInterface
-import lib.{BoardSize, PlayerSize, PlayerType, SquareState, Status, Player, Move, list}
+import lib.{BoardSize, PlayerSize, PlayerType, SquareCases, Status, Player, Move, list}
 
 class MatrixSpec extends AnyWordSpec {
   "A Matrix" when {
@@ -159,9 +159,9 @@ class MatrixSpec extends AnyWordSpec {
             PlayerSize.Two
           )
 
-        matrix.checkSquare(SquareState.UpCase, 1, 0) should be(matrixVector)
-        matrix.checkSquare(SquareState.RightCase, 0, 0) should be(matrixVector)
-        matrix.checkSquare(SquareState.LeftCase, 0, 1) should be(matrixVector)
+        matrix.checkSquare(SquareCases.UpCase, 1, 0) should be(matrixVector)
+        matrix.checkSquare(SquareCases.RightCase, 0, 0) should be(matrixVector)
+        matrix.checkSquare(SquareCases.LeftCase, 0, 1) should be(matrixVector)
       }
       "return correct matrix on edge case" in {
         val matrixVector =
@@ -188,11 +188,11 @@ class MatrixSpec extends AnyWordSpec {
             PlayerSize.Two
           )
 
-        matrix2.checkSquare(SquareState.DownCase, 0, 0) should be(matrixVector)
-        matrix2.checkSquare(SquareState.UpCase, 1, 0) should be(matrixVector)
+        matrix2.checkSquare(SquareCases.DownCase, 0, 0) should be(matrixVector)
+        matrix2.checkSquare(SquareCases.UpCase, 1, 0) should be(matrixVector)
 
-        matrix2.checkSquare(SquareState.RightCase, 0, 0) should be(matrixVector)
-        matrix2.checkSquare(SquareState.LeftCase, 0, 1) should be(matrixVector)
+        matrix2.checkSquare(SquareCases.RightCase, 0, 0) should be(matrixVector)
+        matrix2.checkSquare(SquareCases.LeftCase, 0, 1) should be(matrixVector)
       }
     }
     "checking a move" should {
@@ -250,11 +250,11 @@ class MatrixSpec extends AnyWordSpec {
             PlayerSize.Two
           )
 
-        matrix2.checkSquare(SquareState.DownCase, 0, 0) should be(matrixVector2)
-        matrix2.checkSquare(SquareState.UpCase, matrix2.maxPosX, 0) should be(matrixVector)
+        matrix2.checkSquare(SquareCases.DownCase, 0, 0) should be(matrixVector2)
+        matrix2.checkSquare(SquareCases.UpCase, matrix2.maxPosX, 0) should be(matrixVector)
 
-        matrix2.checkSquare(SquareState.RightCase, 0, 0) should be(matrixVector2)
-        matrix2.checkSquare(SquareState.LeftCase, 0, matrix2.maxPosY) should be(matrixVector)
+        matrix2.checkSquare(SquareCases.RightCase, 0, 0) should be(matrixVector2)
+        matrix2.checkSquare(SquareCases.LeftCase, 0, matrix2.maxPosY) should be(matrixVector)
       }
     }
     "checking for edge case" should {
@@ -296,26 +296,26 @@ class MatrixSpec extends AnyWordSpec {
       }
       "return cells to check" in {
         val matrix = new Matrix(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
-        val cellsToCheckDown: Vector[(Int, Int, Int)] = matrix.cellsToCheck(SquareState.DownCase, 0, 0)
+        val cellsToCheckDown: Vector[(Int, Int, Int)] = matrix.cellsToCheck(SquareCases.DownCase, 0, 0)
         cellsToCheckDown should be(Vector((1, 1, 0), (2, 0, 0), (2, 0, 1)))
 
-        val cellsToCheckUp: Vector[(Int, Int, Int)] = matrix.cellsToCheck(SquareState.UpCase, 3, 0)
+        val cellsToCheckUp: Vector[(Int, Int, Int)] = matrix.cellsToCheck(SquareCases.UpCase, 3, 0)
         cellsToCheckUp should be(Vector((1, 2, 0), (2, 2, 0), (2, 2, 1)))
         
-        val cellsToCheckRight: Vector[(Int, Int, Int)] = matrix.cellsToCheck(SquareState.RightCase, 0, 0)
+        val cellsToCheckRight: Vector[(Int, Int, Int)] = matrix.cellsToCheck(SquareCases.RightCase, 0, 0)
         cellsToCheckRight should be(Vector((2, 0, 1), (1, 0, 0), (1, 1, 0)))
 
-        val cellsToCheckLeft: Vector[(Int, Int, Int)] = matrix.cellsToCheck(SquareState.LeftCase, 0, 4)
+        val cellsToCheckLeft: Vector[(Int, Int, Int)] = matrix.cellsToCheck(SquareCases.LeftCase, 0, 4)
         cellsToCheckLeft should be(Vector((2, 0, 3), (1, 0, 3), (1, 1, 3)))
       }
       "return boolean for neighbor cells" in {
         val matrix = new Matrix(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
-        val checkCellsDown: Vector[Boolean] = matrix.checkAllCells(SquareState.DownCase, 0, 0)
+        val checkCellsDown: Vector[Boolean] = matrix.checkAllCells(SquareCases.DownCase, 0, 0)
         checkCellsDown should be(Vector(false, false, false))
 
         val newMatrix: MatrixInterface = matrix.replaceRowCell(1, 0, true).replaceColCell(0, 0, true)
 
-        val newCheckCellsDown: Vector[Boolean] = newMatrix.checkAllCells(SquareState.DownCase, 0, 0)
+        val newCheckCellsDown: Vector[Boolean] = newMatrix.checkAllCells(SquareCases.DownCase, 0, 0)
         newCheckCellsDown should be(Vector(true, true, false))
       }
       "return unoccupied row coordinates" in {

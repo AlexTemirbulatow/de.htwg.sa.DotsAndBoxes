@@ -1,6 +1,6 @@
 package matrixComponent
 
-import lib.{BoardSize, PlayerSize, SquareState, Status, Player, Move}
+import lib.{BoardSize, PlayerSize, SquareCases, Status, Player, Move}
 
 trait MatrixInterface:
   val vectorStatus: Vector[Vector[Status]]
@@ -20,9 +20,9 @@ trait MatrixInterface:
   def replaceColCell(row: Int, col: Int, value: Boolean): MatrixInterface
   def getUnoccupiedRowCoord(): Vector[(Int, Int, Int)]
   def getUnoccupiedColCoord(): Vector[(Int, Int, Int)]
-  def checkSquare(squareCase: SquareState, x: Int, y: Int): MatrixInterface
-  def checkAllCells(squareCase: SquareState, x: Int, y: Int): Vector[Boolean]
-  def cellsToCheck(squareCase: SquareState, x: Int, y: Int): Vector[(Int, Int, Int)]
+  def checkSquare(squareCase: SquareCases, x: Int, y: Int): MatrixInterface
+  def checkAllCells(squareCase: SquareCases, x: Int, y: Int): Vector[Boolean]
+  def cellsToCheck(squareCase: SquareCases, x: Int, y: Int): Vector[(Int, Int, Int)]
   def isEdge(move: Move): Boolean
   def getCurrentPlayer: Player
   def currentPlayerInfo: (String, Int)

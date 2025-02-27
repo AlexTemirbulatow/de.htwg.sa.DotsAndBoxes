@@ -3,7 +3,7 @@ package fieldComponent.fieldImpl
 import fieldComponent.FieldInterface
 import matrixComponent.MatrixInterface
 import matrixComponent.matrixImpl.Matrix
-import lib.{PlayerType, BoardSize, PlayerSize, SquareState, Player, Status, Move}
+import lib.{PlayerType, BoardSize, PlayerSize, SquareCases, Player, Status, Move}
 
 case class Field(matrix: MatrixInterface) extends FieldInterface:
   def this(boardSize: BoardSize, status: Status, playerSize: PlayerSize, playerType: PlayerType) =
@@ -53,8 +53,8 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
   override def getStatusCell(row: Int, col: Int): Status = matrix.statusCell(row, col)
   override def getRowCell(row: Int, col: Int): Boolean = matrix.rowCell(row, col)
   override def getColCell(row: Int, col: Int): Boolean = matrix.colCell(row, col)
-  override def checkAllCells(squareCase: SquareState, x: Int, y: Int): Vector[Boolean] = matrix.checkAllCells(squareCase, x, y)
-  override def cellsToCheck(squareCase: SquareState, x: Int, y: Int): Vector[(Int, Int, Int)] = matrix.cellsToCheck(squareCase, x, y)
+  override def checkAllCells(squareCase: SquareCases, x: Int, y: Int): Vector[Boolean] = matrix.checkAllCells(squareCase, x, y)
+  override def cellsToCheck(squareCase: SquareCases, x: Int, y: Int): Vector[(Int, Int, Int)] = matrix.cellsToCheck(squareCase, x, y)
   override def putStatus(row: Int, col: Int, status: Status): Field = copy(matrix.replaceStatusCell(row, col, status))
   override def putRow(row: Int, col: Int, value: Boolean): Field = copy(matrix.replaceRowCell(row, col, value))
   override def putCol(row: Int, col: Int, value: Boolean): Field = copy(matrix.replaceColCell(row, col, value))
@@ -62,7 +62,7 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
   override def getUnoccupiedColCoord(): Vector[(Int, Int, Int)] = matrix.getUnoccupiedColCoord()
   override def isFinished: Boolean = (matrix.vectorRow ++ matrix.vectorCol).forall(_.forall(_.equals(true)))
   override def isEdge(move: Move): Boolean = matrix.isEdge(move)
-  override def checkSquare(squareCase: SquareState, x: Int, y: Int): Field = copy(matrix.checkSquare(squareCase, x, y))
+  override def checkSquare(squareCase: SquareCases, x: Int, y: Int): Field = copy(matrix.checkSquare(squareCase, x, y))
   override def currentPlayer: Player = matrix.getCurrentPlayer
   override def currentPlayerId: String = matrix.currentPlayerInfo._1
   override def currentPlayerIndex: Int = matrix.currentPlayerInfo._2

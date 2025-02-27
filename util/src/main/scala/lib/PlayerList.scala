@@ -5,10 +5,10 @@ case class Player(playerId: String, points: Int, status: Status, playerType: Pla
 case class PlayerList(playerList: Vector[Player]):
   def this(playerSize: Int = 2, playerType: PlayerType) =
     this(Vector.tabulate(playerSize)(i =>
-      list(i).copy(playerType = if i == 0 then PlayerType.Human else playerType)
+      list.toVector(i).copy(playerType = if i == 0 then PlayerType.Human else playerType)
     ))
 
-val list = List(
+val list: Vector[Player] = Vector(
   Player("Blue", 0, Status.Blue, PlayerType.Human),
   Player("Red", 0, Status.Red, PlayerType.Human),
   Player("Green", 0, Status.Green, PlayerType.Human),

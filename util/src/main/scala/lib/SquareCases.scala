@@ -1,4 +1,4 @@
 package lib
 
-enum SquareState:
+enum SquareCases:
   case DownCase, UpCase, RightCase, LeftCase
