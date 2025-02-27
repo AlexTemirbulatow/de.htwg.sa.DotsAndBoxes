@@ -29,7 +29,6 @@ jobs:
     needs: build
     steps:
       - uses: actions/checkout@v2
-
       - name: Set up JDK 11
         uses: actions/setup-java@v2
         with:
@@ -40,11 +39,23 @@ jobs:
         uses: sbt/setup-sbt@v1
 
       - name: Run Tests and Generate Coverage Report
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: |
           export CI_BRANCH="${GITHUB_REF#refs/heads/}"
-          sbt clean coverage test coverageAggregate coverageReport jacocoCoveralls
+          sbt "; project util; +clean; +coverage; +test; +coverageReport"
+          sbt "; project core; +clean; +coverage; +test; +coverageReport"
+          sbt "; project model; +clean; +coverage; +test; +coverageReport"
+          sbt "; project computer; +clean; +coverage; +test; +coverageReport"
+          sbt "; project persistence; +clean; +coverage; +test; +coverageReport"
+
+      - name: Create Coverage Report and Upload to Coveralls
+        run: |
+          sbt "; project util; coverageAggregate; coveralls"
+          sbt "; project core; coverageAggregate; coveralls"
+          sbt "; project model; coverageAggregate; coveralls"
+          sbt "; project computer; coverageAggregate; coveralls"
+          sbt "; project persistence; coverageAggregate; coveralls"
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
 
   refresh_badge:
     runs-on: ubuntu-latest

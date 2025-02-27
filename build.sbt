@@ -1,7 +1,6 @@
 val scala3Version = "3.5.0"
 
-lazy val commonSettings = Seq(
-  version := "0.1.0-SNAPSHOT",
+lazy val dependencies = Seq(
   scalaVersion := scala3Version,
   libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.14",
   libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.14" % Test,
@@ -9,92 +8,39 @@ lazy val commonSettings = Seq(
   .cross(CrossVersion.for3Use2_13),
   libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "2.1.0",
   libraryDependencies += ("com.typesafe.play" %% "play-json" % "2.10.0-RC5"),
-  libraryDependencies += "org.scalatestplus" %% "mockito-5-12" % "3.2.19.0" % "test",
-  jacocoReportSettings := JacocoReportSettings(
-    "Jacoco Coverage Report",
-    None,
-    JacocoThresholds(),
-    Seq(
-      JacocoReportFormats.ScalaHTML,
-      JacocoReportFormats.XML,
-    ),
-    "utf-8"
-  ),
-  jacocoCoverallsServiceName := "github-actions",
-  jacocoCoverallsBranch := sys.env.get("CI_BRANCH"),
-  jacocoCoverallsPullRequest := sys.env.get("GITHUB_EVENT_NAME"),
-  jacocoCoverallsRepoToken := sys.env.get("COVERALLS_REPO_TOKEN"),
-  Test / classLoaderLayeringStrategy := ClassLoaderLayeringStrategy.ScalaLibrary
-)
-
-lazy val util = project
-  .in(file("util"))
-  .settings(
-    name := "util",
-    commonSettings
+  libraryDependencies += "org.scalatestplus" %% "mockito-5-12" % "3.2.19.0" % "test"
   )
-  .enablePlugins(JacocoPlugin)
-
-lazy val core = project
-  .in(file("core"))
-  .settings(
-    name := "core",
-    commonSettings
-  )
-  .dependsOn(util, model, computer, persistence)
-  .enablePlugins(JacocoPlugin)
-
-lazy val model = project
-  .in(file("model"))
-  .settings(
-    name := "model",
-    commonSettings
-  )
-  .dependsOn(util)
-  .enablePlugins(JacocoPlugin)
-
-lazy val computer = project
-  .in(file("computer"))
-  .settings(
-    name := "computer",
-    commonSettings
-  )
-  .dependsOn(util, model)
-  .enablePlugins(JacocoPlugin)
-
-lazy val persistence = project
-  .in(file("persistence"))
-  .settings(
-    name := "persistence",
-    commonSettings
-  )
-  .dependsOn(util, model)
-  .enablePlugins(JacocoPlugin)
-
-lazy val gui = project
-  .in(file("gui"))
-  .settings(
-    name := "gui",
-    commonSettings,
-    jacocoExcludes := Seq("*")
-  )
-  .dependsOn(util, core)
-
-lazy val tui = project
-  .in(file("tui"))
-  .settings(
-    name := "tui",
-    commonSettings,
-    jacocoExcludes := Seq("*")
-  )
-  .dependsOn(util, core)
 
 lazy val root = project
   .in(file("."))
   .settings(
     name := "dotsandboxes",
-    commonSettings,
-    coverageAggregate / aggregate := true
+    version := "0.1.0-SNAPSHOT",
+    dependencies
   )
-  .enablePlugins(JacocoPlugin, JacocoCoverallsPlugin)
+  .dependsOn(util, core, model, computer, persistence, gui, tui)
   .aggregate(util, core, model, computer, persistence, gui, tui)
+
+lazy val util        = project in file("util")
+lazy val core        = project in file("core")
+lazy val model       = project in file("model")
+lazy val computer    = project in file("computer")
+lazy val persistence = project in file("persistence")
+lazy val gui         = project in file("gui")
+lazy val tui         = project in file("tui")
+
+
+import org.scoverage.coveralls.GitHubActions
+import org.scoverage.coveralls.Imports.CoverallsKeys.*
+
+coverallsTokenFile := sys.env.get("COVERALLS_REPO_TOKEN")
+coverallsService := Some(GitHubActions)
+
+coverageHighlighting := true
+coverageFailOnMinimum := false
+coverageMinimumStmtTotal := 0
+coverageMinimumBranchTotal := 0
+coverageMinimumStmtPerPackage := 0
+coverageMinimumBranchPerPackage := 0
+coverageMinimumStmtPerFile := 0
+coverageMinimumBranchPerFile := 0
