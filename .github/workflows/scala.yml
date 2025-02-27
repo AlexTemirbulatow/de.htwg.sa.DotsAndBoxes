@@ -40,12 +40,16 @@ jobs:
         uses: sbt/setup-sbt@v1
 
       - name: Build Project and Run Tests
+        run: sbt +clean +coverage +test +coverageReport
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        run: sbt +clean +coverage +test +coverageReport
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Export Coverage
         run: sbt coverageReport coverageAggregate coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
         
   refresh_badge:
     runs-on: ubuntu-latest
