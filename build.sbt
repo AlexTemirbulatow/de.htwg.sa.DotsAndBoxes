@@ -1,6 +1,6 @@
 val scala3Version = "3.5.0"
 
-lazy val commonSettings = Seq(
+lazy val dependencies = Seq(
   version := "0.1.0-SNAPSHOT",
   scalaVersion := scala3Version,
   libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.14",
@@ -15,7 +15,7 @@ lazy val root = project
   .in(file("."))
   .settings(
     name := "dotsandboxes",
-    commonSettings
+    dependencies
   )
   .dependsOn(util, core, model, computer, persistence, gui, tui)
   .aggregate(util, core, model, computer, persistence, gui, tui)
@@ -24,62 +24,56 @@ lazy val util = project
   .in(file("util"))
   .settings(
     name := "util",
-    commonSettings
+    dependencies
   )
 
 lazy val core = project
   .in(file("core"))
   .settings(
     name := "core",
-    commonSettings
+    dependencies
   )
   .dependsOn(util, model, computer, persistence)
-  .aggregate(util, model, computer, persistence)
 
 lazy val model = project
   .in(file("model"))
   .settings(
     name := "model",
-    commonSettings
+    dependencies
   )
   .dependsOn(util)
-  .aggregate(util)
 
 lazy val computer = project
   .in(file("computer"))
   .settings(
     name := "computer",
-    commonSettings
+    dependencies
   )
   .dependsOn(util, model)
-  .aggregate(util, model)
 
 lazy val persistence = project
   .in(file("persistence"))
   .settings(
     name := "persistence",
-    commonSettings
+    dependencies
   )
   .dependsOn(util, model)
-  .aggregate(util, model)
 
 lazy val gui = project
   .in(file("gui"))
   .settings(
     name := "gui",
-    commonSettings
+    dependencies
   )
   .dependsOn(util, core)
-  .aggregate(util, core)
 
 lazy val tui = project
   .in(file("tui"))
   .settings(
     name := "tui",
-    commonSettings
+    dependencies
   )
   .dependsOn(util, core)
-  .aggregate(util, core)
 
 import org.scoverage.coveralls.Imports.CoverallsKeys.*
 
