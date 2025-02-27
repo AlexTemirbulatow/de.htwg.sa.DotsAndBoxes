@@ -87,7 +87,7 @@ lazy val tui = project
 import org.scoverage.coveralls.Imports.CoverallsKeys.*
 
 coverallsTokenFile := sys.env.get("COVERALLS_REPO_TOKEN")
-coverallsService := Some(GitHubActions)
+coverallsService := "github-actions"
 
 coverageHighlighting := true
 coverageFailOnMinimum := false
