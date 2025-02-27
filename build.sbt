@@ -1,5 +1,3 @@
-import org.scoverage.coveralls.GitHubActions
-
 val scala3Version = "3.5.0"
 
 lazy val commonSettings = Seq(
@@ -17,8 +15,7 @@ lazy val root = project
   .in(file("."))
   .settings(
     name := "dotsandboxes",
-    commonSettings,
-    coverageAggregate / aggregate := true
+    commonSettings
   )
   .dependsOn(util, core, model, computer, persistence, gui, tui)
   .aggregate(util, core, model, computer, persistence, gui, tui)
@@ -87,7 +84,7 @@ lazy val tui = project
 import org.scoverage.coveralls.Imports.CoverallsKeys.*
 
 coverallsTokenFile := sys.env.get("COVERALLS_REPO_TOKEN")
-coverallsService := "github-actions"
+coverallsService := Some(org.scoverage.coveralls.GitHubActions)
 
 coverageHighlighting := true
 coverageFailOnMinimum := false
