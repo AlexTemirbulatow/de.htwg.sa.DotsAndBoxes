@@ -336,6 +336,11 @@ class FieldSpec extends AnyWordSpec {
           "O-------O-------O-------O-------O\n"
         )
       }
+      "give access to player" in {
+        val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Four, PlayerType.Human)
+        field.currentPlayer shouldBe Player("Blue", 0, Status.Blue, PlayerType.Human)
+        field.nextPlayer.currentPlayer shouldBe Player("Red", 0, Status.Red, PlayerType.Human)
+      }
       "return information about current game state" in {
         var field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
 
