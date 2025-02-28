@@ -437,11 +437,6 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
     menuBar.background = currentTheme._1
     menuBar.repaint()
     if inMainMenu then switchContent(setupMainMenu) else update(Event.Move)
-
-  def getDifficulty(computer: ComputerInterface): ComputerDifficulty = computer match
-    case _: ComputerEasy   => ComputerDifficulty.Easy
-    case _: ComputerMedium => ComputerDifficulty.Medium
-    case _: ComputerHard   => ComputerDifficulty.Hard
     
   def fieldSize(): (Int, Int) =
     (controller.colSize() - 1, controller.rowSize() - 1)
