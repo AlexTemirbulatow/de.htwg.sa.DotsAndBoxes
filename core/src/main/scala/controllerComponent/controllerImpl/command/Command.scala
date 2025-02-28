@@ -1,7 +1,6 @@
-package core
-package controllerComponent.command
+package controllerComponent.controllerImpl.command
 
-import model.fieldComponent.FieldInterface
+import fieldComponent.FieldInterface
 
 trait Command:
   def doStep(field: FieldInterface): FieldInterface

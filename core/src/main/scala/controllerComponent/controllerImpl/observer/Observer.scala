@@ -1,4 +1,4 @@
-package lib
+package controllerComponent.controllerImpl.observer
 
 trait Observer { def update(event: Event): Unit }
 

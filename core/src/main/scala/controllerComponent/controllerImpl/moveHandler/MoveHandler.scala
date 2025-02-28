@@ -1,8 +1,8 @@
-package core
-package controllerComponent.moveHandler
+package controllerComponent.controllerImpl.moveHandler
 
-import model.fieldComponent.FieldInterface
 import scala.util.{Failure, Success, Try}
+import fieldComponent.FieldInterface
+import lib.Move
 
 object MoveValidator:
   private val chain: MoveHandler =

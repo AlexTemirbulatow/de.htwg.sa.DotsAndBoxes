@@ -1,5 +1,5 @@
 package core
-package controllerComponent.moveStrategy
+package controllerComponent.controllerImpl.moveStrategy
 
 import de.htwg.se.dotsandboxes.model.fieldComponent.FieldInterface
 import de.htwg.se.dotsandboxes.model.fieldComponent.fieldImpl.Field

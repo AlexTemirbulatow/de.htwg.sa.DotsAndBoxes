@@ -1,7 +1,6 @@
-package core
-package controllerComponent.command
+package controllerComponent.controllerImpl.command
 
-import model.fieldComponent.FieldInterface
+import fieldComponent.FieldInterface
 import lib.Move
 
 class PutCommand(move: Move, var field: FieldInterface) extends Command:

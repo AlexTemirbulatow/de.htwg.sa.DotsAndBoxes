@@ -1,5 +1,5 @@
 package core
-package controllerComponent.moveHandler
+package controllerComponent.controllerImpl.moveHandler
 
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec

@@ -1,5 +1,5 @@
-package model
-package matrixComponent.matrixImpl
+
+package lib
 
 import de.htwg.se.dotsandboxes.util.PlayerType
 

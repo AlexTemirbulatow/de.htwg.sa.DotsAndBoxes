@@ -1,5 +1,5 @@
 package core
-package controllerComponent.playerStrategy
+package controllerComponent.controllerImpl.playerStrategy
 
 import de.htwg.se.dotsandboxes.model.fieldComponent.FieldInterface
 import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status

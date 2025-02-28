@@ -1,18 +1,15 @@
-package core
+import controllerComponent.ControllerInterface
+import controllerComponent.controllerImpl.Controller
+import fieldComponent.FieldInterface
+import fieldComponent.fieldImpl.Field
+import fileIoComponent.FileIOInterface
+import fileIoComponent.jsonImpl.FileIO
+import computerComponent.ComputerInterface
+import computerComponent.computerMediumImpl.ComputerMedium
+import lib.{PlayerType, PlayerSize, BoardSize, Status}
 
-import controller.controllerComponent.ControllerInterface
-import controller.controllerComponent.controllerImpl.Controller
-import model.fieldComponent.FieldInterface
-import model.fieldComponent.fieldImpl.Field
-import model.fileIoComponent._
-import model.matrixComponent.matrixImpl.Status
-import de.htwg.se.dotsandboxes.util.PlayerType
-import model.computerComponent._
-import de.htwg.se.dotsandboxes.util.PlayerSize
-import de.htwg.se.dotsandboxes.util.BoardSize
-
-object Default:
+object CoreModule:
   given FieldInterface = new Field(BoardSize.Medium, Status.Empty, PlayerSize.Two, PlayerType.Human)
-  given FileIOInterface = jsonImpl.FileIO()
-  given ComputerInterface = computerMediumImpl.ComputerMedium()
+  given FileIOInterface = FileIO()
+  given ComputerInterface = ComputerMedium()
   given ControllerInterface = Controller()
