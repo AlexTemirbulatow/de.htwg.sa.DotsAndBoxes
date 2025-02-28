@@ -1,8 +1,7 @@
-package core
-package controllerComponent.playerStrategy
+package controllerComponent.controllerImpl.playerStrategy
 
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
-import model.fieldComponent.FieldInterface
+import fieldComponent.FieldInterface
+import lib.Status
 
 object PlayerStrategy:
   def updatePlayer(field: FieldInterface, preStatus: Vector[Vector[Status]], postStatus: Vector[Vector[Status]]): FieldInterface =

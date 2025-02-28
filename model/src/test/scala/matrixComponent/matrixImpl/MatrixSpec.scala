@@ -1,12 +1,10 @@
-package model
 package matrixComponent.matrixImpl
 
-import de.htwg.se.dotsandboxes.util.Move
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
-import de.htwg.se.dotsandboxes.util.moveState.SquareCases
-import de.htwg.se.dotsandboxes.util.{BoardSize, PlayerSize, PlayerType}
-import de.htwg.se.dotsandboxes.model.matrixComponent.MatrixInterface
+
+import matrixComponent.MatrixInterface
+import lib.{BoardSize, PlayerSize, PlayerType, SquareCases, Status, Player, Move, list}
 
 class MatrixSpec extends AnyWordSpec {
   "A Matrix" when {

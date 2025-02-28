@@ -1,7 +1,7 @@
 package lib
 
-import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers._
 
 class PackTSpec extends AnyWordSpec {
   "A PackT" should {

@@ -1,10 +1,9 @@
-package tui
 package tuiComponent
 
-import controller.controllerComponent.ControllerInterface
-import util.Move
 import scala.util.Try
-import util.{Event, Observer}
+import controllerComponent.ControllerInterface
+import controllerComponent.controllerImpl.observer.{Observer, Event}
+import lib.Move
 
 trait Template(controller: ControllerInterface) extends Observer:
   controller.add(this)

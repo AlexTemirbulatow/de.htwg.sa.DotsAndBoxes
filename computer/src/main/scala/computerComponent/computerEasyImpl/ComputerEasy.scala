@@ -1,11 +1,9 @@
-package computer
 package computerComponent.computerEasyImpl
 
-import de.htwg.se.dotsandboxes.model.computerComponent.ComputerInterface
-import de.htwg.se.dotsandboxes.model.fieldComponent.FieldInterface
-import de.htwg.se.dotsandboxes.util.Move
-import de.htwg.se.dotsandboxes.util.moveState.SquareCases
 import scala.util.Random.shuffle
+import computerComponent.ComputerInterface
+import fieldComponent.FieldInterface
+import lib.Move
 
 class ComputerEasy extends ComputerInterface:
   override def calculateMove(field: FieldInterface): Option[Move] =

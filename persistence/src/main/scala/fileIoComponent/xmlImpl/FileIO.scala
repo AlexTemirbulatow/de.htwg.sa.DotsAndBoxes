@@ -1,17 +1,13 @@
-package persistence
 package fileIoComponent.xmlImpl
 
+import java.io.{PrintWriter, File}
+import scala.xml.{Elem, NodeSeq, PrettyPrinter}
+import scala.util.{Success, Failure, Try}
+
+import fileIoComponent.FileIOInterface
 import fieldComponent.FieldInterface
 import fieldComponent.fieldImpl.Field
-import fileIoComponent.FileIOInterface
-import java.io._
-import matrixComponent.matrixImpl.Status
-import scala.xml.{Elem, NodeSeq, PrettyPrinter}
-import scala.util.Try
-import scala.util.{Success, Failure}
-import de.htwg.se.dotsandboxes.util.PlayerType
-import de.htwg.se.dotsandboxes.util.BoardSize
-import de.htwg.se.dotsandboxes.util.PlayerSize
+import lib.{PlayerType, BoardSize, PlayerSize, Status}
 
 class FileIO extends FileIOInterface:
   override def save(field: FieldInterface): Either[String, String] =
@@ -35,44 +31,44 @@ class FileIO extends FileIOInterface:
       <status>
         {
           for
-            row <- 0 until field.maxPosX
-            col <- 0 until field.maxPosY
-          yield statusCellToXml(field, row, col)
+            x <- 0 until field.maxPosX
+            y <- 0 until field.maxPosY
+          yield statusCellToXml(field, x, y)
         }
       </status>
 
       <rows>
         {
           for
-            row <- 0 until field.maxPosX
-            col <- 0 until field.maxPosY
-          yield rowCellToXml(field, row, col)
+            x <- 0 until field.maxPosY
+            y <- 0 until field.maxPosY
+          yield rowCellToXml(field, x, y)
         }
       </rows>
 
       <cols>
         {
           for
-            row <- 0 until field.maxPosX
-            col <- 0 until field.maxPosY
-          yield colCellToXml(field, row, col)
+            x <- 0 until field.maxPosX
+            y <- 0 to field.maxPosY
+          yield colCellToXml(field, x, y)
         }
       </cols>
     </field>
 
-  def statusCellToXml(field: FieldInterface, row: Int, col: Int): Elem =
-    <value row={row.toString} col={col.toString}>
-      {field.getStatusCell(row, col)}
+  def statusCellToXml(field: FieldInterface, x: Int, y: Int): Elem =
+    <value x={x.toString} y={y.toString}>
+      {field.getStatusCell(x, y)}
     </value>
 
-  def rowCellToXml(field: FieldInterface, row: Int, col: Int): Elem =
-    <value row={row.toString} col={col.toString}>
-      {field.getRowCell(row, col)}
+  def rowCellToXml(field: FieldInterface, x: Int, y: Int): Elem =
+    <value x={x.toString} y={y.toString}>
+      {field.getRowCell(x, y)}
     </value>
 
-  def colCellToXml(field: FieldInterface, row: Int, col: Int): Elem =
-    <value row={row.toString} col={col.toString}>
-      {field.getColCell(row, col)}
+  def colCellToXml(field: FieldInterface, x: Int, y: Int): Elem =
+    <value x={x.toString} y={y.toString}>
+      {field.getColCell(x, y)}
     </value>
 
   def playerToXml(field: FieldInterface, index: Int): Elem =
@@ -92,8 +88,8 @@ class FileIO extends FileIOInterface:
 
     val statusSeq: NodeSeq = (file \\ "field" \ "status" \ "value")
     val fieldAfterStatus = statusSeq.foldLeft(initialField) { (field, rowNode) =>
-      val row = (rowNode \ "@row").text.toInt
-      val col = (rowNode \ "@col").text.toInt
+      val x = (rowNode \ "@x").text.toInt
+      val y = (rowNode \ "@y").text.toInt
       val value = rowNode.text.trim
       val status = value match
         case "B" => Status.Blue
@@ -101,23 +97,23 @@ class FileIO extends FileIOInterface:
         case "G" => Status.Green
         case "Y" => Status.Yellow
         case _   => Status.Empty
-      field.putStatus(row, col, status)
+      field.putStatus(x, y, status)
     }
 
     val rowSeq: NodeSeq = (file \\ "field" \ "rows" \ "value")
     val fieldAfterRows = rowSeq.foldLeft(fieldAfterStatus) { (field, rowNode) =>
-      val row = (rowNode \ "@row").text.toInt
-      val col = (rowNode \ "@col").text.toInt
+      val x = (rowNode \ "@x").text.toInt
+      val y = (rowNode \ "@y").text.toInt
       val value = rowNode.text.trim.toBoolean
-      field.putRow(row, col, value)
+      field.putRow(x, y, value)
     }
 
     val colSeq: NodeSeq = (file \\ "field" \ "cols" \ "value")
     val fieldAfterCols = colSeq.foldLeft(fieldAfterRows) { (field, rowNode) =>
-      val row = (rowNode \ "@row").text.toInt
-      val col = (rowNode \ "@col").text.toInt
+      val x = (rowNode \ "@x").text.toInt
+      val y = (rowNode \ "@y").text.toInt
       val value = rowNode.text.trim.toBoolean
-      field.putCol(row, col, value)
+      field.putCol(x, y, value)
     }
 
     val scoreSeq: NodeSeq = (file \\ "field" \ "playerList" \ "value")

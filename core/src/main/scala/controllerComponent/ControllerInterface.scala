@@ -1,19 +1,15 @@
-package core
 package controllerComponent
 
-import de.htwg.se.dotsandboxes.model.computerComponent.ComputerInterface
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
-import util.ComputerDifficulty
-import util.{BoardSize, PackT, PlayerSize, PlayerType}
-import model.fieldComponent.FieldInterface
-import model.matrixComponent.matrixImpl.Player
 import scala.util.Try
-import util.Move
-import util.Observable
+import computerComponent.ComputerInterface
+import fieldComponent.FieldInterface
+import controllerImpl.observer.Observable
+import lib.{PackT, BoardSize, PlayerSize, PlayerType, ComputerDifficulty, Status, Player, Move}
 
 trait ControllerInterface extends Observable:
-  def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, computerDifficulty: ComputerInterface): FieldInterface
-  def getDifficulty(difficulty: ComputerDifficulty): ComputerInterface
+  def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, computerDifficulty: ComputerDifficulty): FieldInterface
+  def getComputerImpl(difficulty: ComputerDifficulty): ComputerInterface
+  def getComputerDifficulty(computer: ComputerInterface): ComputerDifficulty
   def put(move: Move): FieldInterface
   def getStatusCell(row: Int, col: Int): Status
   def getRowCell(row: Int, col: Int): Boolean
@@ -25,7 +21,7 @@ trait ControllerInterface extends Observable:
   def load: FieldInterface
   def colSize(): Int
   def rowSize(): Int
-  def computerImpl: ComputerInterface
+  def computerDifficulty: ComputerDifficulty
   def boardSize: BoardSize
   def playerSize: PlayerSize
   def playerType: PlayerType

@@ -1,15 +1,9 @@
-package model
 package fieldComponent.fieldImpl
 
 import fieldComponent.FieldInterface
 import matrixComponent.MatrixInterface
-import matrixComponent.matrixImpl.{Matrix, Player}
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
-import de.htwg.se.dotsandboxes.util.moveState.SquareCases
-import de.htwg.se.dotsandboxes.util.Move
-import de.htwg.se.dotsandboxes.util.PlayerType
-import de.htwg.se.dotsandboxes.util.BoardSize
-import de.htwg.se.dotsandboxes.util.PlayerSize
+import matrixComponent.matrixImpl.Matrix
+import lib.{PlayerType, BoardSize, PlayerSize, SquareCases, Player, Status, Move}
 
 case class Field(matrix: MatrixInterface) extends FieldInterface:
   def this(boardSize: BoardSize, status: Status, playerSize: PlayerSize, playerType: PlayerType) =

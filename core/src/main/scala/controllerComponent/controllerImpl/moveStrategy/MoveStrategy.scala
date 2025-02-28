@@ -1,7 +1,7 @@
-package core
-package controllerComponent.moveStrategy
+package controllerComponent.controllerImpl.moveStrategy
 
-import model.fieldComponent.FieldInterface
+import fieldComponent.FieldInterface
+import lib.Move
 
 object MoveStrategy:
   def executeStrategy(position: MoveState, move: Move, field: FieldInterface): FieldInterface =

@@ -1,22 +1,18 @@
-package tui
 package tuiComponent
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
-import de.htwg.se.dotsandboxes.util.Move
+import org.mockito.Mockito._
 import scala.util.Try
-import de.htwg.se.dotsandboxes.util.Event
-import de.htwg.se.dotsandboxes.controller.controllerComponent.controllerImpl.Controller
-import de.htwg.se.dotsandboxes.model.fieldComponent.fieldImpl.Field
-import de.htwg.se.dotsandboxes.util.{BoardSize, PlayerSize, PlayerType}
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
-import de.htwg.se.dotsandboxes.model.computerComponent.computerMediumImpl.ComputerMedium
-import de.htwg.se.dotsandboxes.model.fileIoComponent._
+
+import controllerComponent.ControllerInterface
+import controllerComponent.controllerImpl.observer.Event
+import lib.Move
 
 class TemplateSpec extends AnyWordSpec {
   "Template" should {
-    val controller = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Three, PlayerType.Human), new xmlImpl.FileIO(), new ComputerMedium())
-    val template = new Template(controller) {
+    val mockController: ControllerInterface = mock(classOf[ControllerInterface])
+    val template = new Template(mockController) {
       override def gameLoop: Unit = ???
       override def analyzeInput(input: String): Option[Move] = ???
       override def finalStats: String = ???

@@ -1,4 +1,3 @@
-package persistence
 package fileIoComponent
 
 import fieldComponent.FieldInterface

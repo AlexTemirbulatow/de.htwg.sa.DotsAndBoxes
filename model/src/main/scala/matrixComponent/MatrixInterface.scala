@@ -1,12 +1,6 @@
-package model
 package matrixComponent
 
-import de.htwg.se.dotsandboxes.util.Move
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
-import de.htwg.se.dotsandboxes.util.moveState.SquareCases
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Player
-import de.htwg.se.dotsandboxes.util.PlayerSize
-import de.htwg.se.dotsandboxes.util.BoardSize
+import lib.{BoardSize, PlayerSize, SquareCases, Status, Player, Move}
 
 trait MatrixInterface:
   val vectorStatus: Vector[Vector[Status]]
@@ -35,7 +29,7 @@ trait MatrixInterface:
   def currentPoints: Int
   def updatePlayer(curPlayerIndex: Int): MatrixInterface
   def playerIndex: Int
-  def playerList: Vector[matrixImpl.Player]
+  def playerList: Vector[Player]
   def getPoints(index: Int): Int
   def addPoints(curPlayerIndex: Int, points: Int): MatrixInterface
   def changePlayer: MatrixInterface

@@ -1,8 +1,7 @@
-package model
-package matrixComponent.matrixImpl
+package lib
 
-import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers._
 
 class StatusSpec extends AnyWordSpec {
   "Status" when {

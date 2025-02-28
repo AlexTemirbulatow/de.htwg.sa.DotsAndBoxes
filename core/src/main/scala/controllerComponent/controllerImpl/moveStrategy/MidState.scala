@@ -1,8 +1,7 @@
-package core
-package controllerComponent.moveStrategy
+package controllerComponent.controllerImpl.moveStrategy
 
-import model.fieldComponent.FieldInterface
-import lib.Move
+import fieldComponent.FieldInterface
+import lib.{SquareCases, Move}
 
 object MidState extends MoveState:
   override def handle(move: Move, field: FieldInterface): FieldInterface =

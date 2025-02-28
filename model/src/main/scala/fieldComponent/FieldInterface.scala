@@ -1,14 +1,6 @@
-package model
 package fieldComponent
 
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
-import de.htwg.se.dotsandboxes.util.moveState.SquareCases
-import matrixComponent.MatrixInterface
-import matrixComponent.matrixImpl.Player
-import de.htwg.se.dotsandboxes.util.Move
-import de.htwg.se.dotsandboxes.util.PlayerType
-import de.htwg.se.dotsandboxes.util.PlayerSize
-import de.htwg.se.dotsandboxes.util.BoardSize
+import lib.{PlayerType, BoardSize, PlayerSize, SquareCases, Player, Status, Move}
 
 trait FieldInterface:
   val maxPosX: Int

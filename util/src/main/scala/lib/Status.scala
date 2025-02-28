@@ -1,5 +1,4 @@
-package model
-package matrixComponent.matrixImpl
+package lib
 
 enum Status(StringRepresentation: String):
   override def toString = StringRepresentation

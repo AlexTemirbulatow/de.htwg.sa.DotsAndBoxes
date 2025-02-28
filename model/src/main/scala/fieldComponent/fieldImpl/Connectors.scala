@@ -1,4 +1,3 @@
-package model
 package fieldComponent.fieldImpl
 
 trait Connectors:

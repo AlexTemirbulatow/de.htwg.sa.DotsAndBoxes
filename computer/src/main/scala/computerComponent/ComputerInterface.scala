@@ -1,10 +1,7 @@
-package computer
 package computerComponent
 
-import de.htwg.se.dotsandboxes.model.fieldComponent.FieldInterface
-import de.htwg.se.dotsandboxes.util.Move
-import de.htwg.se.dotsandboxes.util.moveState.SquareCases
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
+import fieldComponent.FieldInterface
+import lib.{SquareCases, Move}
 
 trait ComputerInterface:
   def calculateMove(field: FieldInterface): Option[Move]

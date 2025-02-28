@@ -1,10 +1,9 @@
-package computer
 package computerComponent.computerMediumImpl
 
-import de.htwg.se.dotsandboxes.model.computerComponent.ComputerInterface
-import de.htwg.se.dotsandboxes.model.fieldComponent.FieldInterface
-import de.htwg.se.dotsandboxes.util.Move
 import scala.util.Random.shuffle
+import computerComponent.ComputerInterface
+import fieldComponent.FieldInterface
+import lib.Move
 
 class ComputerMedium extends ComputerInterface:
   override def calculateMove(field: FieldInterface): Option[Move] =

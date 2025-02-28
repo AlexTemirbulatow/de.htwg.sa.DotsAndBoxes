@@ -28,27 +28,27 @@ class GameConfigSpec extends AnyWordSpec {
     }
     "converting" should {
       "have the right dimension" in {
-        GameConfig.boardSizes("1") shouldBe BoardSize.Small
-        GameConfig.boardSizes("2") shouldBe BoardSize.Medium
-        GameConfig.boardSizes("3") shouldBe BoardSize.Large
-        GameConfig.boardSizes("4") shouldBe BoardSize.Medium
+        lib.GameConfig.boardSizes("1") shouldBe BoardSize.Small
+        lib.GameConfig.boardSizes("2") shouldBe BoardSize.Medium
+        lib.GameConfig.boardSizes("3") shouldBe BoardSize.Large
+        lib.GameConfig.boardSizes("4") shouldBe BoardSize.Medium
       }
       "have the right player size" in {
-        GameConfig.playerSizes("2") shouldBe PlayerSize.Two
-        GameConfig.playerSizes("3") shouldBe PlayerSize.Three
-        GameConfig.playerSizes("4") shouldBe PlayerSize.Four
-        GameConfig.playerSizes("5") shouldBe PlayerSize.Two
+        lib.GameConfig.playerSizes("2") shouldBe PlayerSize.Two
+        lib.GameConfig.playerSizes("3") shouldBe PlayerSize.Three
+        lib.GameConfig.playerSizes("4") shouldBe PlayerSize.Four
+        lib.GameConfig.playerSizes("5") shouldBe PlayerSize.Two
       }
       "have the right player type" in {
-        GameConfig.playerType("1") shouldBe PlayerType.Human
-        GameConfig.playerType("2") shouldBe PlayerType.Computer
-        GameConfig.playerType("3") shouldBe PlayerType.Human
+        lib.GameConfig.playerType("1") shouldBe PlayerType.Human
+        lib.GameConfig.playerType("2") shouldBe PlayerType.Computer
+        lib.GameConfig.playerType("3") shouldBe PlayerType.Human
       }
-      "have the right computer difficulty" in {
-        GameConfig.computerDifficulty("1") shouldBe ComputerDifficulty.Easy
-        GameConfig.computerDifficulty("2") shouldBe ComputerDifficulty.Medium
-        GameConfig.computerDifficulty("3") shouldBe ComputerDifficulty.Hard
-        GameConfig.computerDifficulty("4") shouldBe ComputerDifficulty.Medium
+      "have the right computer difficulty based on string" in {
+        lib.GameConfig.computerDifficulty("1") shouldBe ComputerDifficulty.Easy
+        lib.GameConfig.computerDifficulty("2") shouldBe ComputerDifficulty.Medium
+        lib.GameConfig.computerDifficulty("3") shouldBe ComputerDifficulty.Hard
+        lib.GameConfig.computerDifficulty("4") shouldBe ComputerDifficulty.Medium
       }
     }
   }

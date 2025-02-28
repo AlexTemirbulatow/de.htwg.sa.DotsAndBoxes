@@ -1,36 +1,17 @@
-package gui
 package guiComponent
 
-import Default.given
-import util.{Event, Observer, Move}
-import controller.controllerComponent.ControllerInterface
-import de.htwg.se.dotsandboxes.util.{BoardSize, GameConfig, PlayerType, PlayerSize}
-import de.htwg.se.dotsandboxes.util.ComputerDifficulty
-import de.htwg.se.dotsandboxes.util.GameConfig.playerSizes
-import de.htwg.se.dotsandboxes.util.GameConfig.playerType
-import de.htwg.se.dotsandboxes.util.GameConfig.computerDifficulty
-import de.htwg.se.dotsandboxes.model.computerComponent.ComputerInterface
-import de.htwg.se.dotsandboxes.model.computerComponent.computerEasyImpl.ComputerEasy
-import de.htwg.se.dotsandboxes.model.computerComponent.computerMediumImpl.ComputerMedium
-import de.htwg.se.dotsandboxes.model.computerComponent.computerHardImpl.ComputerHard
-
-import scala.annotation.transparentTrait
-import scala.swing._
-import scala.swing.event._
-import java.awt.{Color, Font, RenderingHints}
 import java.io.File
-import javax.imageio.ImageIO
-import javax.swing.border.LineBorder
-import javax.swing.{ImageIcon, UIManager}
-import java.awt.Cursor
-import javax.swing.Timer
-import java.awt.event.ActionListener
-import java.awt.GradientPaint
-import javax.swing.border.EmptyBorder
-import javax.swing.text.AbstractDocument.Content
-import javax.swing.BorderFactory
-import java.awt.Graphics
 import java.util.concurrent.Flow
+import java.awt.{Color, Font, RenderingHints, GradientPaint, Cursor}
+import javax.imageio.ImageIO
+import javax.swing.{ImageIcon, UIManager, Timer, BorderFactory}
+import javax.swing.border.{LineBorder, EmptyBorder}
+import scala.swing.event.{ButtonClicked, MouseClicked, MouseEntered, MouseExited}
+import scala.swing._
+
+import controllerComponent.ControllerInterface
+import controllerComponent.controllerImpl.observer.{Observer, Event}
+import lib.{BoardSize, PlayerType, PlayerSize, ComputerDifficulty, Move}
 
 enum ThemeType:
   case Light
@@ -51,43 +32,43 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
 
   var inMainMenu: Boolean = false
 
-  val logo = ImageIO.read(File("src/resources/0_Logo.png"))
-  val logoImg = ImageIcon("src/resources/0_Logo.png")
-  val menu = ImageIcon("src/resources/0_Menu.png")
-  val mainMenu = ImageIcon("src/resources/0_MainMenu.png")
-  val dot = ImageIcon("src/resources/1_Dot.png")
-  val restart = ImageIcon("src/resources/0_Restart.png")
-  val undo = ImageIcon("src/resources/0_Undo.png")
-  val redo = ImageIcon("src/resources/0_Redo.png")
-  val night = ImageIcon("src/resources/0_Night.png")
-  val sun = ImageIcon("src/resources/0_Sun.png")
-  val next = ImageIcon("src/resources/0_Next.png")
-  val previous = ImageIcon("src/resources/0_previous.png")
-  val takenBar = ImageIcon("src/resources/1_BarTaken.png")
-  val untakenBar = ImageIcon("src/resources/1_BarUntaken.png")
-  val takenCol = ImageIcon("src/resources/1_ColTaken.png")
-  val untakenCol = ImageIcon("src/resources/1_ColUntaken.png")
-  val takenNone = ImageIcon("src/resources/2_1TakenEmpty.png")
-  val takenBlue = ImageIcon("src/resources/2_TakenBlue.png")
-  val takenRed = ImageIcon("src/resources/2_TakenRed.png")
-  val takenGreen = ImageIcon("src/resources/2_TakenGreen.png")
-  val takenYellow = ImageIcon("src/resources/2_TakenYellow.png")
-  val playerBlue = ImageIcon("src/resources/3_PlayerBlue.png")
-  val playerBlueComputer = ImageIcon("src/resources/3_PlayerBlueComputer.png")
-  val playerRed = ImageIcon("src/resources/3_PlayerRed.png")
-  val playerRedComputer = ImageIcon("src/resources/3_PlayerRedComputer.png")
-  val playerGreen = ImageIcon("src/resources/3_PlayerGreen.png")
-  val playerGreenComputer = ImageIcon("src/resources/3_PlayerGreenComputer.png")
-  val playerYellow = ImageIcon("src/resources/3_PlayerYellow.png")
-  val playerYellowComputer = ImageIcon("src/resources/3_PlayerYellowComputer.png")
-  val statsBlue = ImageIcon("src/resources/4_StatsBlue.png")
-  val statsBlueComputer = ImageIcon("src/resources/4_StatsBlueComputer.png")
-  val statsRed = ImageIcon("src/resources/4_StatsRed.png")
-  val statsRedComputer = ImageIcon("src/resources/4_StatsRedComputer.png")
-  val statsGreen = ImageIcon("src/resources/4_StatsGreen.png")
-  val statsGreenComputer = ImageIcon("src/resources/4_StatsGreenComputer.png")
-  val statsYellow = ImageIcon("src/resources/4_StatsYellow.png")
-  val statsYellowComputer = ImageIcon("src/resources/4_StatsYellowComputer.png")
+  val logo = ImageIO.read(File("gui/src/main/resources/0_Logo.png"))
+  val logoImg = ImageIcon("gui/src/main/resources/0_Logo.png")
+  val menu = ImageIcon("gui/src/main/resources/0_Menu.png")
+  val mainMenu = ImageIcon("gui/src/main/resources/0_MainMenu.png")
+  val dot = ImageIcon("gui/src/main/resources/1_Dot.png")
+  val restart = ImageIcon("gui/src/main/resources/0_Restart.png")
+  val undo = ImageIcon("gui/src/main/resources/0_Undo.png")
+  val redo = ImageIcon("gui/src/main/resources/0_Redo.png")
+  val night = ImageIcon("gui/src/main/resources/0_Night.png")
+  val sun = ImageIcon("gui/src/main/resources/0_Sun.png")
+  val next = ImageIcon("gui/src/main/resources/0_Next.png")
+  val previous = ImageIcon("gui/src/main/resources/0_previous.png")
+  val takenBar = ImageIcon("gui/src/main/resources/1_BarTaken.png")
+  val untakenBar = ImageIcon("gui/src/main/resources/1_BarUntaken.png")
+  val takenCol = ImageIcon("gui/src/main/resources/1_ColTaken.png")
+  val untakenCol = ImageIcon("gui/src/main/resources/1_ColUntaken.png")
+  val takenNone = ImageIcon("gui/src/main/resources/2_1TakenEmpty.png")
+  val takenBlue = ImageIcon("gui/src/main/resources/2_TakenBlue.png")
+  val takenRed = ImageIcon("gui/src/main/resources/2_TakenRed.png")
+  val takenGreen = ImageIcon("gui/src/main/resources/2_TakenGreen.png")
+  val takenYellow = ImageIcon("gui/src/main/resources/2_TakenYellow.png")
+  val playerBlue = ImageIcon("gui/src/main/resources/3_PlayerBlue.png")
+  val playerBlueComputer = ImageIcon("gui/src/main/resources/3_PlayerBlueComputer.png")
+  val playerRed = ImageIcon("gui/src/main/resources/3_PlayerRed.png")
+  val playerRedComputer = ImageIcon("gui/src/main/resources/3_PlayerRedComputer.png")
+  val playerGreen = ImageIcon("gui/src/main/resources/3_PlayerGreen.png")
+  val playerGreenComputer = ImageIcon("gui/src/main/resources/3_PlayerGreenComputer.png")
+  val playerYellow = ImageIcon("gui/src/main/resources/3_PlayerYellow.png")
+  val playerYellowComputer = ImageIcon("gui/src/main/resources/3_PlayerYellowComputer.png")
+  val statsBlue = ImageIcon("gui/src/main/resources/4_StatsBlue.png")
+  val statsBlueComputer = ImageIcon("gui/src/main/resources/4_StatsBlueComputer.png")
+  val statsRed = ImageIcon("gui/src/main/resources/4_StatsRed.png")
+  val statsRedComputer = ImageIcon("gui/src/main/resources/4_StatsRedComputer.png")
+  val statsGreen = ImageIcon("gui/src/main/resources/4_StatsGreen.png")
+  val statsGreenComputer = ImageIcon("gui/src/main/resources/4_StatsGreenComputer.png")
+  val statsYellow = ImageIcon("gui/src/main/resources/4_StatsYellow.png")
+  val statsYellowComputer = ImageIcon("gui/src/main/resources/4_StatsYellowComputer.png")
 
   title = "Welcome to Dots And Boxes GUI !"
   iconImage = logo
@@ -321,7 +302,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
     var selectedBoardSize: BoardSize = controller.boardSize
     var selectedPlayerSize: PlayerSize = controller.playerSize
     var selectedPlayerType: PlayerType = controller.playerType
-    var selectedDifficulty: ComputerDifficulty = getDifficulty(controller.computerImpl)
+    var selectedDifficulty: ComputerDifficulty = controller.computerDifficulty
 
     val boardSelection = createSelectionPanel(
       "Board Size",
@@ -336,7 +317,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       PlayerSize.values.toSeq,
       p => s"${p.size} Players",
       selectedPlayerSize = _,
-      playerSizes(controller.playerList.size.toString()).ordinal
+      controller.playerSize.ordinal
     )
 
     val playerTypeSelection = createSelectionPanel(
@@ -352,7 +333,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       ComputerDifficulty.values.toSeq,
       d => d.toString,
       selectedDifficulty = _,
-      getDifficulty(controller.computerImpl).ordinal
+      controller.computerDifficulty.ordinal
     )
 
     val returnButton = new Button("Return") {
@@ -390,7 +371,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
             selectedBoardSize,
             selectedPlayerSize,
             selectedPlayerType,
-            GameConfig.computerImpl(selectedDifficulty)
+            selectedDifficulty
           )
       }
     }

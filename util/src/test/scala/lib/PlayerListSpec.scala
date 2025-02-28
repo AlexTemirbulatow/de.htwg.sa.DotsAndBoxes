@@ -1,10 +1,7 @@
-package model
-package matrixComponent.matrixImpl
+package lib
 
-import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
-import de.htwg.se.dotsandboxes.util.PlayerType
-import de.htwg.se.dotsandboxes.util.GameConfig.playerType
+import org.scalatest.matchers.should.Matchers._
 
 class PlayerListSpec extends AnyWordSpec {
   "Player" when {
@@ -19,8 +16,8 @@ class PlayerListSpec extends AnyWordSpec {
     }
     "accessing list" should {
       "return the correct player and list" in {
-        list should be(List(Player("Blue", 0, Status.Blue, PlayerType.Human), Player("Red", 0, Status.Red, PlayerType.Human), Player("Green", 0, Status.Green, PlayerType.Human), Player("Yellow", 0, Status.Yellow, PlayerType.Human)))
-        list shouldBe a[List[Player]]
+        list should be(Vector(Player("Blue", 0, Status.Blue, PlayerType.Human), Player("Red", 0, Status.Red, PlayerType.Human), Player("Green", 0, Status.Green, PlayerType.Human), Player("Yellow", 0, Status.Yellow, PlayerType.Human)))
+        list shouldBe a[Vector[Player]]
         list.size should be(4)
 
         list.head should be(Player("Blue", 0, Status.Blue, PlayerType.Human))

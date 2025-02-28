@@ -1,5 +1,4 @@
-package model
-package fieldImpl
+package fieldComponent.fieldImpl
 
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
@@ -17,13 +16,13 @@ class ConnectorsSpec extends AnyWordSpec {
         Connectors("xyz") should be("")
       }
       "have the right string representation explicit" in {
-        Connectors.apply("O") should be(new Dot().toString)
-        Connectors.apply("-") should be(new EmptyRow().toString)
-        Connectors.apply("=") should be(new ConnectedRow().toString)
-        Connectors.apply("¦") should be(new EmptyColumn().toString)
-        Connectors.apply("‖") should be(new ConnectedColumn().toString)
-        Connectors.apply("") should be(new Empty().toString)
-        Connectors.apply("xyz") should be("")
+        fieldComponent.fieldImpl.Connectors.apply("O") should be(new Dot().toString)
+        fieldComponent.fieldImpl.Connectors.apply("-") should be(new EmptyRow().toString)
+        fieldComponent.fieldImpl.Connectors.apply("=") should be(new ConnectedRow().toString)
+        fieldComponent.fieldImpl.Connectors.apply("¦") should be(new EmptyColumn().toString)
+        fieldComponent.fieldImpl.Connectors.apply("‖") should be(new ConnectedColumn().toString)
+        fieldComponent.fieldImpl.Connectors.apply("") should be(new Empty().toString)
+        fieldComponent.fieldImpl.Connectors.apply("xyz") should be("")
       }
     }
   }

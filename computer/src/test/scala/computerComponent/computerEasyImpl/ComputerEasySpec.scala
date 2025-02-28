@@ -1,12 +1,10 @@
-package computer
 package computerComponent.computerEasyImpl
 
-import de.htwg.se.dotsandboxes.model.fieldComponent.fieldImpl.Field
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
-import de.htwg.se.dotsandboxes.util.{BoardSize, PlayerSize, PlayerType}
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
-import de.htwg.se.dotsandboxes.util.Move
+
+import fieldComponent.fieldImpl.Field
+import lib.{BoardSize, PlayerSize, PlayerType, Status, Move}
 
 class ComputerEasySpec extends AnyWordSpec {
   "ComputerEasy" when {

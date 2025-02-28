@@ -1,6 +1,5 @@
-package core
-package controllerComponent.playerStrategy
+package controllerComponent.controllerImpl.playerStrategy
 
-import model.fieldComponent.FieldInterface
+import fieldComponent.FieldInterface
 
 trait PlayerState { def handle(field: FieldInterface): FieldInterface }

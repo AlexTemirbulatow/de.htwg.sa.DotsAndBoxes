@@ -1,12 +1,10 @@
-package computer
 package computerComponent.computerHardImpl
 
-import de.htwg.se.dotsandboxes.model.fieldComponent.fieldImpl.Field
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
-import de.htwg.se.dotsandboxes.util.Move
-import de.htwg.se.dotsandboxes.util.{BoardSize, PlayerSize, PlayerType}
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
+
+import fieldComponent.fieldImpl.Field
+import lib.{BoardSize, PlayerSize, PlayerType, Status, Move}
 
 class ComputerHardSpec extends AnyWordSpec {
   "ComputerHard" when {

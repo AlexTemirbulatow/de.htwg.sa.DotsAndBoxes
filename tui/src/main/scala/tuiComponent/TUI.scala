@@ -1,14 +1,10 @@
-package tui
 package tuiComponent
 
-import Default.given
-import controller.controllerComponent.ControllerInterface
 import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}
-import util.Event
-import util.{Move, PackT}
-import de.htwg.se.dotsandboxes.util.GameConfig
-import de.htwg.se.dotsandboxes.util.GameConfig.computerImpl
+import controllerComponent.ControllerInterface
+import controllerComponent.controllerImpl.observer.Event
+import lib.{PackT, GameConfig, Move}
 
 class TUI(using controller: ControllerInterface) extends Template(controller):
   override def update(event: Event): Unit = event match
@@ -38,7 +34,7 @@ class TUI(using controller: ControllerInterface) extends Template(controller):
         GameConfig.boardSizes(boardSizeNum),
         GameConfig.playerSizes(playerSizeNum),
         GameConfig.playerType(playerTypeNum),
-        GameConfig.computerImpl(GameConfig.computerDifficulty(computerDifficultyNum))
+        GameConfig.computerDifficulty(computerDifficultyNum)
       )
       None
     case cheat if cheat.startsWith("CHEAT: ") =>

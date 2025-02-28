@@ -1,11 +1,11 @@
-package core
 package controllerComponent.controllerImpl.moveStrategy
 
-import de.htwg.se.dotsandboxes.model.fieldComponent.FieldInterface
-import de.htwg.se.dotsandboxes.model.fieldComponent.fieldImpl.Field
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
+
+import fieldComponent.FieldInterface
+import fieldComponent.fieldImpl.Field
+import lib.{BoardSize, PlayerSize, PlayerType, Status, Move}
 
 class MoveStrategySpec extends AnyWordSpec {
   "MoveStrategy" when {

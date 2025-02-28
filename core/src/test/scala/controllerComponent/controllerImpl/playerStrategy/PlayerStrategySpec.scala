@@ -1,11 +1,11 @@
-package core
 package controllerComponent.controllerImpl.playerStrategy
 
-import de.htwg.se.dotsandboxes.model.fieldComponent.FieldInterface
-import de.htwg.se.dotsandboxes.model.matrixComponent.matrixImpl.Status
-import de.htwg.se.dotsandboxes.model.fieldComponent.fieldImpl.Field
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
+
+import fieldComponent.FieldInterface
+import fieldComponent.fieldImpl.Field
+import lib.{BoardSize, PlayerSize, PlayerType, Status}
 
 class PlayerStrategySpec extends AnyWordSpec {
   "PlayerStrategy" should {

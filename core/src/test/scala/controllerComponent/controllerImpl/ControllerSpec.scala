@@ -1,28 +1,24 @@
-package core
-package controllerComponent.controllerImpl
+package controllerComponent
+package controllerImpl
 
-import de.htwg.se.dotsandboxes.Default.given_FieldInterface
-import de.htwg.se.dotsandboxes.Default.given_FileIOInterface
-import de.htwg.se.dotsandboxes.controller.controllerComponent.ControllerInterface
-import de.htwg.se.dotsandboxes.model.computerComponent.computerMediumImpl.ComputerMedium
-import de.htwg.se.dotsandboxes.model.fieldComponent.FieldInterface
-import de.htwg.se.dotsandboxes.model.fileIoComponent._
-import de.htwg.se.dotsandboxes.util.PackT
-import de.htwg.se.dotsandboxes.util.{BoardSize, PlayerSize, PlayerType}
-import model.fieldComponent.fieldImpl.Field
-import model.matrixComponent.matrixImpl.{Player, Status}
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
-import scala.util.Failure
-import util.Move
-import util.{Event, Observer}
-import de.htwg.se.dotsandboxes.model.computerComponent.computerHardImpl.ComputerHard
-import de.htwg.se.dotsandboxes.model.computerComponent.ComputerInterface
-import de.htwg.se.dotsandboxes.model.computerComponent.computerEasyImpl.ComputerEasy
 import org.mockito.Mockito._
+import scala.util.Failure
+
+import observer.{Observer, Event}
+import fieldComponent.FieldInterface
+import fieldComponent.fieldImpl.Field
+import fileIoComponent.xmlImpl.FileIO
+import fileIoComponent.FileIOInterface
+import computerComponent.computerEasyImpl.ComputerEasy
+import computerComponent.computerMediumImpl.ComputerMedium
+import computerComponent.computerHardImpl.ComputerHard
+import computerComponent.ComputerInterface
+import lib.{BoardSize, PlayerSize, PlayerType, PackT, ComputerDifficulty, Player, Status, Move}
 
 class ControllerSpec extends AnyWordSpec {
-  val controller = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Three, PlayerType.Human), new xmlImpl.FileIO(), new ComputerMedium())
+  val controller = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Three, PlayerType.Human), new FileIO(), new ComputerMedium())
   "The Controller" should {
     "put a connected line on the field when a move is made" in {
       val fieldWithMove = controller.put(Move(1, 0, 0, true))
@@ -206,7 +202,7 @@ class ControllerSpec extends AnyWordSpec {
       controller.remove(testObserver)
     }
     "do a cheating move" in {
-      val controllerCheat = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new xmlImpl.FileIO(), new ComputerMedium())
+      val controllerCheat = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new FileIO(), new ComputerMedium())
       class TestObserver(controller: Controller) extends Observer:
         controllerCheat.add(this)
         var bing = false
@@ -307,7 +303,7 @@ class ControllerSpec extends AnyWordSpec {
       result shouldBe a[Failure[?]]
     }
     "be able to finish the game with cheat" in {
-      val controllerCheat = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new xmlImpl.FileIO(), new ComputerMedium())
+      val controllerCheat = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new FileIO(), new ComputerMedium())
       controllerCheat.publishCheat(
         controllerCheat.put,
         PackT(
@@ -349,8 +345,8 @@ class ControllerSpec extends AnyWordSpec {
       controllerCheat.gameEnded shouldBe true
     }
     "be able to undo and redo" in {
-      val controller = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new xmlImpl.FileIO(), new ComputerMedium())
-      val controller2 = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new xmlImpl.FileIO(), new ComputerMedium())
+      val controller = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new FileIO(), new ComputerMedium())
+      val controller2 = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new FileIO(), new ComputerMedium())
 
       controller.publish(controller.put, Move(1, 0, 0, true))
       controller.publish(controller.put, Move(1, 1, 0, true))
@@ -395,7 +391,7 @@ class ControllerSpec extends AnyWordSpec {
       controller2.redo should be(redoField)
     }
     "be able to undo and redo when the game was already finished" in {
-      val controller = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new xmlImpl.FileIO(), new ComputerMedium())
+      val controller = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new FileIO(), new ComputerMedium())
 
       for {
         x <- 0 until controller.field.maxPosY
@@ -414,13 +410,57 @@ class ControllerSpec extends AnyWordSpec {
       controller.gameEnded shouldBe true
     }
     "handle nil undo and redo stack" in {
-      val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new xmlImpl.FileIO(), new ComputerMedium())
+      val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new FileIO(), new ComputerMedium())
       val field = controller.field
       controller.undo should be(field)
       controller.redo should be(field)
     }
+    "save and load the correct game state" in {
+      val controller = Controller(using new Field(BoardSize.Medium, Status.Empty, PlayerSize.Four, PlayerType.Human), new FileIO(), new ComputerMedium())
+      controller.publish(controller.put, Move(1, 0, 0, true))
+      controller.publish(controller.put, Move(2, 0, 0, true))
+      controller.publish(controller.put, Move(2, 0, 1, true))
+      controller.publish(controller.put, Move(1, 1, 0, true))
+
+      controller.publish(controller.put, Move(1, 0, 1, true))
+      controller.publish(controller.put, Move(2, 0, 2, true))
+      controller.publish(controller.put, Move(1, 1, 1, true))
+
+      controller.publish(controller.put, Move(1, 0, 2, true))
+      controller.publish(controller.put, Move(2, 0, 3, true))
+      controller.publish(controller.put, Move(2, 1, 0, true))
+      controller.publish(controller.put, Move(1, 1, 2, true))
+
+      controller.publish(controller.put, Move(1, 0, 3, true))
+      controller.publish(controller.put, Move(2, 0, 4, true))
+      controller.publish(controller.put, Move(1, 1, 3, true))
+
+      controller.save should be(controller.field)
+      controller.load should be(controller.field)
+    }
+    "return a finished game state" in {
+      val mockFileIO = mock(classOf[FileIOInterface])
+      val controller = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), mockFileIO, new ComputerMedium())
+      for {
+        x <- 0 until controller.field.maxPosY
+        y <- 0 until controller.field.maxPosY
+      } controller.publish(controller.put, Move(1, x, y, true))
+
+      for {
+        x <- 0 until controller.field.maxPosX
+        y <- 0 to controller.field.maxPosY
+      } controller.publish(controller.put, Move(2, x, y, true))
+
+      controller.gameEnded shouldBe true
+      controller.save should be(controller.field)
+
+      when(mockFileIO.load).thenReturn(controller.field)
+      controller.load should be(controller.field)
+
+      controller.gameEnded shouldBe true
+    }
     "deny wrong input" in {
-      val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new xmlImpl.FileIO(), new ComputerMedium())
+      val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new FileIO(), new ComputerMedium())
       controller.publish(controller.put, Move(1, 0, 0, true))
       controller.publish(controller.put, Move(1, 1, 0, true))
       controller.publish(controller.put, Move(2, 0, 0, true))
@@ -452,45 +492,59 @@ class ControllerSpec extends AnyWordSpec {
       val playerSize: PlayerSize = PlayerSize.Four
       val playerType: PlayerType = PlayerType.Computer
       val computerImpl: ComputerInterface = new ComputerHard
-      val controller = new Controller(using new Field(boardSize, Status.Empty, playerSize, playerType), new xmlImpl.FileIO(), computerImpl)
+      val controller = new Controller(using new Field(boardSize, Status.Empty, playerSize, playerType), new FileIO(), computerImpl)
     
       controller.boardSize shouldBe boardSize
       controller.playerSize shouldBe playerSize
       controller.playerType shouldBe playerType
-      controller.computerImpl shouldBe computerImpl
+      controller.computerDifficulty shouldBe ComputerDifficulty.Hard
+    }
+    "return the right computer implementation" in {
+      val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new FileIO(), new ComputerMedium())
+      controller.getComputerImpl(controller.computerDifficulty) shouldBe a[ComputerMedium]
+      controller.getComputerImpl(ComputerDifficulty.Easy) shouldBe a[ComputerEasy]
+      controller.getComputerImpl(ComputerDifficulty.Medium) shouldBe a[ComputerMedium]
+      controller.getComputerImpl(ComputerDifficulty.Hard) shouldBe a[ComputerHard]
+    }
+    "return the right computer difficulty" in {
+      val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new FileIO(), new ComputerMedium())
+      controller.getComputerDifficulty(controller.computer) shouldBe ComputerDifficulty.Medium
+      controller.getComputerDifficulty(ComputerEasy()) shouldBe ComputerDifficulty.Easy
+      controller.getComputerDifficulty(ComputerMedium()) shouldBe ComputerDifficulty.Medium
+      controller.getComputerDifficulty(ComputerHard()) shouldBe ComputerDifficulty.Hard
     }
     "init a new game" in {
-      val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new xmlImpl.FileIO(), new ComputerMedium())
-      controller.initGame(BoardSize.Medium, PlayerSize.Three, PlayerType.Computer, ComputerEasy())
+      val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new FileIO(), new ComputerMedium())
+      controller.initGame(BoardSize.Medium, PlayerSize.Three, PlayerType.Computer, ComputerDifficulty.Easy)
 
       controller.boardSize shouldBe BoardSize.Medium
       controller.playerSize shouldBe PlayerSize.Three
       controller.playerType shouldBe PlayerType.Computer
-      controller.computerImpl shouldBe a [ComputerEasy]
+      controller.computerDifficulty shouldBe ComputerDifficulty.Easy
     }
     "init a new game and choose computer medium if more than 2 players and computer hard is chosen" in {
-      val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new xmlImpl.FileIO(), new ComputerMedium())
-      controller.initGame(BoardSize.Medium, PlayerSize.Three, PlayerType.Computer, ComputerHard())
+      val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new FileIO(), new ComputerMedium())
+      controller.initGame(BoardSize.Medium, PlayerSize.Three, PlayerType.Computer, ComputerDifficulty.Hard)
 
       controller.boardSize shouldBe BoardSize.Medium
       controller.playerSize shouldBe PlayerSize.Three
       controller.playerType shouldBe PlayerType.Computer
-      controller.computerImpl shouldBe a [ComputerMedium]
+      controller.computerDifficulty shouldBe ComputerDifficulty.Medium
 
-      controller.initGame(BoardSize.Medium, PlayerSize.Four, PlayerType.Computer, ComputerHard())
-      controller.computerImpl shouldBe a [ComputerMedium]
+      controller.initGame(BoardSize.Medium, PlayerSize.Four, PlayerType.Computer, ComputerDifficulty.Hard)
+      controller.computerDifficulty shouldBe ComputerDifficulty.Medium
 
-      controller.initGame(BoardSize.Medium, PlayerSize.Four, PlayerType.Computer, ComputerMedium())
-      controller.computerImpl shouldBe a [ComputerMedium]
+      controller.initGame(BoardSize.Medium, PlayerSize.Four, PlayerType.Computer, ComputerDifficulty.Medium)
+      controller.computerDifficulty shouldBe ComputerDifficulty.Medium
 
-      controller.initGame(BoardSize.Medium, PlayerSize.Four, PlayerType.Computer, ComputerEasy())
-      controller.computerImpl shouldBe a [ComputerEasy]
+      controller.initGame(BoardSize.Medium, PlayerSize.Four, PlayerType.Computer, ComputerDifficulty.Easy)
+      controller.computerDifficulty shouldBe ComputerDifficulty.Easy
 
-      controller.initGame(BoardSize.Medium, PlayerSize.Two, PlayerType.Computer, ComputerHard())
-      controller.computerImpl shouldBe a [ComputerHard]
+      controller.initGame(BoardSize.Medium, PlayerSize.Two, PlayerType.Computer, ComputerDifficulty.Hard)
+      controller.computerDifficulty shouldBe ComputerDifficulty.Hard
     }
     "restart a game" in {
-      val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new xmlImpl.FileIO(), new ComputerMedium())
+      val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new FileIO(), new ComputerMedium())
       controller.publish(controller.put, Move(1, 0, 0, true))
       controller.publish(controller.put, Move(1, 1, 0, true))
       controller.publish(controller.put, Move(2, 0, 0, true))
@@ -521,7 +575,7 @@ class ControllerSpec extends AnyWordSpec {
       controller.currentPoints should be(0)
     }
     "play against a computer AI" in {
-      val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Computer), new xmlImpl.FileIO(), new ComputerMedium())
+      val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Computer), new FileIO(), new ComputerMedium())
       controller.publish(controller.put, Move(1, 0, 0, true))
       controller.getRowCell(0, 0) should be(true)
 
@@ -534,7 +588,7 @@ class ControllerSpec extends AnyWordSpec {
       allCells.count(identity) shouldBe 2
     }
     "make a computer move" in {
-      val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Computer), new xmlImpl.FileIO(), new ComputerMedium())
+      val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Computer), new FileIO(), new ComputerMedium())
       val newField = controller.computerMove(controller.field)
 
       val allCells = 
@@ -548,7 +602,7 @@ class ControllerSpec extends AnyWordSpec {
     "handle bad computer move" in {
       val mockComputerImpl = mock(classOf[ComputerHard])
       val initialField: FieldInterface = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Computer)
-      val controller = new Controller(using initialField, new xmlImpl.FileIO(), mockComputerImpl)
+      val controller = new Controller(using initialField, new FileIO(), mockComputerImpl)
       controller.publish(controller.put, Move(9, 9, 9, true)) shouldBe a[Failure[?]]
       
       when(mockComputerImpl.calculateMove(initialField)).thenReturn(Some(Move(9, 9, 9, true)))
@@ -567,7 +621,7 @@ class ControllerSpec extends AnyWordSpec {
     "handle None computer move" in {
       val mockComputerImpl = mock(classOf[ComputerHard])
       val initialField: FieldInterface = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Computer)
-      val controller = new Controller(using initialField, new xmlImpl.FileIO(), mockComputerImpl)
+      val controller = new Controller(using initialField, new FileIO(), mockComputerImpl)
       
       when(mockComputerImpl.calculateMove(initialField)).thenReturn(None)
       
