@@ -63,7 +63,7 @@ To run the TUI properly, the terminal must be set to `chcp 65001` and `Unicode U
         Therefore, a move to occupy a line consists of: <br>
         &lt;Line&gt;&lt;X&gt;&lt;Y&gt; &nbsp;&nbsp;&nbsp; e.g., 132
         <br><br>
-        You can type the following options: <br>
+        You can also type the following options: <br>
         (q) to quit, (z) to undo, (y) to redo, <br>
         (r) to restart, (h) for help <br>
         (s) to save the current game state <br>
