@@ -2,9 +2,9 @@ name: Scala CI
 
 on:
   push:
-    branches: [ "main", "developer" ]
+    branches: [ "SA03-Microservice" ]
   pull_request:
-    branches: [ "main", "developer" ]
+    branches: [ "SA03-Microservice" ]
 
 jobs:
   build:
