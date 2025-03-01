@@ -1,5 +1,4 @@
 import CoreModule.given
-import tuiComponent.TUI
 
 object TUIService:
-  @main def startTUI: Unit = TUI().run
+  @main def startTUI: Unit = tuiComponent.TUI().run
