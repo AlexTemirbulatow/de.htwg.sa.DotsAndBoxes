@@ -230,6 +230,10 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
         contents += switchThemeButton
         contents += settingsMenuBar
       }) = gbc
+
+      override def paintComponent(g: Graphics2D) =
+        renderHints(g)
+        super.paintComponent(g)
     }
 
     contents += menuBarPanel
