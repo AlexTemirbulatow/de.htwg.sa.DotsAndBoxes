@@ -35,7 +35,7 @@ class TemplateSpec extends AnyWordSpec {
         "<Line> index: (1) for horizontally, (2) for vertically\n" +
         "<X> coordinate: starting at (0)\n" +
         "<Y> coordinate: starting at (0)\n" +
-        "e.g: 132\n\n" +
+        "e.g., 132\n\n" +
         "You can type (q) to quit, (z) to undo (y) to redo, (r) to restart,\n" +
         "(h) for help, (s) to save the current game state or (l) to load it.\n\n" +
         "If you want to start a new game with different settings you can type 'NEW: '\n" +
@@ -44,7 +44,7 @@ class TemplateSpec extends AnyWordSpec {
         "<Player size>:         (2), (3), (4)\n" +
         "<Player type>:         (1) for humans, (2) for computers\n" +
         "<Computer difficulty>: (1) for easy, (2) for medium, (3) for hard\n" +
-        "e.g: NEW: 2 3 2 1\n"
+        "e.g., NEW: 2 3 2 1\n"
       )
     }
   }
