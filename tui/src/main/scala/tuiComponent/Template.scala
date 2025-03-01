@@ -14,9 +14,9 @@ trait Template(controller: ControllerInterface) extends Observer:
     gameLoop
   def welcoming: String =
     "\n" +
-      "-----------------------------------\n" +
-      "| Welcome to Dots And Boxes TUI ! |\n" +
-      "-----------------------------------\n"
+      "---------------------------------\n" +
+      "| Welcome to Dots And Boxes TUI |\n" +
+      "---------------------------------\n"
   def help: String =
     "--Note\n\n" +
       "A move consists of:\n\n" +

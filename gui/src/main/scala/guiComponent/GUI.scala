@@ -70,11 +70,11 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
   val statsYellow = ImageIcon("gui/src/main/resources/4_StatsYellow.png")
   val statsYellowComputer = ImageIcon("gui/src/main/resources/4_StatsYellowComputer.png")
 
-  title = "Welcome to Dots And Boxes GUI !"
+  title = "Welcome to Dots And Boxes GUI"
   iconImage = logo
   resizable = false
   menuBar = new MenuBar {
-    contents += new Button(Action("") { if inMainMenu then update(Event.Move) else switchContent(setupMainMenu) }) {
+    val mainMenuButton: Button = new Button(Action("") { if inMainMenu then update(Event.Move) else switchContent(setupMainMenu) }) {
       icon = mainMenu
       contentAreaFilled = false
       borderPainted = false
@@ -83,7 +83,6 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       cursor = new Cursor(Cursor.HAND_CURSOR)
       margin = new Insets(0, 0, 0, 0)
       tooltip = "Main Menu"
-
       reactions += {
         case ButtonClicked(_) =>
           opaque = true
@@ -98,9 +97,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       }
     }
 
-    contents += space(15)
-
-    contents += new Button(Action("") { if !inMainMenu then controller.publish(controller.restart) }) {
+    val restartGameButton: Button = new Button(Action("") { if !inMainMenu then controller.publish(controller.restart) }) {
       icon = restart
       contentAreaFilled = false
       borderPainted = false
@@ -109,7 +106,6 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       cursor = new Cursor(Cursor.HAND_CURSOR)
       margin = new Insets(0, 0, 0, 0)
       tooltip = "Restart Game"
-
       reactions += {
         case ButtonClicked(_) =>
           opaque = true
@@ -123,9 +119,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       }
     }
 
-    contents += space(6)
-
-    contents += new Button(Action("") { if !inMainMenu then controller.publish(controller.undo) }) {
+    val undoButton: Button = new Button(Action("") { if !inMainMenu then controller.publish(controller.undo) }) {
       icon = undo
       contentAreaFilled = false
       borderPainted = false
@@ -134,7 +128,6 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       cursor = new Cursor(Cursor.HAND_CURSOR)
       margin = new Insets(0, 0, 0, 0)
       tooltip = "Undo"
-
       reactions += {
         case ButtonClicked(_) =>
           opaque = true
@@ -148,9 +141,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       }
     }
 
-    contents += space(5)
-
-    contents += new Button(Action("") { if !inMainMenu then controller.publish(controller.redo) }) {
+    val redoButton: Button = new Button(Action("") { if !inMainMenu then controller.publish(controller.redo) }) {
       icon = redo
       contentAreaFilled = false
       borderPainted = false
@@ -159,7 +150,6 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       cursor = new Cursor(Cursor.HAND_CURSOR)
       margin = new Insets(0, 0, 0, 0)
       tooltip = "Redo"
-
       reactions += {
         case ButtonClicked(_) =>
           opaque = true
@@ -173,9 +163,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       }
     }
 
-    contents += space(163)
-
-    contents += new Button(Action("") { switchTheme(!isDarkTheme) }) {
+    val switchThemeButton: Button = new Button(Action("") { switchTheme(!isDarkTheme) }) {
       icon = if isDarkTheme then sun else night
       contentAreaFilled = false
       borderPainted = false
@@ -192,9 +180,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       }
     }
 
-    contents += space(5)
-
-    contents += new Menu("") {
+    val settingsMenu: Menu = new Menu("") {
       icon = menu
       borderPainted = false
       contentAreaFilled = false
@@ -206,13 +192,51 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       contents += MenuItem(Action("Load") { if !inMainMenu then controller.load })
     }
 
-    override def paintComponent(g: Graphics2D) =
-      renderHints(g)
-      super.paintComponent(g)
+    val menuBarPanel = new GridBagPanel {
+      val gbc = new Constraints
+      opaque = false
+
+      gbc.gridx = 0
+      gbc.gridy = 0
+      gbc.weightx = 0.0
+      gbc.anchor = GridBagPanel.Anchor.West
+      layout(new FlowPanel {
+        opaque = false
+        contents += mainMenuButton
+      }) = gbc
+
+      gbc.gridx = 1
+      gbc.gridy = 0
+      gbc.weightx = 1.0
+      gbc.anchor = GridBagPanel.Anchor.Center
+      layout(new FlowPanel {
+        opaque = false
+        contents += restartGameButton
+        contents += undoButton
+        contents += redoButton
+      }) = gbc
+
+      gbc.gridx = 2
+      gbc.gridy = 0
+      gbc.weightx = 1.0
+      gbc.anchor = GridBagPanel.Anchor.East
+      val settingsMenuBar = new MenuBar {
+        opaque = false
+        border = new EmptyBorder(0, 0, 0, 0)
+        contents += settingsMenu
+      }
+      layout(new FlowPanel {
+        opaque = false
+        contents += switchThemeButton
+        contents += settingsMenuBar
+      }) = gbc
+    }
+
+    contents += menuBarPanel
   }
 
   UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
-  menuBar.border = Swing.EmptyBorder(5, 10, 0, 0)
+  menuBar.border = Swing.EmptyBorder(5, 10, 0, 10)
   menuBar.background = currentTheme._1
   update(Event.Move)
   pack()

@@ -23,9 +23,9 @@ class TemplateSpec extends AnyWordSpec {
     "return the right string on welcoming" in {
       template.welcoming should be(
         "\n" +
-        "-----------------------------------\n" +
-        "| Welcome to Dots And Boxes TUI ! |\n" +
-        "-----------------------------------\n"
+        "---------------------------------\n" +
+        "| Welcome to Dots And Boxes TUI |\n" +
+        "---------------------------------\n"
       )
     }
     "return the right string on help" in {
