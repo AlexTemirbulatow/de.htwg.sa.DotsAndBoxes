@@ -6,6 +6,6 @@ class GUISpec extends AnyWordSpec {
   "GUI" should {
     "coming soon..." in {
 
-    } 
+    }
   }
 }
