@@ -24,8 +24,15 @@ lazy val root = project
     name := "dotsandboxes",
     dependencies
   )
-  .dependsOn(core, model, computer, persistence, gui, tui)
-  .aggregate(core, model, computer, persistence, gui, tui)
+  .dependsOn(util, core, model, computer, persistence, gui, tui)
+  .aggregate(util, core, model, computer, persistence, gui, tui)
+
+lazy val util = project
+  .in(file("util"))
+  .settings(
+    name := "util",
+    scalaVersion := scala3Version
+  )
 
 lazy val core = project
   .in(file("core"))
@@ -33,7 +40,7 @@ lazy val core = project
     name := "core",
     dependencies
   )
-  .dependsOn(model, computer, persistence)
+  .dependsOn(util, model, computer, persistence)
 
 lazy val model = project
   .in(file("model"))
@@ -41,6 +48,7 @@ lazy val model = project
     name := "model",
     dependencies
   )
+  .dependsOn(util)
 
 lazy val computer = project
   .in(file("computer"))
@@ -48,7 +56,7 @@ lazy val computer = project
     name := "computer",
     dependencies
   )
-  .dependsOn(model)
+  .dependsOn(util, model)
 
 lazy val persistence = project
   .in(file("persistence"))
@@ -56,7 +64,7 @@ lazy val persistence = project
     name := "persistence",
     dependencies
   )
-  .dependsOn(model)
+  .dependsOn(util, model)
 
 lazy val gui = project
   .in(file("gui"))
@@ -64,7 +72,7 @@ lazy val gui = project
     name := "gui",
     dependencies
   )
-  .dependsOn(core)
+  .dependsOn(util, core)
 
 lazy val tui = project
   .in(file("tui"))
@@ -72,7 +80,7 @@ lazy val tui = project
     name := "tui",
     dependencies
   )
-  .dependsOn(core)
+  .dependsOn(util, core)
 
 import org.scoverage.coveralls.Imports.CoverallsKeys.*
 
