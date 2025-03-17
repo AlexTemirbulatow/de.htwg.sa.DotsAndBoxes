@@ -6,7 +6,6 @@ import scala.util.{Failure, Success}
 import controllerImpl.command.{PutCommand, UndoManager}
 import controllerImpl.moveStrategy.{EdgeState, MidState, MoveStrategy}
 import controllerImpl.playerStrategy.PlayerStrategy
-import controllerImpl.observer.Event
 import controllerImpl.moveHandler.MoveValidator
 import computerComponent.ComputerInterface
 import computerComponent.computerEasyImpl.ComputerEasy
@@ -15,7 +14,7 @@ import computerComponent.computerMediumImpl.ComputerMedium
 import fieldComponent.fieldImpl.Field
 import fieldComponent.FieldInterface
 import fileIoComponent.FileIOInterface
-import de.github.dotsandboxes.lib.{Move, PackT, PlayerType, BoardSize, ComputerDifficulty, PlayerSize, Status, Player}
+import de.github.dotsandboxes.lib.{Move, PlayerType, BoardSize, ComputerDifficulty, PlayerSize, Status, Player, Event}
 
 class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, var computer: ComputerInterface) extends ControllerInterface:
   val undoManager = new UndoManager
@@ -33,14 +32,14 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, v
     case _: ComputerEasy   => ComputerDifficulty.Easy
     case _: ComputerMedium => ComputerDifficulty.Medium
     case _: ComputerHard   => ComputerDifficulty.Hard
-  override def put(move: Move): FieldInterface = undoManager.doStep(field, PutCommand(move, field))
   override def getStatusCell(row: Int, col: Int): Status = field.getStatusCell(row, col)
   override def getRowCell(row: Int, col: Int): Boolean = field.getRowCell(row, col)
   override def getColCell(row: Int, col: Int): Boolean = field.getColCell(row, col)
+
+  override def put(move: Move): FieldInterface = undoManager.doStep(field, PutCommand(move, field))
   override def restart: FieldInterface = initGame(field.boardSize, field.playerSize, playerType, computerDifficulty)
   override def undo: FieldInterface = undoManager.undoStep(field)
   override def redo: FieldInterface = undoManager.redoStep(field)
-
   override def save: FieldInterface =
     fileIO.save(field)
     if !gameEnded then notifyObservers(Event.Move)
@@ -85,34 +84,6 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, v
         if gameEnded then notifyObservers(Event.End); Success(field)
         if field.currentPlayer.playerType == PlayerType.Computer then computerMove(field)
         Success(field)
-  override def publishCheat(doThis: Move => FieldInterface, pack: PackT[Option[Move]]): Try[FieldInterface] =
-    val results = for {
-      (moveOpt, index) <- pack.moves.zipWithIndex
-      isLast = index == pack.moves.length - 1
-    } yield moveOpt match {
-      case Some(move) =>
-        MoveValidator.validate(move, field) match {
-          case Failure(exception) =>
-            print(exception.getMessage.dropRight(28))
-            Failure(exception)
-          case Success(_) =>
-            field = doThis(move)
-            val preStatus = field.currentStatus
-            val movePosition = if field.isEdge(move) then EdgeState else MidState
-            field = MoveStrategy.executeStrategy(movePosition, move, field)
-            val postStatus = field.currentStatus
-            if isLast then
-              field = PlayerStrategy.updatePlayer(field, preStatus, postStatus)
-              notifyObservers(Event.Move)
-            if gameEnded then notifyObservers(Event.End)
-            Success(field)
-        }
-      case None =>
-        println(s"Invalid move at position ${index + 1}")
-        Failure(new Exception(s"Found None at index $index"))
-    }
-    results.find(_.isFailure).getOrElse(results.lastOption.getOrElse(Failure(new Exception("No valid moves found"))))
-
   override def computerMove(field: FieldInterface): FieldInterface =
     val moveOption: Option[Move] = computer.calculateMove(field)
     moveOption match

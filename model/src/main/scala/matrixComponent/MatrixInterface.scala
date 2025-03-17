@@ -1,6 +1,6 @@
 package matrixComponent
 
-import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, SquareCases, Status, Player, Move}
+import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, SquareCase, Status, Player, Move}
 
 trait MatrixInterface:
   val vectorStatus: Vector[Vector[Status]]
@@ -20,9 +20,9 @@ trait MatrixInterface:
   def replaceColCell(row: Int, col: Int, value: Boolean): MatrixInterface
   def getUnoccupiedRowCoord(): Vector[(Int, Int, Int)]
   def getUnoccupiedColCoord(): Vector[(Int, Int, Int)]
-  def checkSquare(squareCase: SquareCases, x: Int, y: Int): MatrixInterface
-  def checkAllCells(squareCase: SquareCases, x: Int, y: Int): Vector[Boolean]
-  def cellsToCheck(squareCase: SquareCases, x: Int, y: Int): Vector[(Int, Int, Int)]
+  def checkSquare(squareCase: SquareCase, x: Int, y: Int): MatrixInterface
+  def checkAllCells(squareCase: SquareCase, x: Int, y: Int): Vector[Boolean]
+  def cellsToCheck(squareCase: SquareCase, x: Int, y: Int): Vector[(Int, Int, Int)]
   def isEdge(move: Move): Boolean
   def getCurrentPlayer: Player
   def currentPlayerInfo: (String, Int)

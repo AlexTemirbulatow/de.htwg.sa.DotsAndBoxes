@@ -4,7 +4,7 @@ import scala.util.Try
 import computerComponent.ComputerInterface
 import fieldComponent.FieldInterface
 import controllerImpl.observer.Observable
-import de.github.dotsandboxes.lib.{PackT, BoardSize, PlayerSize, PlayerType, ComputerDifficulty, Status, Player, Move}
+import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, ComputerDifficulty, Status, Player, Move}
 
 trait ControllerInterface extends Observable:
   def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, computerDifficulty: ComputerDifficulty): FieldInterface
@@ -33,6 +33,5 @@ trait ControllerInterface extends Observable:
   def stats: String
   def publish(doThis: => FieldInterface): FieldInterface
   def publish(doThis: Move => FieldInterface, move: Move): Try[FieldInterface]
-  def publishCheat(doThis: Move => FieldInterface, pack: PackT[Option[Move]]): Try[FieldInterface]
   def computerMove(field: FieldInterface): FieldInterface
   override def toString: String

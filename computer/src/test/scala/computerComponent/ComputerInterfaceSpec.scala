@@ -5,7 +5,7 @@ import org.scalatest.wordspec.AnyWordSpec
 
 import fieldComponent.FieldInterface
 import fieldComponent.fieldImpl.Field
-import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, SquareCases, Status, Move}
+import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, SquareCase, Status, Move}
 
 class ComputerInterfaceSpec extends AnyWordSpec {
   "ComputerInterface" when {
@@ -262,32 +262,32 @@ class ComputerInterfaceSpec extends AnyWordSpec {
       "return a down case" in {
         val squareCase = computerInterface.getSquareCases(1, 0, 0, field)
         squareCase.size shouldBe 1
-        squareCase.head should be(SquareCases.DownCase)
+        squareCase.head should be(SquareCase.DownCase)
       }
       "return a up case" in {
         val squareCase = computerInterface.getSquareCases(1, 3, 0, field)
         squareCase.size shouldBe 1
-        squareCase.head should be(SquareCases.UpCase)
+        squareCase.head should be(SquareCase.UpCase)
       }
       "return a right case" in {
         val squareCase = computerInterface.getSquareCases(2, 0, 0, field)
         squareCase.size shouldBe 1
-        squareCase.head should be(SquareCases.RightCase)
+        squareCase.head should be(SquareCase.RightCase)
       }
       "return a left case" in {
         val squareCase = computerInterface.getSquareCases(2, 0, 4, field)
         squareCase.size shouldBe 1
-        squareCase.head should be(SquareCases.LeftCase)
+        squareCase.head should be(SquareCase.LeftCase)
       }
       "return down and up cases" in {
         val squareCases = computerInterface.getSquareCases(1, 1, 1, field)
         squareCases.size shouldBe 2
-        squareCases should be(Vector(SquareCases.DownCase, SquareCases.UpCase))
+        squareCases should be(Vector(SquareCase.DownCase, SquareCase.UpCase))
       }
       "return right and left cases" in {
         val squareCases = computerInterface.getSquareCases(2, 0, 2, field)
         squareCases.size shouldBe 2
-        squareCases should be(Vector(SquareCases.RightCase, SquareCases.LeftCase))
+        squareCases should be(Vector(SquareCase.RightCase, SquareCase.LeftCase))
       }
     }
   }

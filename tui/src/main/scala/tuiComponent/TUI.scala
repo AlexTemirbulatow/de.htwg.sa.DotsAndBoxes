@@ -1,50 +1,54 @@
 package tuiComponent
 
+import akka.actor.ActorSystem
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpMethods, HttpRequest, HttpResponse, StatusCode}
+import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, GameConfig, Move, PlayerSize, PlayerType, Event}
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}
-import controllerComponent.ControllerInterface
-import controllerComponent.controllerImpl.observer.Event
-import de.github.dotsandboxes.lib.{PackT, GameConfig, Move}
+import spray.json.{JsBoolean, JsNumber, JsObject, JsString}
 
-class TUI(using controller: ControllerInterface) extends Template(controller):
-  override def update(event: Event): Unit = event match
+class TUI:
+  implicit val system: ActorSystem = ActorSystem()
+  implicit val executionContext: ExecutionContext = system.dispatcher
+
+  def run: Unit =
+    println(welcome)
+    println(help)
+    update(Event.Move)
+    gameLoop
+
+  def update(event: Event): Unit = event match
     case Event.Abort => sys.exit
-    case Event.End   => print(finalStats)
-    case Event.Move  => print(controller.toString)
+    case Event.End   => print(finalStatsHttp)
+    case Event.Move  => print(controllerToStringHttp)
 
-  override def gameLoop: Unit =
+  def gameLoop: Unit =
     analyzeInput(readLine) match
-      case Some(move) => controller.publish(controller.put, move)
+      case Some(move) => controllerPublishHttp(move)
       case None       =>
     gameLoop
 
-  override def analyzeInput(input: String): Option[Move] = input match
+  def analyzeInput(input: String): Option[Move] = input match
     case "q" => update(Event.Abort); None
-    case "z" => controller.publish(controller.undo); None
-    case "y" => controller.publish(controller.redo); None
-    case "s" => controller.save; None
-    case "l" => controller.load; None
-    case "r" => controller.restart; None
+    case "z" => controllerPublishHttp("undo"); None
+    case "y" => controllerPublishHttp("redo"); None
+    case "s" => controllerPublishHttp("save"); None
+    case "l" => controllerPublishHttp("load"); None
+    case "r" => controllerPublishHttp("restart"); None
     case "h" => println(help); None
     case newGame if newGame.startsWith("NEW: ") =>
       val numbers = newGame.split(": ")(1).split(" ")
       val (boardSizeNum, playerSizeNum, playerTypeNum, computerDifficultyNum): (String, String, String, String) =
         (numbers(0), numbers(1), numbers(2), numbers(3))
-      controller.initGame(
+      controllerInitGameHttp(
         GameConfig.boardSizes(boardSizeNum),
         GameConfig.playerSizes(playerSizeNum),
         GameConfig.playerType(playerTypeNum),
         GameConfig.computerDifficulty(computerDifficultyNum)
       )
-      None
-    case cheat if cheat.startsWith("CHEAT: ") =>
-      val moves: List[String] = cheat.stripPrefix("CHEAT: ").split("\\s+").toList
-      val pack: List[Option[Move]] = moves.map(move => {
-        checkSyntax(move(0), move(1), move(2)) match
-          case Success(move) => Some(Move(move(0), move(1), move(2), true))
-          case Failure(_)    => None
-      })
-      controller.publishCheat(controller.put, PackT(pack))
       None
     case _ if input.length == 3 =>
       checkSyntax(input(0), input(1), input(2)) match
@@ -53,15 +57,97 @@ class TUI(using controller: ControllerInterface) extends Template(controller):
     case _ =>
       print(syntaxErr); None
 
-  override def checkSyntax(vec: Char, x: Char, y: Char): Try[(Int, Int, Int)] =
+  def checkSyntax(vec: Char, x: Char, y: Char): Try[(Int, Int, Int)] =
     Try(vec.toString.toInt, x.toString.toInt, y.toString.toInt)
 
-  override def finalStats: String =
-    "\n" +
-    controller.winner + "\n" +
-    "_________________________" + "\n\n" +
-    controller.stats +
-    "\n"
+  def getRequest(url: String): Future[String] =
+    val request = HttpRequest(
+      method = HttpMethods.GET,
+      uri = url
+    )
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(request)
+    responseFuture.flatMap { response =>
+      response.entity.toStrict(5.seconds).map(_.data.utf8String)
+    }
 
-  override def syntaxErr: String =
+  def postRequest(url: String, json: JsObject): Future[StatusCode] =
+    val request = HttpRequest(
+      method = HttpMethods.POST,
+      uri = url,
+      entity = HttpEntity(ContentTypes.`application/json`, json.compactPrint)
+    )
+    Http().singleRequest(request).map(_.status)
+
+  def controllerToStringHttp: String =
+    val requestUrl = "http://localhost:8082/api/core/"
+    Await.result(getRequest(requestUrl), 5.seconds)
+
+  def controllerPublishHttp(move: Move): Future[StatusCode] =
+    val requestUrl = "http://localhost:8082/api/core/publish"
+    val jsonBody = JsObject(
+      "method" -> JsString("put"),
+      "vec" -> JsNumber(move.vec),
+      "x" -> JsNumber(move.x),
+      "y" -> JsNumber(move.y),
+      "value" -> JsBoolean(move.value)
+    )
+    postRequest(requestUrl, jsonBody)
+
+  def controllerPublishHttp(operation: String): Future[StatusCode] =
+    val requestUrl = "http://localhost:8082/api/core/publish"
+    val jsonBody = JsObject(
+      "method" -> JsString(operation)
+    )
+    postRequest(requestUrl, jsonBody)
+
+  def controllerInitGameHttp(
+      boardSize: BoardSize,
+      playerSize: PlayerSize,
+      playerType: PlayerType,
+      computerDifficulty: ComputerDifficulty
+  ): Future[StatusCode] =
+    val requestUrl = "http://localhost:8082/api/core/publish"
+    val jsonBody = JsObject(
+      "boardSize" -> JsString(boardSize.toString),
+      "playerSize" -> JsString(playerSize.toString),
+      "playerType" -> JsString(playerType.toString),
+      "computerDifficulty" -> JsString(computerDifficulty.toString)
+    )
+    postRequest(requestUrl, jsonBody)
+
+  def finalStatsHttp: String =
+    val requestUrlWinner = "http://localhost:8082/api/core/get/winner"
+    val requestUrlStats = "http://localhost:8082/api/core/get/stats"
+    val winner = Await.result(getRequest(requestUrlWinner), 5.seconds)
+    val stats = Await.result(getRequest(requestUrlStats), 5.seconds)
+    "\n" +
+      winner + "\n" +
+      "_________________________" + "\n\n" +
+      stats +
+      "\n"
+
+  def welcome: String =
+    "\n" +
+      "---------------------------------\n" +
+      "| Welcome to Dots And Boxes TUI |\n" +
+      "---------------------------------\n"
+
+  def help: String =
+    "--Note\n\n" +
+      "A move consists of:\n\n" +
+      "<Line> index: (1) for horizontally, (2) for vertically\n" +
+      "<X> coordinate: starting at (0)\n" +
+      "<Y> coordinate: starting at (0)\n" +
+      "e.g., 132\n\n" +
+      "You can type (q) to quit, (z) to undo (y) to redo, (r) to restart,\n" +
+      "(h) for help, (s) to save the current game state or (l) to load it.\n\n" +
+      "If you want to start a new game with different settings you can type 'NEW: '\n" +
+      "followed by this space separated options:\n\n" +
+      "<Board size>:          (1) for 4x3, (2) for 5x4, (3) for 8x6\n" +
+      "<Player size>:         (2), (3), (4)\n" +
+      "<Player type>:         (1) for humans, (2) for computers\n" +
+      "<Computer difficulty>: (1) for easy, (2) for medium, (3) for hard\n" +
+      "e.g., NEW: 2 3 2 1\n"
+
+  def syntaxErr: String =
     "\nIncorrect syntax. Try again: "

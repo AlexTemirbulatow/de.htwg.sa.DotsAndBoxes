@@ -6,7 +6,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.mockito.Mockito._
 import scala.util.Failure
 
-import observer.{Observer, Event}
+import observer.Observer
 import fieldComponent.FieldInterface
 import fieldComponent.fieldImpl.Field
 import fileIoComponent.xmlImpl.FileIO
@@ -15,7 +15,7 @@ import computerComponent.computerEasyImpl.ComputerEasy
 import computerComponent.computerMediumImpl.ComputerMedium
 import computerComponent.computerHardImpl.ComputerHard
 import computerComponent.ComputerInterface
-import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, PackT, ComputerDifficulty, Player, Status, Move}
+import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, ComputerDifficulty, Player, Status, Move, Event}
 
 class ControllerSpec extends AnyWordSpec {
   val controller = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Three, PlayerType.Human), new FileIO(), new ComputerMedium())
@@ -200,149 +200,6 @@ class ControllerSpec extends AnyWordSpec {
       )
 
       controller.remove(testObserver)
-    }
-    "do a cheating move" in {
-      val controllerCheat = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new FileIO(), new ComputerMedium())
-      class TestObserver(controller: Controller) extends Observer:
-        controllerCheat.add(this)
-        var bing = false
-        def update(e: Event) = bing = true
-      val testObserver = TestObserver(controllerCheat)
-
-      controllerCheat.toString should be(
-        "\n\n" +
-          "O-------O-------O-------O-------O\n" +
-          "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
-          "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
-          "O-------O-------O-------O-------O\n" +
-          "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
-          "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
-          "O-------O-------O-------O-------O\n" +
-          "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
-          "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
-          "O-------O-------O-------O-------O\n\n" +
-          "Blues turn\n" +
-          "[points: 0]\n\n" +
-          "Your Move <Line><X><Y>: "
-      )
-
-      val cheatingMove: List[Option[Move]] = List(
-        Some(Move(1, 0, 0, true)),
-        Some(Move(1, 1, 0, true)),
-        Some(Move(2, 0, 0, true))
-      )
-
-      controllerCheat.publishCheat(
-        controllerCheat.put,
-        PackT(cheatingMove)
-      )
-
-      controllerCheat.toString should be(
-        "\n\n" +
-          "O=======O-------O-------O-------O\n" +
-          "‖   -   ¦   -   ¦   -   ¦   -   ¦\n" +
-          "‖   -   ¦   -   ¦   -   ¦   -   ¦\n" +
-          "O=======O-------O-------O-------O\n" +
-          "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
-          "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
-          "O-------O-------O-------O-------O\n" +
-          "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
-          "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
-          "O-------O-------O-------O-------O\n\n" +
-          "Reds turn\n" +
-          "[points: 0]\n\n" +
-          "Your Move <Line><X><Y>: "
-      )
-
-      val cheatingMove2: List[Option[Move]] = List(
-        Some(Move(2, 0, 1, true)),
-        None,
-        Some(Move(2, 0, 2, true))
-      )
-
-      val result = controllerCheat.publishCheat(
-        controllerCheat.put,
-        PackT(cheatingMove2)
-      )
-
-      controllerCheat.toString should be(
-        "\n\n" +
-          "O=======O-------O-------O-------O\n" +
-          "‖   R   ‖   -   ‖   -   ¦   -   ¦\n" +
-          "‖   R   ‖   -   ‖   -   ¦   -   ¦\n" +
-          "O=======O-------O-------O-------O\n" +
-          "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
-          "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
-          "O-------O-------O-------O-------O\n" +
-          "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
-          "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
-          "O-------O-------O-------O-------O\n\n" +
-          "Blues turn\n" +
-          "[points: 0]\n\n" +
-          "Your Move <Line><X><Y>: "
-      )
-
-      result should matchPattern { case Failure(_) => }
-
-      val cheatingMove3: List[Option[Move]] = List(
-        Some(Move(9, 0, 1, true))
-      )
-
-      val result2 = controllerCheat.publishCheat(
-        controllerCheat.put,
-        PackT(cheatingMove3)
-      )
-
-      result2 should matchPattern { case Failure(_) => }
-
-      val result4 = controllerCheat.publishCheat(
-        controllerCheat.put,
-        PackT(List())
-      )
-
-      result shouldBe a[Failure[?]]
-    }
-    "be able to finish the game with cheat" in {
-      val controllerCheat = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new FileIO(), new ComputerMedium())
-      controllerCheat.publishCheat(
-        controllerCheat.put,
-        PackT(
-          List(
-            Some(Move(1, 0, 0, true)),
-            Some(Move(1, 0, 1, true)),
-            Some(Move(1, 0, 2, true)),
-            Some(Move(1, 0, 3, true)),
-            Some(Move(1, 1, 0, true)),
-            Some(Move(1, 1, 1, true)),
-            Some(Move(1, 1, 2, true)),
-            Some(Move(1, 1, 3, true)),
-            Some(Move(1, 2, 0, true)),
-            Some(Move(1, 2, 1, true)),
-            Some(Move(1, 2, 2, true)),
-            Some(Move(1, 2, 3, true)),
-            Some(Move(1, 3, 0, true)),
-            Some(Move(1, 3, 1, true)),
-            Some(Move(1, 3, 2, true)),
-            Some(Move(1, 3, 3, true)),
-            Some(Move(2, 0, 0, true)),
-            Some(Move(2, 0, 1, true)),
-            Some(Move(2, 0, 2, true)),
-            Some(Move(2, 0, 3, true)),
-            Some(Move(2, 0, 4, true)),
-            Some(Move(2, 1, 0, true)),
-            Some(Move(2, 1, 1, true)),
-            Some(Move(2, 1, 2, true)),
-            Some(Move(2, 1, 3, true)),
-            Some(Move(2, 1, 4, true)),
-            Some(Move(2, 2, 0, true)),
-            Some(Move(2, 2, 1, true)),
-            Some(Move(2, 2, 2, true)),
-            Some(Move(2, 2, 3, true)),
-            Some(Move(2, 2, 4, true))
-          )
-        )
-      )
-      controllerCheat.gameEnded shouldBe true
     }
     "be able to undo and redo" in {
       val controller = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new FileIO(), new ComputerMedium())

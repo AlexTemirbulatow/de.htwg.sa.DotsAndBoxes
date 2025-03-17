@@ -1,6 +1,6 @@
 package fieldComponent
 
-import de.github.dotsandboxes.lib.{PlayerType, BoardSize, PlayerSize, SquareCases, Player, Status, Move}
+import de.github.dotsandboxes.lib.{PlayerType, BoardSize, PlayerSize, SquareCase, Player, Status, Move}
 import play.api.libs.json.JsObject
 
 trait FieldInterface:
@@ -21,8 +21,8 @@ trait FieldInterface:
   def getStatusCell(row: Int, col: Int): Status
   def getRowCell(row: Int, col: Int): Boolean
   def getColCell(row: Int, col: Int): Boolean
-  def checkAllCells(squareCase: SquareCases, x: Int, y: Int): Vector[Boolean]
-  def cellsToCheck(squareCase: SquareCases, x: Int, y: Int): Vector[(Int, Int, Int)]
+  def checkAllCells(squareCase: SquareCase, x: Int, y: Int): Vector[Boolean]
+  def cellsToCheck(squareCase: SquareCase, x: Int, y: Int): Vector[(Int, Int, Int)]
   def putStatus(row: Int, col: Int, status: Status): FieldInterface
   def putRow(row: Int, col: Int, value: Boolean): FieldInterface
   def putCol(row: Int, col: Int, value: Boolean): FieldInterface
@@ -30,7 +30,7 @@ trait FieldInterface:
   def getUnoccupiedColCoord(): Vector[(Int, Int, Int)]
   def isFinished: Boolean
   def isEdge(move: Move): Boolean
-  def checkSquare(squareCase: SquareCases, x: Int, y: Int): FieldInterface
+  def checkSquare(squareCase: SquareCase, x: Int, y: Int): FieldInterface
   def currentPlayer: Player
   def currentPlayerId: String
   def currentPlayerIndex: Int

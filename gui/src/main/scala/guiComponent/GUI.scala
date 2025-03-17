@@ -10,8 +10,8 @@ import scala.swing.event.{ButtonClicked, MouseClicked, MouseEntered, MouseExited
 import scala.swing._
 
 import controllerComponent.ControllerInterface
-import controllerComponent.controllerImpl.observer.{Observer, Event}
-import de.github.dotsandboxes.lib.{BoardSize, PlayerType, PlayerSize, ComputerDifficulty, Move}
+import controllerComponent.controllerImpl.observer.Observer
+import de.github.dotsandboxes.lib.{BoardSize, PlayerType, PlayerSize, ComputerDifficulty, Move, Event}
 
 enum ThemeType:
   case Light
