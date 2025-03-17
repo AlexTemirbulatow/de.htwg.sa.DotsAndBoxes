@@ -1,6 +1,7 @@
 package fieldComponent
 
 import lib.{PlayerType, BoardSize, PlayerSize, SquareCases, Player, Status, Move}
+import play.api.libs.json.JsObject
 
 trait FieldInterface:
   val maxPosX: Int
@@ -45,4 +46,6 @@ trait FieldInterface:
   def rowSize(): Int
   def colSize(): Int
   def space(length: Int): String
+  def toJson: JsObject
+  def fromJson(jsonField: String): FieldInterface
   override def toString: String

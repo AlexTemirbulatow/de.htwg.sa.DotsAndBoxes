@@ -1,4 +1,6 @@
 val scala3Version = "3.5.0"
+val akkaVersion = "2.8.5"
+val akkaHttpVersion = "10.5.3"
 
 lazy val dependencies = Seq(
   version := "0.1.0-SNAPSHOT",
@@ -8,7 +10,12 @@ lazy val dependencies = Seq(
   libraryDependencies += ("org.scala-lang.modules" %% "scala-swing" % "3.0.0").cross(CrossVersion.for3Use2_13),
   libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "2.1.0",
   libraryDependencies += ("com.typesafe.play" %% "play-json" % "2.10.0-RC5"),
-  libraryDependencies += "org.scalatestplus" %% "mockito-5-12" % "3.2.19.0" % "test"
+  libraryDependencies += "org.scalatestplus" %% "mockito-5-12" % "3.2.19.0" % "test",
+  libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.5.2",
+  libraryDependencies += "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
+  libraryDependencies += "com.typesafe.akka" %% "akka-stream" % akkaVersion,
+  libraryDependencies += "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
+  libraryDependencies += "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion
 )
 
 lazy val root = project
