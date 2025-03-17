@@ -4,7 +4,7 @@ import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 
 import matrixComponent.MatrixInterface
-import lib.{BoardSize, PlayerSize, PlayerType, SquareCases, Status, Player, Move, list}
+import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, SquareCases, Status, Player, Move, list}
 
 class MatrixSpec extends AnyWordSpec {
   "A Matrix" when {

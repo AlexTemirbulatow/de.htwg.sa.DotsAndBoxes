@@ -15,7 +15,7 @@ import computerComponent.computerEasyImpl.ComputerEasy
 import computerComponent.computerMediumImpl.ComputerMedium
 import computerComponent.computerHardImpl.ComputerHard
 import computerComponent.ComputerInterface
-import lib.{BoardSize, PlayerSize, PlayerType, PackT, ComputerDifficulty, Player, Status, Move}
+import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, PackT, ComputerDifficulty, Player, Status, Move}
 
 class ControllerSpec extends AnyWordSpec {
   val controller = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Three, PlayerType.Human), new FileIO(), new ComputerMedium())

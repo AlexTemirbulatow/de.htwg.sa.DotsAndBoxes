@@ -4,7 +4,7 @@ import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 
 import fieldComponent.fieldImpl.Field
-import lib.{BoardSize, PlayerSize, PlayerType, Status, Move}
+import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, Status, Move}
 
 class ComputerHardSpec extends AnyWordSpec {
   "ComputerHard" when {

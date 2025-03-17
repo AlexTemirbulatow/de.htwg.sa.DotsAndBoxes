@@ -4,7 +4,7 @@ import scala.util.Try
 import computerComponent.ComputerInterface
 import fieldComponent.FieldInterface
 import controllerImpl.observer.Observable
-import lib.{PackT, BoardSize, PlayerSize, PlayerType, ComputerDifficulty, Status, Player, Move}
+import de.github.dotsandboxes.lib.{PackT, BoardSize, PlayerSize, PlayerType, ComputerDifficulty, Status, Player, Move}
 
 trait ControllerInterface extends Observable:
   def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, computerDifficulty: ComputerDifficulty): FieldInterface

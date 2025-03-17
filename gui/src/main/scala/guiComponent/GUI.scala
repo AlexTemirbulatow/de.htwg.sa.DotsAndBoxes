@@ -11,7 +11,7 @@ import scala.swing._
 
 import controllerComponent.ControllerInterface
 import controllerComponent.controllerImpl.observer.{Observer, Event}
-import lib.{BoardSize, PlayerType, PlayerSize, ComputerDifficulty, Move}
+import de.github.dotsandboxes.lib.{BoardSize, PlayerType, PlayerSize, ComputerDifficulty, Move}
 
 enum ThemeType:
   case Light

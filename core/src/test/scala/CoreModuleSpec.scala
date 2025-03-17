@@ -3,7 +3,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import CoreModule.given
 import fieldComponent.FieldInterface
 import fieldComponent.fieldImpl.Field
-import lib.{BoardSize, PlayerSize, PlayerType, Status}
+import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, Status}
 import fileIoComponent.FileIOInterface
 import fileIoComponent.{jsonImpl, xmlImpl}
 import computerComponent.ComputerInterface

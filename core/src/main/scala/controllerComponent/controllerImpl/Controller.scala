@@ -15,7 +15,7 @@ import computerComponent.computerMediumImpl.ComputerMedium
 import fieldComponent.fieldImpl.Field
 import fieldComponent.FieldInterface
 import fileIoComponent.FileIOInterface
-import lib.{Move, PackT, PlayerType, BoardSize, ComputerDifficulty, PlayerSize, Status, Player}
+import de.github.dotsandboxes.lib.{Move, PackT, PlayerType, BoardSize, ComputerDifficulty, PlayerSize, Status, Player}
 
 class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, var computer: ComputerInterface) extends ControllerInterface:
   val undoManager = new UndoManager

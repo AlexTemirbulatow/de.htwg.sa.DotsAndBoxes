@@ -1,7 +1,7 @@
 package computerComponent
 
 import fieldComponent.FieldInterface
-import lib.{SquareCases, Move}
+import de.github.dotsandboxes.lib.{SquareCases, Move}
 
 trait ComputerInterface:
   def calculateMove(field: FieldInterface): Option[Move]

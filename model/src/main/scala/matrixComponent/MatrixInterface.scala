@@ -1,6 +1,6 @@
 package matrixComponent
 
-import lib.{BoardSize, PlayerSize, SquareCases, Status, Player, Move}
+import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, SquareCases, Status, Player, Move}
 
 trait MatrixInterface:
   val vectorStatus: Vector[Vector[Status]]

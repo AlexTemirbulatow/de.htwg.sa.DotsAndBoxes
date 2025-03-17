@@ -3,7 +3,7 @@ package tuiComponent
 import scala.util.Try
 import controllerComponent.ControllerInterface
 import controllerComponent.controllerImpl.observer.{Observer, Event}
-import lib.Move
+import de.github.dotsandboxes.lib.Move
 
 trait Template(controller: ControllerInterface) extends Observer:
   controller.add(this)

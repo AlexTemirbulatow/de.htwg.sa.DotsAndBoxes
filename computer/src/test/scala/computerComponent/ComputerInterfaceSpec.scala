@@ -5,7 +5,7 @@ import org.scalatest.wordspec.AnyWordSpec
 
 import fieldComponent.FieldInterface
 import fieldComponent.fieldImpl.Field
-import lib.{BoardSize, PlayerSize, PlayerType, SquareCases, Status, Move}
+import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, SquareCases, Status, Move}
 
 class ComputerInterfaceSpec extends AnyWordSpec {
   "ComputerInterface" when {

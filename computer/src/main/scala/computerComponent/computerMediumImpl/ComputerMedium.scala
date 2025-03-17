@@ -3,7 +3,7 @@ package computerComponent.computerMediumImpl
 import scala.util.Random.shuffle
 import computerComponent.ComputerInterface
 import fieldComponent.FieldInterface
-import lib.Move
+import de.github.dotsandboxes.lib.Move
 
 class ComputerMedium extends ComputerInterface:
   override def calculateMove(field: FieldInterface): Option[Move] =

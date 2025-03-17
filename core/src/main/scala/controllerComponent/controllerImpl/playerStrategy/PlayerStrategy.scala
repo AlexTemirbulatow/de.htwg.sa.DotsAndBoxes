@@ -1,7 +1,7 @@
 package controllerComponent.controllerImpl.playerStrategy
 
 import fieldComponent.FieldInterface
-import lib.Status
+import de.github.dotsandboxes.lib.Status
 
 object PlayerStrategy:
   def updatePlayer(field: FieldInterface, preStatus: Vector[Vector[Status]], postStatus: Vector[Vector[Status]]): FieldInterface =

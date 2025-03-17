@@ -4,7 +4,7 @@ import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}
 import controllerComponent.ControllerInterface
 import controllerComponent.controllerImpl.observer.Event
-import lib.{PackT, GameConfig, Move}
+import de.github.dotsandboxes.lib.{PackT, GameConfig, Move}
 
 class TUI(using controller: ControllerInterface) extends Template(controller):
   override def update(event: Event): Unit = event match

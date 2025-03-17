@@ -1,7 +1,7 @@
 package controllerComponent.controllerImpl.moveStrategy
 
 import fieldComponent.FieldInterface
-import lib.{SquareCases, Move}
+import de.github.dotsandboxes.lib.{SquareCases, Move}
 
 object EdgeState extends MoveState:
   override def handle(move: Move, field: FieldInterface): FieldInterface =

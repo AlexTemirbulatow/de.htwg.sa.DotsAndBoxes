@@ -5,7 +5,7 @@ import org.scalatest.wordspec.AnyWordSpec
 
 import fieldComponent.FieldInterface
 import matrixComponent.matrixImpl.Matrix
-import lib.{BoardSize, PlayerSize, PlayerType, SquareCases, Player, Status, Move}
+import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, SquareCases, Player, Status, Move}
 
 class FieldSpec extends AnyWordSpec {
   "A Dots and Boxes Field" when {

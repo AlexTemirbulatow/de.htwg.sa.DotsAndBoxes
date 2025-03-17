@@ -1,7 +1,7 @@
 package controllerComponent.controllerImpl.command
 
 import fieldComponent.FieldInterface
-import lib.Move
+import de.github.dotsandboxes.lib.Move
 
 class PutCommand(move: Move, var field: FieldInterface) extends Command:
   override def doStep(field: FieldInterface): FieldInterface =

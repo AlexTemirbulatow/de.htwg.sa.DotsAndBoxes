@@ -1,6 +1,6 @@
 package fieldComponent
 
-import lib.{PlayerType, BoardSize, PlayerSize, SquareCases, Player, Status, Move}
+import de.github.dotsandboxes.lib.{PlayerType, BoardSize, PlayerSize, SquareCases, Player, Status, Move}
 import play.api.libs.json.JsObject
 
 trait FieldInterface:

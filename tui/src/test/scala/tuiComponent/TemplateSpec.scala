@@ -7,7 +7,7 @@ import scala.util.Try
 
 import controllerComponent.ControllerInterface
 import controllerComponent.controllerImpl.observer.Event
-import lib.Move
+import de.github.dotsandboxes.lib.Move
 
 class TemplateSpec extends AnyWordSpec {
   "Template" should {

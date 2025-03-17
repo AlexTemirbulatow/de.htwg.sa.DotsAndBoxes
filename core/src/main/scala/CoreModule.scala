@@ -6,7 +6,7 @@ import fileIoComponent.FileIOInterface
 import fileIoComponent.jsonImpl.FileIO
 import computerComponent.ComputerInterface
 import computerComponent.computerMediumImpl.ComputerMedium
-import lib.{PlayerType, PlayerSize, BoardSize, Status}
+import de.github.dotsandboxes.lib.{PlayerType, PlayerSize, BoardSize, Status}
 
 object CoreModule:
   given FieldInterface = new Field(BoardSize.Medium, Status.Empty, PlayerSize.Two, PlayerType.Human)

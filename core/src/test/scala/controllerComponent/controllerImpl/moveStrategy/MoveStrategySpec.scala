@@ -5,7 +5,7 @@ import org.scalatest.wordspec.AnyWordSpec
 
 import fieldComponent.FieldInterface
 import fieldComponent.fieldImpl.Field
-import lib.{BoardSize, PlayerSize, PlayerType, Status, Move}
+import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, Status, Move}
 
 class MoveStrategySpec extends AnyWordSpec {
   "MoveStrategy" when {

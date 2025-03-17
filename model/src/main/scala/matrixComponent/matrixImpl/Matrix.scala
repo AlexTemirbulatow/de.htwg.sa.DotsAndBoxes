@@ -1,7 +1,7 @@
 package matrixComponent.matrixImpl
 
 import matrixComponent.MatrixInterface
-import lib.{PlayerType, BoardSize, PlayerSize, SquareCases, Move, Status, Player, PlayerList, list}
+import de.github.dotsandboxes.lib.{PlayerType, BoardSize, PlayerSize, SquareCases, Move, Status, Player, PlayerList, list}
 
 case class Matrix(
   vecStatus: Vector[Vector[Status]],

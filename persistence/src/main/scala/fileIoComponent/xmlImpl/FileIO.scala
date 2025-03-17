@@ -7,7 +7,7 @@ import scala.util.{Success, Failure, Try}
 import fileIoComponent.FileIOInterface
 import fieldComponent.FieldInterface
 import fieldComponent.fieldImpl.Field
-import lib.{PlayerType, BoardSize, PlayerSize, Status}
+import de.github.dotsandboxes.lib.{PlayerType, BoardSize, PlayerSize, Status}
 
 class FileIO extends FileIOInterface:
   override def save(field: FieldInterface): Either[String, String] =

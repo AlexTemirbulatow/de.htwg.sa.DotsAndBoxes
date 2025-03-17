@@ -1,10 +1,8 @@
-val scala3Version = "3.5.0"
+val scala3Version = "3.6.4"
 val akkaVersion = "2.8.5"
 val akkaHttpVersion = "10.5.3"
 
 lazy val dependencies = Seq(
-  version := "0.1.0-SNAPSHOT",
-  scalaVersion := scala3Version,
   libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.14",
   libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.14" % Test,
   libraryDependencies += ("org.scala-lang.modules" %% "scala-swing" % "3.0.0").cross(CrossVersion.for3Use2_13),
@@ -15,72 +13,86 @@ lazy val dependencies = Seq(
   libraryDependencies += "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
   libraryDependencies += "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   libraryDependencies += "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
-  libraryDependencies += "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion
+  libraryDependencies += "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion,
+  externalResolvers += "Github Packages" at "https://maven.pkg.github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes.library",
+  credentials += Credentials(
+    "GitHub Package Registry",
+    "maven.pkg.github.com",
+    sys.env.getOrElse("GITHUB_USERNAME", ""),
+    sys.env.getOrElse("GITHUB_TOKEN", "")
+  ),
+  libraryDependencies += "com.github.AlexTemirbulatow" %% "dotsandboxes" % "0.1.2-SNAPSHOT"
 )
 
 lazy val root = project
   .in(file("."))
   .settings(
     name := "dotsandboxes",
+    version := "0.1.0-SNAPSHOT",
+    scalaVersion := scala3Version,
     dependencies
   )
-  .dependsOn(util, core, model, computer, persistence, gui, tui)
-  .aggregate(util, core, model, computer, persistence, gui, tui)
-
-lazy val util = project
-  .in(file("util"))
-  .settings(
-    name := "util",
-    scalaVersion := scala3Version
-  )
+  .dependsOn(core, model, computer, persistence, gui, tui)
+  .aggregate(core, model, computer, persistence, gui, tui)
 
 lazy val core = project
   .in(file("core"))
   .settings(
     name := "core",
+    version := "0.1.0-SNAPSHOT",
+    scalaVersion := scala3Version,
     dependencies
   )
-  .dependsOn(util, model, computer, persistence)
+  .dependsOn(model, computer, persistence)
 
 lazy val model = project
   .in(file("model"))
   .settings(
     name := "model",
+    version := "0.1.0-SNAPSHOT",
+    scalaVersion := scala3Version,
     dependencies
   )
-  .dependsOn(util)
 
 lazy val computer = project
   .in(file("computer"))
   .settings(
     name := "computer",
+    version := "0.1.0-SNAPSHOT",
+    scalaVersion := scala3Version,
     dependencies
   )
-  .dependsOn(util, model)
+  .dependsOn(model)
 
 lazy val persistence = project
   .in(file("persistence"))
   .settings(
     name := "persistence",
+    version := "0.1.0-SNAPSHOT",
+    scalaVersion := scala3Version,
     dependencies
   )
-  .dependsOn(util, model)
+  .dependsOn(model)
 
 lazy val gui = project
   .in(file("gui"))
   .settings(
     name := "gui",
+    version := "0.1.0-SNAPSHOT",
+    scalaVersion := scala3Version,
     dependencies
   )
-  .dependsOn(util, core)
+  .dependsOn(core)
 
 lazy val tui = project
   .in(file("tui"))
   .settings(
     name := "tui",
+    version := "0.1.0-SNAPSHOT",
+    scalaVersion := scala3Version,
     dependencies
   )
-  .dependsOn(util, core)
+  .dependsOn(core)
 
 import org.scoverage.coveralls.Imports.CoverallsKeys.*
 

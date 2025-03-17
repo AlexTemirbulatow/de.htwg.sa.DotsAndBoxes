@@ -13,7 +13,7 @@ import java.io.{ByteArrayOutputStream, PrintStream}
 import controllerComponent.ControllerInterface
 import controllerComponent.controllerImpl.observer.Event
 import fieldComponent.FieldInterface
-import lib.{PackT, PlayerSize, PlayerType, BoardSize, ComputerDifficulty, Move}
+import de.github.dotsandboxes.lib.{PackT, PlayerSize, PlayerType, BoardSize, ComputerDifficulty, Move}
 
 class TUISpec extends AnyWordSpec with BeforeAndAfterEach {
   var mockController: ControllerInterface = uninitialized

@@ -6,7 +6,7 @@ import scala.util.{Failure, Success}
 
 import fieldComponent.FieldInterface
 import fieldComponent.fieldImpl.Field
-import lib.{BoardSize, PlayerSize, PlayerType, Status, Move}
+import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, Status, Move}
 
 class MoveValidatorSpec extends AnyWordSpec {
   "MoveHandler" should {

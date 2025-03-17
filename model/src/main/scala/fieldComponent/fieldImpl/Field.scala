@@ -3,7 +3,7 @@ package fieldComponent.fieldImpl
 import fieldComponent.FieldInterface
 import matrixComponent.MatrixInterface
 import matrixComponent.matrixImpl.Matrix
-import lib.{PlayerType, BoardSize, PlayerSize, SquareCases, Player, Status, Move}
+import de.github.dotsandboxes.lib.{PlayerType, BoardSize, PlayerSize, SquareCases, Player, Status, Move}
 import play.api.libs.json.{Json, JsObject, JsValue, JsLookupResult}
 import scala.util.Try
 
