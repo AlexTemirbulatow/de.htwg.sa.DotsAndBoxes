@@ -9,16 +9,28 @@ import javax.swing.border.{LineBorder, EmptyBorder}
 import scala.swing.event.{ButtonClicked, MouseClicked, MouseEntered, MouseExited}
 import scala.swing._
 
+import akka.http.scaladsl.Http
+import akka.actor.ActorSystem
+import spray.json.{JsBoolean, JsNumber, JsObject, JsString}
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpMethods, HttpRequest, HttpResponse, StatusCode}
+import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.duration.DurationInt
+
 import controllerComponent.ControllerInterface
-import controllerComponent.controllerImpl.observer.Observer
 import de.github.dotsandboxes.lib.{BoardSize, PlayerType, PlayerSize, ComputerDifficulty, Move, Event}
+import scala.util.Try
 
 enum ThemeType:
   case Light
   case Dark
 
-class GUI(using controller: ControllerInterface) extends Frame with Observer:
-  controller.add(this)
+class GUI(using controller: ControllerInterface) extends Frame:
+  private val CORE_HOST = "localhost"
+  private val CORE_PORT = "8082"
+  private val CORE_BASE_URL = s"http://$CORE_HOST:$CORE_PORT/"
+
+  implicit val system: ActorSystem = ActorSystem()
+  implicit val executionContext: ExecutionContext = system.dispatcher
 
   val panelSize: Dimension = new Dimension(800, 800)
 
@@ -97,7 +109,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       }
     }
 
-    val restartGameButton: Button = new Button(Action("") { if !inMainMenu then controller.publish(controller.restart) }) {
+    val restartGameButton: Button = new Button(Action("") { if !inMainMenu then controllerPublishHttp("restart") }) {
       icon = restart
       contentAreaFilled = false
       borderPainted = false
@@ -119,7 +131,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       }
     }
 
-    val undoButton: Button = new Button(Action("") { if !inMainMenu then controller.publish(controller.undo) }) {
+    val undoButton: Button = new Button(Action("") { if !inMainMenu then controllerPublishHttp("undo") }) {
       icon = undo
       contentAreaFilled = false
       borderPainted = false
@@ -141,7 +153,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       }
     }
 
-    val redoButton: Button = new Button(Action("") { if !inMainMenu then controller.publish(controller.redo) }) {
+    val redoButton: Button = new Button(Action("") { if !inMainMenu then controllerPublishHttp("redo") }) {
       icon = redo
       contentAreaFilled = false
       borderPainted = false
@@ -188,8 +200,8 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       tooltip = "Settings"
       cursor = new Cursor(Cursor.HAND_CURSOR)
       contents += MenuItem(Action("Exit") { update(Event.Abort) })
-      contents += MenuItem(Action("Save") { if !inMainMenu then controller.save })
-      contents += MenuItem(Action("Load") { if !inMainMenu then controller.load })
+      contents += MenuItem(Action("Save") { if !inMainMenu then controllerPublishHttp("save") })
+      contents += MenuItem(Action("Load") { if !inMainMenu then controllerPublishHttp("load") })
     }
 
     val menuBarPanel = new GridBagPanel {
@@ -395,7 +407,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
         case MouseEntered(_)  => background = new Color(63, 130, 160)
         case MouseExited(_)   => background = new Color(63, 144, 163)
         case ButtonClicked(_) =>
-          controller.initGame(
+          controllerInitGameHttp(
             selectedBoardSize,
             selectedPlayerSize,
             selectedPlayerType,
@@ -437,7 +449,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
     }
   }
 
-  override def update(event: Event): Unit = event match
+  def update(event: Event): Unit = event match
     case Event.Abort => sys.exit
     case Event.End   => switchContent(revise(playerResult)); inMainMenu = false
     case Event.Move  => switchContent(revise(if controller.gameEnded then playerResult else playerTurn)); inMainMenu = false
@@ -571,13 +583,13 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
 
     private def bar(row: Int, col: Int) =
       contents += dotImg
-      contents += CellButton(1, row, col, controller.getRowCell(row, col))
+      contents += CellButton(1, row, col, controllerRowCellHttp(row, col))
 
     private def cell(row: Int, col: Int) =
-      contents += CellButton(2, row, col, controller.getColCell(row, col))
+      contents += CellButton(2, row, col, controllerColCellHttp(row, col))
       if col != x then
         contents += new Label {
-          icon = controller.getStatusCell(row, col).toString match
+          icon = controllerStatusCellHttp(row, col) match
             case "-" => takenNone
             case "B" => takenBlue
             case "R" => takenRed
@@ -613,10 +625,69 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
 
     reactions += {
       case MouseClicked(source) =>
-        controller.publish(controller.put, Move(vec, x, y, true))
+        controllerPublishHttp(Move(vec, x, y, true))
       case MouseEntered(source) =>
         vec match
           case 1 => if !status then icon = untakenBar
           case 2 => if !status then icon = untakenCol
       case MouseExited(source) => if !status then icon = takenNone
     }
+
+  def getRequest(endpoint: String): Future[String] =
+    val request = HttpRequest(
+      method = HttpMethods.GET,
+      uri = CORE_BASE_URL.concat(endpoint)
+    )
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(request)
+    responseFuture.flatMap { response =>
+      response.entity.toStrict(5.seconds).map(_.data.utf8String)
+    }
+
+  def postRequest(endpoint: String, json: JsObject): Future[StatusCode] =
+    val request = HttpRequest(
+      method = HttpMethods.POST,
+      uri = CORE_BASE_URL.concat(endpoint),
+      entity = HttpEntity(ContentTypes.`application/json`, json.compactPrint)
+    )
+    Http().singleRequest(request).map(_.status)
+
+  def controllerStatusCellHttp(row: Int, col: Int): String =
+    Await.result(getRequest(s"api/core/get/statusCell/$row$col"), 5.seconds)
+
+  def controllerRowCellHttp(row: Int, col: Int): Boolean =
+    val value = Await.result(getRequest(s"api/core/get/rowCell/$row$col"), 5.seconds)
+    value.toBoolean
+
+  def controllerColCellHttp(row: Int, col: Int): Boolean =
+    val value = Await.result(getRequest(s"api/core/get/colCell/$row$col"), 5.seconds)
+    value.toBoolean
+
+  def controllerPublishHttp(move: Move): Future[StatusCode] =
+    val jsonBody = JsObject(
+      "method" -> JsString("put"),
+      "vec" -> JsNumber(move.vec),
+      "x" -> JsNumber(move.x),
+      "y" -> JsNumber(move.y),
+      "value" -> JsBoolean(move.value)
+    )
+    postRequest("api/core/publish", jsonBody)
+
+  def controllerPublishHttp(method: String): Future[StatusCode] =
+    val jsonBody = JsObject(
+      "method" -> JsString(method)
+    )
+    postRequest("api/core/publish", jsonBody)
+
+  def controllerInitGameHttp(
+      boardSize: BoardSize,
+      playerSize: PlayerSize,
+      playerType: PlayerType,
+      computerDifficulty: ComputerDifficulty
+  ): Future[StatusCode] =
+    val jsonBody = JsObject(
+      "boardSize" -> JsString(boardSize.toString),
+      "playerSize" -> JsString(playerSize.toString),
+      "playerType" -> JsString(playerType.toString),
+      "computerDifficulty" -> JsString(computerDifficulty.toString)
+    )
+    postRequest("api/core/publish", jsonBody)

@@ -7,6 +7,7 @@ import controllerComponent.ControllerInterface
 import play.api.libs.json.{JsValue, Json}
 import de.github.dotsandboxes.lib.{PlayerType, BoardSize, PlayerSize, Move, ComputerDifficulty, Status}
 import scala.util.Try
+import controllerComponent.controllerImpl.observer.ObserverHttp
 
 class CoreRoutes(val controller: ControllerInterface):
   def coreRoutes: Route = handleExceptions(exceptionHandler) {
@@ -14,7 +15,6 @@ class CoreRoutes(val controller: ControllerInterface):
       handleControllerToStringRequest,
       handleGameDataRequests,
       handleInitGameRequest,
-      handleRestartRequest,
       handlePublishRequests
     )
   }
@@ -52,13 +52,6 @@ class CoreRoutes(val controller: ControllerInterface):
     } ~
     path("stats") {
       complete(controller.stats)
-    }
-  }
-
-  private def handleRestartRequest: Route = get {
-    path("restart") {
-      controller.restart
-      complete(OK)
     }
   }
 
@@ -108,6 +101,17 @@ class CoreRoutes(val controller: ControllerInterface):
           case _ =>
             complete(BadRequest, "Invalid method")
         }
+      }
+    }
+  }
+
+  private def registerObserverRequest: Route = post {
+    path("registerObserver") {
+      entity(as[String]) { json =>
+        val jsonValue: JsValue = Json.parse(json)
+        val observerUrl: String = (jsonValue \ "url").as[String]
+        controller.add(new ObserverHttp(observerUrl))
+        complete(OK)  
       }
     }
   }

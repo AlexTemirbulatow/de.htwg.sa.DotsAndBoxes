@@ -11,6 +11,10 @@ import scala.util.{Failure, Success, Try}
 import spray.json.{JsBoolean, JsNumber, JsObject, JsString}
 
 class TUI:
+  private val CORE_HOST = "localhost"
+  private val CORE_PORT = "8082"
+  private val CORE_BASE_URL = s"http://$CORE_HOST:$CORE_PORT/"
+
   implicit val system: ActorSystem = ActorSystem()
   implicit val executionContext: ExecutionContext = system.dispatcher
 
@@ -60,30 +64,27 @@ class TUI:
   def checkSyntax(vec: Char, x: Char, y: Char): Try[(Int, Int, Int)] =
     Try(vec.toString.toInt, x.toString.toInt, y.toString.toInt)
 
-  def getRequest(url: String): Future[String] =
+  def getRequest(endpoint: String): Future[String] =
     val request = HttpRequest(
       method = HttpMethods.GET,
-      uri = url
+      uri = CORE_BASE_URL.concat(endpoint)
     )
     val responseFuture: Future[HttpResponse] = Http().singleRequest(request)
     responseFuture.flatMap { response =>
       response.entity.toStrict(5.seconds).map(_.data.utf8String)
     }
 
-  def postRequest(url: String, json: JsObject): Future[StatusCode] =
+  def postRequest(endpoint: String, json: JsObject): Future[StatusCode] =
     val request = HttpRequest(
       method = HttpMethods.POST,
-      uri = url,
+      uri = CORE_BASE_URL.concat(endpoint),
       entity = HttpEntity(ContentTypes.`application/json`, json.compactPrint)
     )
     Http().singleRequest(request).map(_.status)
 
-  def controllerToStringHttp: String =
-    val requestUrl = "http://localhost:8082/api/core/"
-    Await.result(getRequest(requestUrl), 5.seconds)
+  def controllerToStringHttp: String = Await.result(getRequest("api/core/"), 5.seconds)
 
   def controllerPublishHttp(move: Move): Future[StatusCode] =
-    val requestUrl = "http://localhost:8082/api/core/publish"
     val jsonBody = JsObject(
       "method" -> JsString("put"),
       "vec" -> JsNumber(move.vec),
@@ -91,14 +92,13 @@ class TUI:
       "y" -> JsNumber(move.y),
       "value" -> JsBoolean(move.value)
     )
-    postRequest(requestUrl, jsonBody)
+    postRequest("api/core/publish", jsonBody)
 
-  def controllerPublishHttp(operation: String): Future[StatusCode] =
-    val requestUrl = "http://localhost:8082/api/core/publish"
+  def controllerPublishHttp(method: String): Future[StatusCode] =
     val jsonBody = JsObject(
-      "method" -> JsString(operation)
+      "method" -> JsString(method)
     )
-    postRequest(requestUrl, jsonBody)
+    postRequest("api/core/publish", jsonBody)
 
   def controllerInitGameHttp(
       boardSize: BoardSize,
@@ -106,20 +106,17 @@ class TUI:
       playerType: PlayerType,
       computerDifficulty: ComputerDifficulty
   ): Future[StatusCode] =
-    val requestUrl = "http://localhost:8082/api/core/publish"
     val jsonBody = JsObject(
       "boardSize" -> JsString(boardSize.toString),
       "playerSize" -> JsString(playerSize.toString),
       "playerType" -> JsString(playerType.toString),
       "computerDifficulty" -> JsString(computerDifficulty.toString)
     )
-    postRequest(requestUrl, jsonBody)
+    postRequest("api/core/publish", jsonBody)
 
   def finalStatsHttp: String =
-    val requestUrlWinner = "http://localhost:8082/api/core/get/winner"
-    val requestUrlStats = "http://localhost:8082/api/core/get/stats"
-    val winner = Await.result(getRequest(requestUrlWinner), 5.seconds)
-    val stats = Await.result(getRequest(requestUrlStats), 5.seconds)
+    val winner = Await.result(getRequest("api/core/get/winner"), 5.seconds)
+    val stats  = Await.result(getRequest("api/core/get/stats"), 5.seconds)
     "\n" +
       winner + "\n" +
       "_________________________" + "\n\n" +

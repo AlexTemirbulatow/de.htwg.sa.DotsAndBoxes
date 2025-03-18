@@ -1,2 +1,2 @@
 object TUIService:
-  @main def startTUI: Unit = api.server.TUIHttpServer.run
+  @main def startTuiServer: Unit = api.server.TUIHttpServer.run

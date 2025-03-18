@@ -95,4 +95,4 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, v
 
   override def toString: String =
     def moveString: String = if !gameEnded then "Your Move <Line><X><Y>: " else ""
-    s"\n\n${field.toString}\n${currentPlayer}s turn\n[points: ${currentPoints}]\n\n${moveString}"
+    s"\n${field.toString}\n${currentPlayer}s turn\n[points: ${currentPoints}]\n\n${moveString}"
