@@ -6,16 +6,16 @@ import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpMethods, HttpRequest}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import api.routes.TUIRoutes
+import api.routes.GUIRoutes
+import guiComponent.GUI
 import org.slf4j.LoggerFactory
-import scala.concurrent.{ExecutionContext}
-import tuiComponent.TUI
 import play.api.libs.json.Json
+import scala.concurrent.ExecutionContext
 
-object TUIHttpServer:
-  private val TUI_HOST = "localhost"
-  private val TUI_PORT = 8084
-  private val TUI_OBSERVER_URL = s"http://$TUI_HOST:$TUI_PORT/api/tui/update"
+object GUIHttpServer:
+  private val GUI_HOST = "localhost"
+  private val GUI_PORT = 8085
+  private val GUI_OBSERVER_URL = s"http://$GUI_HOST:$GUI_PORT/api/gui/update"
   private val CORE_OBSERVER_URL = "http://localhost:8082/api/core/registerObserver"
 
   implicit val system: ActorSystem = ActorSystem()
@@ -24,32 +24,30 @@ object TUIHttpServer:
   private val logger = LoggerFactory.getLogger(getClass)
 
   def run: Unit =
-    registerObserverHttp(TUI_OBSERVER_URL)
-    val tui = new TUI
+    registerObserverHttp(GUI_OBSERVER_URL)
+    //val gui = GUI()
     val server = Http()
-      .newServerAt(TUI_HOST, TUI_PORT)
-      .bind(routes(TUIRoutes(tui)))
-    tui.run
+      .newServerAt(GUI_HOST, GUI_PORT)
 
-  private def routes(tuiRoutes: TUIRoutes): Route =
+  private def routes(guiRoutes: GUIRoutes): Route =
     pathPrefix("api") {
       concat(
         pathPrefix("tui") {
           concat(
-            tuiRoutes.tuiRoutes
+            guiRoutes.guiRoutes
           )
         }
       )
     }
 
-  private def registerObserverHttp(tuiObserverUrl: String): Unit =
+  private def registerObserverHttp(guiObserverUrl: String): Unit =
     Http().singleRequest(
       HttpRequest(
         method = HttpMethods.POST,
         uri = CORE_OBSERVER_URL,
         entity = HttpEntity(
           ContentTypes.`application/json`,
-          Json.obj("url" -> tuiObserverUrl).toString
+          Json.obj("url" -> guiObserverUrl).toString
         )
       )
     )

@@ -14,8 +14,10 @@ class CoreRoutes(val controller: ControllerInterface):
     concat(
       handleControllerToStringRequest,
       handleGameDataRequests,
+      handleRestartGameRequest,
       handleInitGameRequest,
-      handlePublishRequests
+      handlePublishRequests,
+      handleRegisterObserverRequest
     )
   }
 
@@ -47,11 +49,24 @@ class CoreRoutes(val controller: ControllerInterface):
     path("gameEnded") {
       complete(controller.gameEnded.toString)
     } ~
+    path("currentPlayer") {
+      complete(controller.currentPlayer)
+    } ~
+    path("currentPoints") {
+      complete(controller.currentPoints.toString)
+    } ~
     path("winner") {
       complete(controller.winner)
     } ~
     path("stats") {
       complete(controller.stats)
+    }
+  }
+
+  private def handleRestartGameRequest: Route = get {
+    path("restart") {
+      controller.restart
+      complete(OK)
     }
   }
 
@@ -74,7 +89,6 @@ class CoreRoutes(val controller: ControllerInterface):
       entity(as[String]) { json =>
         val jsonValue: JsValue = Json.parse(json)
         val method: String = (jsonValue \ "method").as[String]
-
         method match {
           case "put" =>
             val vec: Int = (jsonValue \ "vec").as[Int]
@@ -95,9 +109,6 @@ class CoreRoutes(val controller: ControllerInterface):
           case "load" =>
             controller.publish(controller.load)
             complete(OK)
-          case "restart" =>
-            controller.restart
-            complete(OK)
           case _ =>
             complete(BadRequest, "Invalid method")
         }
@@ -105,7 +116,7 @@ class CoreRoutes(val controller: ControllerInterface):
     }
   }
 
-  private def registerObserverRequest: Route = post {
+  private def handleRegisterObserverRequest: Route = post {
     path("registerObserver") {
       entity(as[String]) { json =>
         val jsonValue: JsValue = Json.parse(json)

@@ -452,7 +452,7 @@ class GUI(using controller: ControllerInterface) extends Frame:
   def update(event: Event): Unit = event match
     case Event.Abort => sys.exit
     case Event.End   => switchContent(revise(playerResult)); inMainMenu = false
-    case Event.Move  => switchContent(revise(if controller.gameEnded then playerResult else playerTurn)); inMainMenu = false
+    case Event.Move  => switchContent(revise(if controllerGameEndedHttp then playerResult else playerTurn)); inMainMenu = false
 
   override def closeOperation: Unit = update(Event.Abort)
 
@@ -479,7 +479,7 @@ class GUI(using controller: ControllerInterface) extends Frame:
     if inMainMenu then switchContent(setupMainMenu) else update(Event.Move)
     
   def fieldSize(): (Int, Int) =
-    (controller.colSize() - 1, controller.rowSize() - 1)
+    (controllerColSize - 1, controllerRowSize - 1)
 
   def gridSize(fieldSize: (Int, Int)): (Int, Int) =
     ((fieldSize._1 + fieldSize._1 + 1), (fieldSize._2 + fieldSize._2 + 1))
@@ -495,13 +495,13 @@ class GUI(using controller: ControllerInterface) extends Frame:
   def playerTurn: FlowPanel = new FlowPanel {
     background = currentTheme._1
     contents += new Label {
-      icon = controller.currentPlayer.toString match
+      icon = controllerCurrentPlayerHttp match
         case "Blue"   => if controller.playerList(0).playerType == PlayerType.Human then playerBlue else playerBlueComputer
         case "Red"    => if controller.playerList(1).playerType == PlayerType.Human then playerRed else playerRedComputer
         case "Green"  => if controller.playerList(2).playerType == PlayerType.Human then playerGreen else playerGreenComputer
         case "Yellow" => if controller.playerList(3).playerType == PlayerType.Human then playerYellow else playerYellowComputer
     }
-    val label = Label(s" Turn [points: ${controller.currentPoints}]")
+    val label = Label(s" Turn [points: ${controllerCurrentPointsHttp}]")
     label.foreground = currentTheme._3
     label.font = Font("Comic Sans MS", 0, 35)
     contents += label
@@ -514,10 +514,10 @@ class GUI(using controller: ControllerInterface) extends Frame:
   def playerResult: FlowPanel = new FlowPanel {
     background = currentTheme._1
     val fontType = Font("Comic Sans MS", 0, 35)
-    controller.winner match
+    controllerWinnerHttp match
       case "It's a draw!" =>
         contents += new Label {
-          val label = Label(controller.winner)
+          val label = Label(controllerWinnerHttp)
           label.font = fontType
           label.foreground = currentTheme._3
           label.border = LineBorder(currentTheme._1, 10)
@@ -525,7 +525,7 @@ class GUI(using controller: ControllerInterface) extends Frame:
         }
       case _ =>
         contents += new Label {
-          icon = controller.winner.substring(7) match
+          icon = controllerWinnerHttp.substring(7) match
             case "Blue wins!"   => if controller.playerList(0).playerType == PlayerType.Human then playerBlue else playerBlueComputer
             case "Red wins!"    => if controller.playerList(1).playerType == PlayerType.Human then playerRed else playerRedComputer
             case "Green wins!"  => if controller.playerList(2).playerType == PlayerType.Human then playerGreen else playerGreenComputer
@@ -655,12 +655,28 @@ class GUI(using controller: ControllerInterface) extends Frame:
     Await.result(getRequest(s"api/core/get/statusCell/$row$col"), 5.seconds)
 
   def controllerRowCellHttp(row: Int, col: Int): Boolean =
-    val value = Await.result(getRequest(s"api/core/get/rowCell/$row$col"), 5.seconds)
-    value.toBoolean
+    Await.result(getRequest(s"api/core/get/rowCell/$row$col"), 5.seconds).toBoolean
 
   def controllerColCellHttp(row: Int, col: Int): Boolean =
-    val value = Await.result(getRequest(s"api/core/get/colCell/$row$col"), 5.seconds)
-    value.toBoolean
+    Await.result(getRequest(s"api/core/get/colCell/$row$col"), 5.seconds).toBoolean
+
+  def controllerRowSize: Int =
+    Await.result(getRequest(s"api/core/get/rowSize"), 5.seconds).toInt
+
+  def controllerColSize: Int =
+    Await.result(getRequest(s"api/core/get/colSize"), 5.seconds).toInt
+
+  def controllerGameEndedHttp: Boolean =
+    Await.result(getRequest(s"api/core/get/gameEnded"), 5.seconds).toBoolean
+
+  def controllerCurrentPlayerHttp: String =
+    Await.result(getRequest(s"api/core/get/currentPlayer"), 5.seconds)
+
+  def controllerCurrentPointsHttp: String =
+    Await.result(getRequest(s"api/core/get/currentPoints"), 5.seconds)
+
+  def controllerWinnerHttp: String =
+    Await.result(getRequest(s"api/core/get/winner"), 5.seconds)
 
   def controllerPublishHttp(move: Move): Future[StatusCode] =
     val jsonBody = JsObject(

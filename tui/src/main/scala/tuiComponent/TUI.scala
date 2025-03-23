@@ -41,7 +41,7 @@ class TUI:
     case "y" => controllerPublishHttp("redo"); None
     case "s" => controllerPublishHttp("save"); None
     case "l" => controllerPublishHttp("load"); None
-    case "r" => controllerPublishHttp("restart"); None
+    case "r" => controllerRestartHttp; None
     case "h" => println(help); None
     case newGame if newGame.startsWith("NEW: ") =>
       val numbers = newGame.split(": ")(1).split(" ")
@@ -99,6 +99,8 @@ class TUI:
       "method" -> JsString(method)
     )
     postRequest("api/core/publish", jsonBody)
+
+  def controllerRestartHttp: Future[String] = getRequest("api/core/restart")
 
   def controllerInitGameHttp(
       boardSize: BoardSize,
