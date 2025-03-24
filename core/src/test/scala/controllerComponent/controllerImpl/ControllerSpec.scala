@@ -454,16 +454,23 @@ class ControllerSpec extends AnyWordSpec with Eventually {
     }
     "make a computer move" in {
       val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Computer), new FileIO(), new ComputerMedium())
-      val newField: FieldInterface = Await.result(controller.computerMove(controller.field), 2.seconds)
-      val newField2: FieldInterface = Await.result(controller.computerMove(controller.field), 2.seconds)
+      val initField = controller.field
+      val futureField: Future[FieldInterface] = controller.computerMove(controller.field)
+      val updatedField = Await.result(futureField, 2.seconds)
+      updatedField should not be initField
+    }
+    "calculate a computer move" in {
+      val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Computer), new FileIO(), new ComputerMedium())
+      val initField = controller.field
+      val updatedField = controller.calculateComputerMove(controller.field)
+      updatedField should not be initField
 
-      val allCells = 
-        (for (x <- 0 until newField2.maxPosY; y <- 0 until newField2.maxPosY) 
+      val allCells =
+        (for (x <- 0 until updatedField.maxPosY; y <- 0 until updatedField.maxPosY) 
           yield controller.getRowCell(x, y)) ++ 
-        (for (x <- 0 until newField2.maxPosX; y <- 0 to newField2.maxPosY) 
+        (for (x <- 0 until updatedField.maxPosX; y <- 0 to updatedField.maxPosY) 
           yield controller.getColCell(x, y))
-
-      allCells.count(identity) shouldBe 2
+      allCells.count(identity) shouldBe 1
     }
     "handle bad computer move" in {
       val mockComputerImpl = mock(classOf[ComputerHard])
