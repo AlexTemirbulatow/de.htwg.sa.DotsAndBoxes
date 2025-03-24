@@ -1,22 +1,23 @@
 package controllerComponent
 package controllerImpl
 
-import scala.util.Try
-import scala.util.{Failure, Success}
-import controllerImpl.command.{PutCommand, UndoManager}
-import controllerImpl.moveStrategy.{EdgeState, MidState, MoveStrategy}
-import controllerImpl.playerStrategy.PlayerStrategy
-import controllerImpl.moveHandler.MoveValidator
 import computerComponent.ComputerInterface
 import computerComponent.computerEasyImpl.ComputerEasy
 import computerComponent.computerHardImpl.ComputerHard
 import computerComponent.computerMediumImpl.ComputerMedium
-import fieldComponent.fieldImpl.Field
+import controllerImpl.command.{PutCommand, UndoManager}
+import controllerImpl.moveHandler.MoveValidator
+import controllerImpl.moveStrategy.{EdgeState, MidState, MoveStrategy}
+import controllerImpl.playerStrategy.PlayerStrategy
+import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, Event, Move, Player, PlayerSize, PlayerType, Status}
 import fieldComponent.FieldInterface
+import fieldComponent.fieldImpl.Field
 import fileIoComponent.FileIOInterface
-import de.github.dotsandboxes.lib.{Move, PlayerType, BoardSize, ComputerDifficulty, PlayerSize, Status, Player, Event}
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Try, Failure, Success}
 
 class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, var computer: ComputerInterface) extends ControllerInterface:
+  given ExecutionContext = ExecutionContext.global
   val undoManager = new UndoManager
 
   override def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, difficulty: ComputerDifficulty): FieldInterface =
@@ -82,9 +83,14 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, v
         field = PlayerStrategy.updatePlayer(field, preStatus, postStatus)
         notifyObservers(Event.Move)
         if gameEnded then notifyObservers(Event.End); Success(field)
-        if field.currentPlayer.playerType == PlayerType.Computer then computerMove(field)
+        if !gameEnded && field.currentPlayer.playerType == PlayerType.Computer then computerMove(field)
         Success(field)
-  override def computerMove(field: FieldInterface): FieldInterface =
+  override def computerMove(field: FieldInterface): Future[FieldInterface] =
+    Future {
+      Thread.sleep(1000)
+      calculateComputerMove(field)
+    }
+  override def calculateComputerMove(field: FieldInterface): FieldInterface =
     val moveOption: Option[Move] = computer.calculateMove(field)
     moveOption match
       case Some(move) =>

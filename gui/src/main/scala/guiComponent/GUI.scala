@@ -84,12 +84,19 @@ class GUI extends Frame:
   val statsYellowComputer = ImageIcon("gui/src/main/resources/4_StatsYellowComputer.png")
 
   def run: Unit =
+    title = "Welcome to Dots And Boxes GUI"
+    iconImage = logo
+    resizable = false
+    menuBar = menuBarHeader
+    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
+    menuBar.border = Swing.EmptyBorder(5, 10, 0, 10)
+    menuBar.background = currentTheme._1
     update(Event.Move)
-
-  title = "Welcome to Dots And Boxes GUI"
-  iconImage = logo
-  resizable = false
-  menuBar = new MenuBar {
+    pack()
+    centerOnScreen()
+    open()
+  
+  val menuBarHeader = new MenuBar {
     val mainMenuButton: Button = new Button(Action("") { if inMainMenu then update(Event.Move) else switchContent(setupMainMenu) }) {
       icon = mainMenu
       contentAreaFilled = false
@@ -254,14 +261,6 @@ class GUI extends Frame:
 
     contents += menuBarPanel
   }
-
-  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
-  menuBar.border = Swing.EmptyBorder(5, 10, 0, 10)
-  menuBar.background = currentTheme._1
-  pack()
-  centerOnScreen()
-  open()
-
 
   def setupMainMenu: BoxPanel = {
     background = currentTheme._1

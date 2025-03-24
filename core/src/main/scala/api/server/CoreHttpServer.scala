@@ -24,8 +24,8 @@ object CoreHttpServer:
   def run: Unit =
     val server = Http()
       .newServerAt(CORE_HOST, CORE_PORT)
-      .bind(routes(CoreRoutes(given_ControllerInterface)))
-    logger.info(s"Core sever is running at http://$CORE_HOST:$CORE_PORT/api/\nPress RETURN to terminate...")
+      .bind(routes(CoreRoutes(given_ControllerInterface, logger)))
+    logger.info(s"Core sever is running at http://$CORE_HOST:$CORE_PORT/api/\n\nPress RETURN to terminate...\n")
     StdIn.readLine()
     shutDown(server)
 

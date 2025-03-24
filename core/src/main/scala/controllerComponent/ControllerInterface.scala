@@ -5,6 +5,7 @@ import controllerImpl.observer.Observable
 import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, Move, Player, PlayerSize, PlayerType, Status}
 import fieldComponent.FieldInterface
 import scala.util.Try
+import scala.concurrent.Future
 
 trait ControllerInterface extends Observable:
   def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, computerDifficulty: ComputerDifficulty): FieldInterface
@@ -33,5 +34,6 @@ trait ControllerInterface extends Observable:
   def stats: String
   def publish(doThis: => FieldInterface): FieldInterface
   def publish(doThis: Move => FieldInterface, move: Move): Try[FieldInterface]
-  def computerMove(field: FieldInterface): FieldInterface
+  def computerMove(field: FieldInterface): Future[FieldInterface]
+  def calculateComputerMove(field: FieldInterface): FieldInterface
   override def toString: String
