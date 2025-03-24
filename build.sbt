@@ -17,6 +17,9 @@ lazy val commonSettings = Seq(
     "org.scala-lang.modules" %% "scala-swing" % "3.0.0" cross CrossVersion.for3Use2_13,
     "org.scala-lang.modules" %% "scala-xml" % "2.1.0",
     "com.typesafe.play" %% "play-json" % "2.10.0-RC5",
+    "io.circe" %% "circe-core" % "0.14.1",
+    "io.circe" %% "circe-generic" % "0.14.1",
+    "io.circe" %% "circe-parser" % "0.14.1",
     "org.scalatestplus" %% "mockito-5-12" % "3.2.19.0" % Test,
     "ch.qos.logback" % "logback-classic" % "1.5.2",
     "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
@@ -84,7 +87,6 @@ lazy val gui = project
     scalaVersion := scala3Version
   )
   .settings(commonSettings)
-  .dependsOn(core)
 
 lazy val tui = project
   .in(file("tui"))

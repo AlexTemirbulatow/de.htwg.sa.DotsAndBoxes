@@ -8,6 +8,9 @@ import play.api.libs.json.{JsValue, Json}
 import de.github.dotsandboxes.lib.{PlayerType, BoardSize, PlayerSize, Move, ComputerDifficulty, Status}
 import scala.util.Try
 import controllerComponent.controllerImpl.observer.ObserverHttp
+import de.github.dotsandboxes.lib.Player
+import io.circe.generic.auto._
+import io.circe.syntax._
 
 class CoreRoutes(val controller: ControllerInterface):
   def coreRoutes: Route = handleExceptions(exceptionHandler) {
@@ -17,7 +20,8 @@ class CoreRoutes(val controller: ControllerInterface):
       handleRestartGameRequest,
       handleInitGameRequest,
       handlePublishRequests,
-      handleRegisterObserverRequest
+      handleRegisterObserverRequest,
+      handleDeregisterObserverRequest
     )
   }
 
@@ -28,6 +32,18 @@ class CoreRoutes(val controller: ControllerInterface):
   }
 
   private def handleGameDataRequests: Route = pathPrefix("get") {
+    path("boardSize") {
+      complete(controller.boardSize.toString)
+    } ~
+    path("playerSize") {
+      complete(controller.playerSize.toString)
+    } ~
+    path("playerType") {
+      complete(controller.playerType.toString)
+    } ~
+    path("computerDifficulty") {
+      complete(controller.computerDifficulty.toString)
+    } ~
     path("statusCell" / IntNumber / IntNumber) { (row, col) =>
       val status: Status = controller.getStatusCell(row, col)
       complete(status.toString)
@@ -48,6 +64,9 @@ class CoreRoutes(val controller: ControllerInterface):
     } ~
     path("gameEnded") {
       complete(controller.gameEnded.toString)
+    } ~
+    path("playerList") {
+      complete(controller.playerList.asJson.noSpaces)
     } ~
     path("currentPlayer") {
       complete(controller.currentPlayer)
@@ -123,6 +142,17 @@ class CoreRoutes(val controller: ControllerInterface):
         val observerUrl: String = (jsonValue \ "url").as[String]
         controller.add(new ObserverHttp(observerUrl))
         complete(OK)  
+      }
+    }
+  }
+
+  private def handleDeregisterObserverRequest: Route = post {
+    path("deregisterObserver") {
+      entity(as[String]) { json =>
+        val jsonValue: JsValue = Json.parse(json)
+        val observerUrl: String = (jsonValue \ "url").as[String]
+        controller.remove(observerUrl)
+        complete(OK)
       }
     }
   }

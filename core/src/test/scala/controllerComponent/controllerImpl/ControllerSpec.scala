@@ -30,10 +30,11 @@ class ControllerSpec extends AnyWordSpec {
         controller.add(this)
         var bing = false
         def update(e: Event) = bing = true
+        def url = "testUrl"
       val testObserver = TestObserver(controller)
 
       controller.toString should be(
-        "\n\n" +
+        "\n" +
           "O-------O-------O-------O-------O\n" +
           "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
           "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
@@ -59,7 +60,7 @@ class ControllerSpec extends AnyWordSpec {
       controller.colSize() should be(5)
 
       controller.toString should be(
-        "\n\n" +
+        "\n" +
           "O=======O-------O-------O-------O\n" +
           "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
           "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
@@ -76,7 +77,7 @@ class ControllerSpec extends AnyWordSpec {
       )
       controller.publish(controller.put, Move(1, 1, 1, true))
       controller.toString should be(
-        "\n\n" +
+        "\n" +
           "O=======O-------O-------O-------O\n" +
           "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
           "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
@@ -93,7 +94,7 @@ class ControllerSpec extends AnyWordSpec {
       )
       controller.publish(controller.put, Move(2, 0, 1, true))
       controller.toString should be(
-        "\n\n" +
+        "\n" +
           "O=======O-------O-------O-------O\n" +
           "¦   -   ‖   -   ¦   -   ¦   -   ¦\n" +
           "¦   -   ‖   -   ¦   -   ¦   -   ¦\n" +
@@ -114,7 +115,7 @@ class ControllerSpec extends AnyWordSpec {
       controller.currentPoints should be(1)
       controller.currentPlayer should be("Red")
       controller.toString should be(
-        "\n\n" +
+        "\n" +
           "O=======O-------O-------O-------O\n" +
           "‖   R   ‖   -   ¦   -   ¦   -   ¦\n" +
           "‖   R   ‖   -   ¦   -   ¦   -   ¦\n" +
@@ -139,7 +140,7 @@ class ControllerSpec extends AnyWordSpec {
       controller.publish(controller.put, Move(2, 1, 0, true))
       controller.publish(controller.put, Move(2, 0, 3, true))
       controller.toString should be(
-        "\n\n" +
+        "\n" +
           "O=======O=======O=======O=======O\n" +
           "‖   R   ‖   B   ‖   G   ‖   G   ‖\n" +
           "‖   R   ‖   B   ‖   G   ‖   G   ‖\n" +
@@ -175,7 +176,7 @@ class ControllerSpec extends AnyWordSpec {
       controller.publish(controller.put, Move(1, 3, 3, true))
       controller.currentPoints should be(9)
       controller.toString should be(
-        "\n\n" +
+        "\n" +
           "O=======O=======O=======O=======O\n" +
           "‖   R   ‖   B   ‖   G   ‖   G   ‖\n" +
           "‖   R   ‖   B   ‖   G   ‖   G   ‖\n" +
@@ -199,7 +200,7 @@ class ControllerSpec extends AnyWordSpec {
           "Player Green [points: 9]"
       )
 
-      controller.remove(testObserver)
+      controller.remove("testUrl")
     }
     "be able to undo and redo" in {
       val controller = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), new FileIO(), new ComputerMedium())
@@ -328,7 +329,7 @@ class ControllerSpec extends AnyWordSpec {
       controller.publish(controller.put, Move(2, 0, 9, true))
       /* no change */
       controller.toString should be(
-        "\n\n" +
+        "\n" +
           "O=======O-------O-------O-------O\n" +
           "‖   R   ‖   -   ¦   -   ¦   -   ¦\n" +
           "‖   R   ‖   -   ¦   -   ¦   -   ¦\n" +

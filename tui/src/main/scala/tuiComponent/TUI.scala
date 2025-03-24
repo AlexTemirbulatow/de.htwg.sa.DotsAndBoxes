@@ -9,6 +9,7 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}
 import spray.json.{JsBoolean, JsNumber, JsObject, JsString}
+import org.slf4j.LoggerFactory
 
 class TUI:
   private val CORE_HOST = "localhost"
@@ -18,6 +19,8 @@ class TUI:
   implicit val system: ActorSystem = ActorSystem()
   implicit val executionContext: ExecutionContext = system.dispatcher
 
+  private val logger = LoggerFactory.getLogger(getClass)
+
   def run: Unit =
     println(welcome)
     println(help)
@@ -25,7 +28,7 @@ class TUI:
     gameLoop
 
   def update(event: Event): Unit = event match
-    case Event.Abort => sys.exit
+    case Event.Abort => sys.exit; system.terminate()
     case Event.End   => print(finalStatsHttp)
     case Event.Move  => print(controllerToStringHttp)
 
@@ -114,7 +117,7 @@ class TUI:
       "playerType" -> JsString(playerType.toString),
       "computerDifficulty" -> JsString(computerDifficulty.toString)
     )
-    postRequest("api/core/publish", jsonBody)
+    postRequest("api/core/initGame", jsonBody)
 
   def finalStatsHttp: String =
     val winner = Await.result(getRequest("api/core/get/winner"), 5.seconds)

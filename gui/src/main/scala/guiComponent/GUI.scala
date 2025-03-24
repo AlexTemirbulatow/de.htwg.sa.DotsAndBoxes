@@ -15,22 +15,23 @@ import spray.json.{JsBoolean, JsNumber, JsObject, JsString}
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpMethods, HttpRequest, HttpResponse, StatusCode}
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration.DurationInt
-
-import controllerComponent.ControllerInterface
-import de.github.dotsandboxes.lib.{BoardSize, PlayerType, PlayerSize, ComputerDifficulty, Move, Event}
 import scala.util.Try
+import org.slf4j.LoggerFactory
+import de.github.dotsandboxes.lib.{BoardSize, Player, PlayerType, PlayerSize, ComputerDifficulty, Move, Event}
 
 enum ThemeType:
   case Light
   case Dark
 
-class GUI(using controller: ControllerInterface) extends Frame:
+class GUI extends Frame:
   private val CORE_HOST = "localhost"
   private val CORE_PORT = "8082"
   private val CORE_BASE_URL = s"http://$CORE_HOST:$CORE_PORT/"
 
   implicit val system: ActorSystem = ActorSystem()
   implicit val executionContext: ExecutionContext = system.dispatcher
+
+  private val logger = LoggerFactory.getLogger(getClass)
 
   val panelSize: Dimension = new Dimension(800, 800)
 
@@ -82,6 +83,9 @@ class GUI(using controller: ControllerInterface) extends Frame:
   val statsYellow = ImageIcon("gui/src/main/resources/4_StatsYellow.png")
   val statsYellowComputer = ImageIcon("gui/src/main/resources/4_StatsYellowComputer.png")
 
+  def run: Unit =
+    update(Event.Move)
+
   title = "Welcome to Dots And Boxes GUI"
   iconImage = logo
   resizable = false
@@ -109,7 +113,7 @@ class GUI(using controller: ControllerInterface) extends Frame:
       }
     }
 
-    val restartGameButton: Button = new Button(Action("") { if !inMainMenu then controllerPublishHttp("restart") }) {
+    val restartGameButton: Button = new Button(Action("") { if !inMainMenu then controllerRestartHttp }) {
       icon = restart
       contentAreaFilled = false
       borderPainted = false
@@ -254,7 +258,6 @@ class GUI(using controller: ControllerInterface) extends Frame:
   UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
   menuBar.border = Swing.EmptyBorder(5, 10, 0, 10)
   menuBar.background = currentTheme._1
-  update(Event.Move)
   pack()
   centerOnScreen()
   open()
@@ -339,17 +342,17 @@ class GUI(using controller: ControllerInterface) extends Frame:
       border = Swing.EmptyBorder(0, 0, 0, 0)
     }
 
-    var selectedBoardSize: BoardSize = controller.boardSize
-    var selectedPlayerSize: PlayerSize = controller.playerSize
-    var selectedPlayerType: PlayerType = controller.playerType
-    var selectedDifficulty: ComputerDifficulty = controller.computerDifficulty
+    var selectedBoardSize: BoardSize = controllerBoardSizeHttp
+    var selectedPlayerSize: PlayerSize = controllerPlayerSizeHttp
+    var selectedPlayerType: PlayerType = controllerPlayerTypeHttp
+    var selectedDifficulty: ComputerDifficulty = controllerComputerDifficulty
 
     val boardSelection = createSelectionPanel(
       "Board Size",
       BoardSize.values.toSeq,
       b => s"${b.dimensions._1} x ${b.dimensions._2}",
       selectedBoardSize = _,
-      controller.boardSize.ordinal
+      selectedBoardSize.ordinal
     )
 
     val playerSelection = createSelectionPanel(
@@ -357,7 +360,7 @@ class GUI(using controller: ControllerInterface) extends Frame:
       PlayerSize.values.toSeq,
       p => s"${p.size} Players",
       selectedPlayerSize = _,
-      controller.playerSize.ordinal
+      selectedPlayerSize.ordinal
     )
 
     val playerTypeSelection = createSelectionPanel(
@@ -365,7 +368,7 @@ class GUI(using controller: ControllerInterface) extends Frame:
       PlayerType.values.toSeq,
       h => if (h == PlayerType.Human) "Humans" else "Computers",
       selectedPlayerType = _,
-      controller.playerType.ordinal
+      selectedPlayerType.ordinal
     )
 
     val difficultySelection = createSelectionPanel(
@@ -373,7 +376,7 @@ class GUI(using controller: ControllerInterface) extends Frame:
       ComputerDifficulty.values.toSeq,
       d => d.toString,
       selectedDifficulty = _,
-      controller.computerDifficulty.ordinal
+      selectedDifficulty.ordinal
     )
 
     val returnButton = new Button("Return") {
@@ -450,7 +453,7 @@ class GUI(using controller: ControllerInterface) extends Frame:
   }
 
   def update(event: Event): Unit = event match
-    case Event.Abort => sys.exit
+    case Event.Abort => sys.exit; system.terminate()
     case Event.End   => switchContent(revise(playerResult)); inMainMenu = false
     case Event.Move  => switchContent(revise(if controllerGameEndedHttp then playerResult else playerTurn)); inMainMenu = false
 
@@ -496,10 +499,10 @@ class GUI(using controller: ControllerInterface) extends Frame:
     background = currentTheme._1
     contents += new Label {
       icon = controllerCurrentPlayerHttp match
-        case "Blue"   => if controller.playerList(0).playerType == PlayerType.Human then playerBlue else playerBlueComputer
-        case "Red"    => if controller.playerList(1).playerType == PlayerType.Human then playerRed else playerRedComputer
-        case "Green"  => if controller.playerList(2).playerType == PlayerType.Human then playerGreen else playerGreenComputer
-        case "Yellow" => if controller.playerList(3).playerType == PlayerType.Human then playerYellow else playerYellowComputer
+        case "Blue"   => if controllerPlayerListHttp(0).playerType == PlayerType.Human then playerBlue else playerBlueComputer
+        case "Red"    => if controllerPlayerListHttp(1).playerType == PlayerType.Human then playerRed else playerRedComputer
+        case "Green"  => if controllerPlayerListHttp(2).playerType == PlayerType.Human then playerGreen else playerGreenComputer
+        case "Yellow" => if controllerPlayerListHttp(3).playerType == PlayerType.Human then playerYellow else playerYellowComputer
     }
     val label = Label(s" Turn [points: ${controllerCurrentPointsHttp}]")
     label.foreground = currentTheme._3
@@ -526,10 +529,10 @@ class GUI(using controller: ControllerInterface) extends Frame:
       case _ =>
         contents += new Label {
           icon = controllerWinnerHttp.substring(7) match
-            case "Blue wins!"   => if controller.playerList(0).playerType == PlayerType.Human then playerBlue else playerBlueComputer
-            case "Red wins!"    => if controller.playerList(1).playerType == PlayerType.Human then playerRed else playerRedComputer
-            case "Green wins!"  => if controller.playerList(2).playerType == PlayerType.Human then playerGreen else playerGreenComputer
-            case "Yellow wins!" => if controller.playerList(3).playerType == PlayerType.Human then playerYellow else playerYellowComputer
+            case "Blue wins!"   => if controllerPlayerListHttp(0).playerType == PlayerType.Human then playerBlue else playerBlueComputer
+            case "Red wins!"    => if controllerPlayerListHttp(1).playerType == PlayerType.Human then playerRed else playerRedComputer
+            case "Green wins!"  => if controllerPlayerListHttp(2).playerType == PlayerType.Human then playerGreen else playerGreenComputer
+            case "Yellow wins!" => if controllerPlayerListHttp(3).playerType == PlayerType.Human then playerYellow else playerYellowComputer
         }
         val label = Label(" wins!")
         label.font = fontType
@@ -543,7 +546,7 @@ class GUI(using controller: ControllerInterface) extends Frame:
 
   def playerScoreboard: FlowPanel = new FlowPanel {
     background = currentTheme._2
-    contents ++= controller.playerList.map { player =>
+    contents ++= controllerPlayerListHttp.map { player =>
       val label = new Label {
         icon = player.playerId match
           case "Blue"   => if player.playerType == PlayerType.Human then statsBlue else statsBlueComputer
@@ -651,14 +654,36 @@ class GUI(using controller: ControllerInterface) extends Frame:
     )
     Http().singleRequest(request).map(_.status)
 
+  def controllerPlayerListHttp: Vector[Player] =
+    import io.circe.parser.decode
+    import io.circe.generic.auto._
+    val jsonString = Await.result(getRequest("api/core/get/playerList"), 5.seconds)
+    val decodedPlayers = decode[Vector[Player]](jsonString)
+    return decodedPlayers match {
+      case Right(playerList) => playerList
+      case Left(_) => Vector.empty
+    }
+
+  def controllerBoardSizeHttp: BoardSize =
+    Try(BoardSize.valueOf(Await.result(getRequest("api/core/get/boardSize"), 5.seconds))).getOrElse(BoardSize.Medium)
+
+  def controllerPlayerSizeHttp: PlayerSize =
+    Try(PlayerSize.valueOf(Await.result(getRequest("api/core/get/playerSize"), 5.seconds))).getOrElse(PlayerSize.Two)
+
+  def controllerPlayerTypeHttp: PlayerType =
+    Try(PlayerType.valueOf(Await.result(getRequest("api/core/get/playerType"), 5.seconds))).getOrElse(PlayerType.Human)
+
+  def controllerComputerDifficulty: ComputerDifficulty =
+    Try(ComputerDifficulty.valueOf(Await.result(getRequest("api/core/get/computerDifficulty"), 5.seconds))).getOrElse(ComputerDifficulty.Medium)
+
   def controllerStatusCellHttp(row: Int, col: Int): String =
-    Await.result(getRequest(s"api/core/get/statusCell/$row$col"), 5.seconds)
+    Await.result(getRequest(s"api/core/get/statusCell/$row/$col"), 5.seconds)
 
   def controllerRowCellHttp(row: Int, col: Int): Boolean =
-    Await.result(getRequest(s"api/core/get/rowCell/$row$col"), 5.seconds).toBoolean
+    Await.result(getRequest(s"api/core/get/rowCell/$row/$col"), 5.seconds).toBoolean
 
   def controllerColCellHttp(row: Int, col: Int): Boolean =
-    Await.result(getRequest(s"api/core/get/colCell/$row$col"), 5.seconds).toBoolean
+    Await.result(getRequest(s"api/core/get/colCell/$row/$col"), 5.seconds).toBoolean
 
   def controllerRowSize: Int =
     Await.result(getRequest(s"api/core/get/rowSize"), 5.seconds).toInt
@@ -694,6 +719,8 @@ class GUI(using controller: ControllerInterface) extends Frame:
     )
     postRequest("api/core/publish", jsonBody)
 
+  def controllerRestartHttp: Future[String] = getRequest("api/core/restart")
+
   def controllerInitGameHttp(
       boardSize: BoardSize,
       playerSize: PlayerSize,
@@ -706,4 +733,4 @@ class GUI(using controller: ControllerInterface) extends Frame:
       "playerType" -> JsString(playerType.toString),
       "computerDifficulty" -> JsString(computerDifficulty.toString)
     )
-    postRequest("api/core/publish", jsonBody)
+    postRequest("api/core/initGame", jsonBody)
