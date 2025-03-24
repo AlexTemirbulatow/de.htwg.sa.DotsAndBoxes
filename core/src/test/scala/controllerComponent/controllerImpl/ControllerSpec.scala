@@ -1,10 +1,13 @@
 package controllerComponent
 package controllerImpl
 
+import org.scalatest.concurrent.Eventually
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 import org.mockito.Mockito._
 import scala.util.Failure
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration._
 
 import observer.Observer
 import fieldComponent.FieldInterface
@@ -17,7 +20,9 @@ import computerComponent.computerHardImpl.ComputerHard
 import computerComponent.ComputerInterface
 import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, ComputerDifficulty, Player, Status, Move, Event}
 
-class ControllerSpec extends AnyWordSpec {
+
+class ControllerSpec extends AnyWordSpec with Eventually {
+  implicit override val patienceConfig: PatienceConfig = PatienceConfig(timeout = 3.seconds, interval = 200.millis)
   val controller = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Three, PlayerType.Human), new FileIO(), new ComputerMedium())
   "The Controller" should {
     "put a connected line on the field when a move is made" in {
@@ -437,22 +442,25 @@ class ControllerSpec extends AnyWordSpec {
       controller.publish(controller.put, Move(1, 0, 0, true))
       controller.getRowCell(0, 0) should be(true)
 
-      val allCells = 
-        (for (x <- 0 until controller.field.maxPosY; y <- 0 until controller.field.maxPosY) 
-          yield controller.getRowCell(x, y)) ++ 
-        (for (x <- 0 until controller.field.maxPosX; y <- 0 to controller.field.maxPosY) 
-          yield controller.getColCell(x, y))
+      eventually {
+        val allCells =
+          (for (x <- 0 until controller.field.maxPosY; y <- 0 until controller.field.maxPosY) 
+            yield controller.getRowCell(x, y)) ++ 
+          (for (x <- 0 until controller.field.maxPosX; y <- 0 to controller.field.maxPosY) 
+            yield controller.getColCell(x, y))
 
-      allCells.count(identity) shouldBe 2
+        allCells.count(identity) shouldBe 2
+      }
     }
     "make a computer move" in {
       val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Computer), new FileIO(), new ComputerMedium())
-      val newField = controller.computerMove(controller.field)
+      val newField: FieldInterface = Await.result(controller.computerMove(controller.field), 2.seconds)
+      val newField2: FieldInterface = Await.result(controller.computerMove(controller.field), 2.seconds)
 
       val allCells = 
-        (for (x <- 0 until newField.maxPosY; y <- 0 until newField.maxPosY) 
+        (for (x <- 0 until newField2.maxPosY; y <- 0 until newField2.maxPosY) 
           yield controller.getRowCell(x, y)) ++ 
-        (for (x <- 0 until newField.maxPosX; y <- 0 to newField.maxPosY) 
+        (for (x <- 0 until newField2.maxPosX; y <- 0 to newField2.maxPosY) 
           yield controller.getColCell(x, y))
 
       allCells.count(identity) shouldBe 2
@@ -465,7 +473,7 @@ class ControllerSpec extends AnyWordSpec {
       
       when(mockComputerImpl.calculateMove(initialField)).thenReturn(Some(Move(9, 9, 9, true)))
       
-      val newField = controller.computerMove(controller.field)
+      val newField = controller.calculateComputerMove(controller.field)
 
       val allCells = 
         (for (x <- 0 until newField.maxPosY; y <- 0 until newField.maxPosY) 
@@ -483,7 +491,7 @@ class ControllerSpec extends AnyWordSpec {
       
       when(mockComputerImpl.calculateMove(initialField)).thenReturn(None)
       
-      val newField = controller.computerMove(controller.field)
+      val newField = controller.calculateComputerMove(controller.field)
 
       val allCells = 
         (for (x <- 0 until newField.maxPosY; y <- 0 until newField.maxPosY) 
