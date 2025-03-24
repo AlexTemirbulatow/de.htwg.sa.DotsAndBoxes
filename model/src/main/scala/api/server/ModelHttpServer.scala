@@ -25,7 +25,7 @@ object ModelHttpServer:
     val server = Http()
       .newServerAt(MODEL_HOST, MODEL_PORT)
       .bind(routes(FieldRoutes(given_FieldInterface)))
-    logger.info(s"Model sever is running at http://$MODEL_HOST:$MODEL_PORT/api/\nPress RETURN to terminate...")
+    logger.info(s"Model sever is running at http://$MODEL_HOST:$MODEL_PORT/api/\n\nPress RETURN to terminate...\n")
     StdIn.readLine()
     shutDown(server)
 

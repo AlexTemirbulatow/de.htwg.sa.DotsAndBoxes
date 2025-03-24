@@ -46,7 +46,7 @@ private class MoveAvailableHandler(val next: Option[MoveHandler]) extends MoveHa
       case 1 => field.getRowCell(move.x, move.y)
       case 2 => field.getColCell(move.x, move.y)
     isTaken match
-      case true => Failure(new MatchError("\nThis line is already taken. Try again: "))
+      case true => Failure(new MatchError("\nThis line is already taken. Try again\n"))
       case false =>
         next match
           case Some(nextHandler: MoveHandler) => nextHandler.handle(move, field)

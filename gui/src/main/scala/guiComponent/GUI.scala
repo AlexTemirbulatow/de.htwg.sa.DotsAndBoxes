@@ -344,7 +344,7 @@ class GUI extends Frame:
     var selectedBoardSize: BoardSize = controllerBoardSizeHttp
     var selectedPlayerSize: PlayerSize = controllerPlayerSizeHttp
     var selectedPlayerType: PlayerType = controllerPlayerTypeHttp
-    var selectedDifficulty: ComputerDifficulty = controllerComputerDifficulty
+    var selectedDifficulty: ComputerDifficulty = controllerComputerDifficultyHttp
 
     val boardSelection = createSelectionPanel(
       "Board Size",
@@ -481,7 +481,7 @@ class GUI extends Frame:
     if inMainMenu then switchContent(setupMainMenu) else update(Event.Move)
     
   def fieldSize(): (Int, Int) =
-    (controllerColSize - 1, controllerRowSize - 1)
+    (controllerColSizeHttp - 1, controllerRowSizeHttp - 1)
 
   def gridSize(fieldSize: (Int, Int)): (Int, Int) =
     ((fieldSize._1 + fieldSize._1 + 1), (fieldSize._2 + fieldSize._2 + 1))
@@ -672,7 +672,7 @@ class GUI extends Frame:
   def controllerPlayerTypeHttp: PlayerType =
     Try(PlayerType.valueOf(Await.result(getRequest("api/core/get/playerType"), 5.seconds))).getOrElse(PlayerType.Human)
 
-  def controllerComputerDifficulty: ComputerDifficulty =
+  def controllerComputerDifficultyHttp: ComputerDifficulty =
     Try(ComputerDifficulty.valueOf(Await.result(getRequest("api/core/get/computerDifficulty"), 5.seconds))).getOrElse(ComputerDifficulty.Medium)
 
   def controllerStatusCellHttp(row: Int, col: Int): String =
@@ -684,10 +684,10 @@ class GUI extends Frame:
   def controllerColCellHttp(row: Int, col: Int): Boolean =
     Await.result(getRequest(s"api/core/get/colCell/$row/$col"), 5.seconds).toBoolean
 
-  def controllerRowSize: Int =
+  def controllerRowSizeHttp: Int =
     Await.result(getRequest(s"api/core/get/rowSize"), 5.seconds).toInt
 
-  def controllerColSize: Int =
+  def controllerColSizeHttp: Int =
     Await.result(getRequest(s"api/core/get/colSize"), 5.seconds).toInt
 
   def controllerGameEndedHttp: Boolean =

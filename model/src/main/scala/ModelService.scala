@@ -1,4 +1,2 @@
-import api.server.ModelHttpServer
-
 object ModelService:
-  @main def main: Unit = ModelHttpServer.run
+  @main def startModelServer: Unit = api.server.ModelHttpServer.run

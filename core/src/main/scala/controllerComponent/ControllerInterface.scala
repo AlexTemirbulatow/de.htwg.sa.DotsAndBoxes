@@ -11,7 +11,7 @@ trait ControllerInterface extends Observable:
   def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, computerDifficulty: ComputerDifficulty): FieldInterface
   def getComputerImpl(difficulty: ComputerDifficulty): ComputerInterface
   def getComputerDifficulty(computer: ComputerInterface): ComputerDifficulty
-  def put(move: Move): FieldInterface
+  def put(move: Move): String
   def getStatusCell(row: Int, col: Int): Status
   def getRowCell(row: Int, col: Int): Boolean
   def getColCell(row: Int, col: Int): Boolean
@@ -33,7 +33,7 @@ trait ControllerInterface extends Observable:
   def winner: String
   def stats: String
   def publish(doThis: => FieldInterface): FieldInterface
-  def publish(doThis: Move => FieldInterface, move: Move): Try[FieldInterface]
+  def publish(doThis: Move => String, move: Move): Try[FieldInterface]
   def computerMove(field: FieldInterface): Future[FieldInterface]
   def calculateComputerMove(field: FieldInterface): FieldInterface
   override def toString: String
