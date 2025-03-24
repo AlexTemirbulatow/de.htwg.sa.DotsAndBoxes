@@ -1,7 +1,7 @@
 val scala3Version = "3.6.4"
 val akkaVersion = "2.8.5"
 val akkaHttpVersion = "10.5.3"
-val dotsandboxesLibVersion = "0.1.3-SNAPSHOT"
+val dotsandboxesLibVersion = "0.1.4-SNAPSHOT"
 
 lazy val commonSettings = Seq(
   resolvers += "Github Packages" at "https://maven.pkg.github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes.library",
