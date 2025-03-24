@@ -13,14 +13,6 @@ object ModelRequest:
   private val MODEL_PORT = "8080"
   private val MODEL_BASE_URL = s"http://$MODEL_HOST:$MODEL_PORT/"
 
-  def getRequest(endpoint: String): Future[String] =
-    Future {
-      Using(Source.fromURL(MODEL_BASE_URL.concat(endpoint)))(_.mkString) match {
-        case Success(content)   => content
-        case Failure(exception) => println(s"HTTP GET ERROR AT: $endpoint -- ${exception.getMessage}"); ""
-      }
-    }
-
   def postRequest(endpoint: String, json: JsObject): Future[String] =
     Future {
       Using {

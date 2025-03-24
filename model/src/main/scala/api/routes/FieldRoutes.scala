@@ -10,7 +10,7 @@ import de.github.dotsandboxes.lib.{Status, Move}
 import play.api.libs.json.{Json, JsValue}
 import de.github.dotsandboxes.lib.SquareCase
 
-class FieldRoutes(var field: FieldInterface):
+class FieldRoutes(val field: FieldInterface):
   def fieldRoutes: Route = handleExceptions(exceptionHandler) {
     concat(
       handlePlaceRequests,
@@ -30,8 +30,9 @@ class FieldRoutes(var field: FieldInterface):
           val x: Int = (jsonValue \ "x").as[Int]
           val y: Int = (jsonValue \ "y").as[Int]
           val value: Boolean = (jsonValue \ "value").as[Boolean]
-          field = field.putRow(x, y, value)
-          complete(field.toJson.toString)
+          val fieldValue: String = (jsonValue \ "field").as[String]
+          val updatedField: FieldInterface = field.fromJson(fieldValue).putRow(x, y, value)
+          complete(updatedField.toJson.toString)
         }
       } ~
       path("col") {
@@ -40,76 +41,119 @@ class FieldRoutes(var field: FieldInterface):
           val x: Int = (jsonValue \ "x").as[Int]
           val y: Int = (jsonValue \ "y").as[Int]
           val value: Boolean = (jsonValue \ "value").as[Boolean]
-          field = field.putCol(x, y, value)
-          complete(field.toJson.toString)
+          val fieldValue: String = (jsonValue \ "field").as[String]
+          val updatedField: FieldInterface = field.fromJson(fieldValue).putCol(x, y, value)
+          complete(updatedField.toJson.toString)
         }
       }
     }
   }
 
+  private def parsedField(json: String): FieldInterface =
+    val jsonValue: JsValue = Json.parse(json)
+    val fieldValue: String = (jsonValue \ "field").as[String]
+    field.fromJson(fieldValue)
+
   private def handleGameDataRequests: Route = pathPrefix("get") {
     path("asString") {
-      complete(field.toString)
+      entity(as[String]) { json =>
+        complete(parsedField(json).toString)
+      }
     } ~
     path("statusCell" / IntNumber / IntNumber) { (row, col) =>
-      val status: Status = field.getStatusCell(row, col)
-      complete(status.toString)
+      entity(as[String]) { json =>
+        complete(parsedField(json).getStatusCell(row, col).toString)
+      }
     } ~
     path("rowCell" / IntNumber / IntNumber) { (row, col) =>
-      val value: Boolean = field.getRowCell(row, col)
-      complete(value.toString)
+      entity(as[String]) { json =>
+        complete(parsedField(json).getRowCell(row, col).toString)
+      }
     } ~
     path("colCell" / IntNumber / IntNumber) { (row, col) =>
-      val value: Boolean = field.getColCell(row, col)
-      complete(value.toString)
+      entity(as[String]) { json =>
+        complete(parsedField(json).getColCell(row, col).toString)
+      }
     } ~
     path("colSize") {
-      complete(field.colSize().toString)
+      entity(as[String]) { json =>
+        complete(parsedField(json).colSize().toString)
+      }
     } ~
     path("rowSize") {
-      complete(field.rowSize().toString)
+      entity(as[String]) { json =>
+        complete(parsedField(json).rowSize().toString)
+      }
     } ~
     path("maxPosX") {
-      complete(field.maxPosX.toString)
+      entity(as[String]) { json =>
+        complete(parsedField(json).maxPosX.toString)
+      }
     } ~
     path("maxPosY") {
-      complete(field.maxPosY.toString)
+      entity(as[String]) { json =>
+        complete(parsedField(json).maxPosY.toString)
+      }
     } ~
     path("boardSize") {
-      complete(field.boardSize.toString)
+      entity(as[String]) { json =>
+        complete(parsedField(json).boardSize.toString)
+      }
     } ~
     path("playerSize") {
-      complete(field.playerSize.toString)
+      entity(as[String]) { json =>
+        complete(parsedField(json).playerSize.toString)
+      }
     } ~
     path("playerType") {
-      complete(field.playerType.toString)
+      entity(as[String]) { json =>
+        complete(parsedField(json).playerType.toString)
+      }
     } ~
     path("playerList") {
-      complete(field.playerList.asJson.noSpaces)
+      entity(as[String]) { json =>
+        complete(parsedField(json).playerList.asJson.noSpaces)
+      }
     } ~
     path("playerIndex") {
-      complete(field.playerIndex.toString)
+      entity(as[String]) { json =>
+        complete(parsedField(json).playerIndex.toString)
+      }
     } ~
     path("currentPlayer") {
-      complete(field.currentPlayerId)
+      entity(as[String]) { json =>
+        complete(parsedField(json).currentPlayerId)
+      }
     } ~
     path("currentPlayerType") {
-      complete(field.currentPlayer.playerType.toString)
+      entity(as[String]) { json =>
+        complete(parsedField(json).currentPlayer.playerType.toString)
+      }
     } ~
     path("currentPoints") {
-      complete(field.currentPoints.toString)
+      entity(as[String]) { json =>
+        complete(parsedField(json).currentPoints.toString)
+      }
     } ~
     path("currentStatus") {
-      complete(field.currentStatus.asJson.noSpaces)
+      entity(as[String]) { json =>
+        complete(parsedField(json).currentStatus.asJson.noSpaces)
+      }
     } ~
     path("gameEnded") {
-      complete(field.isFinished.toString)
+      entity(as[String]) { json =>
+        complete(parsedField(json).isFinished.toString)
+      }
     } ~
     path("winner") {
-      complete(field.winner)
+      entity(as[String]) { json =>
+        complete(parsedField(json).winner)
+      }
     } ~
     path("stats") {
-      complete(field.stats)
+      entity(as[String]) { json =>
+        complete(parsedField(json).stats)
+      }
     }
   }
 
@@ -122,7 +166,8 @@ class FieldRoutes(var field: FieldInterface):
           val x: Int = (jsonValue \ "x").as[Int]
           val y: Int = (jsonValue \ "y").as[Int]
           val value: Boolean = (jsonValue \ "value").as[Boolean]
-          complete(field.isEdge(Move(vec, x, y, value)).toString)
+          val fieldValue: String = (jsonValue \ "field").as[String]
+          complete(field.fromJson(fieldValue).isEdge(Move(vec, x, y, value)).toString)
         }
       }
     }
@@ -136,10 +181,11 @@ class FieldRoutes(var field: FieldInterface):
             val jsonValue: JsValue = Json.parse(json)
             val x: Int = (jsonValue \ "x").as[Int]
             val y: Int = (jsonValue \ "y").as[Int]
-            field = field
+            val fieldValue: String = (jsonValue \ "field").as[String]
+            val updatedField: FieldInterface = field.fromJson(fieldValue)
               .checkSquare(SquareCase.DownCase, x, y)
               .checkSquare(SquareCase.UpCase, x, y)
-            complete(field.toJson.toString)
+            complete(updatedField.toJson.toString)
           }
         } ~
         path("vertical") {
@@ -147,10 +193,11 @@ class FieldRoutes(var field: FieldInterface):
             val jsonValue: JsValue = Json.parse(json)
             val x: Int = (jsonValue \ "x").as[Int]
             val y: Int = (jsonValue \ "y").as[Int]
-            field = field
+            val fieldValue: String = (jsonValue \ "field").as[String]
+            val updatedField: FieldInterface = field.fromJson(fieldValue)
               .checkSquare(SquareCase.RightCase, x, y)
               .checkSquare(SquareCase.LeftCase, x, y)
-            complete(field.toJson.toString)
+            complete(updatedField.toJson.toString)
           }
         }
       } ~
@@ -160,8 +207,9 @@ class FieldRoutes(var field: FieldInterface):
             val jsonValue: JsValue = Json.parse(json)
             val x: Int = (jsonValue \ "x").as[Int]
             val y: Int = (jsonValue \ "y").as[Int]
-            field = field.checkSquare(SquareCase.DownCase, x, y)
-            complete(field.toJson.toString)
+            val fieldValue: String = (jsonValue \ "field").as[String]
+            val updatedField: FieldInterface = field.fromJson(fieldValue).checkSquare(SquareCase.DownCase, x, y)
+            complete(updatedField.toJson.toString)
           }
         } ~
         path("upCase") {
@@ -169,8 +217,9 @@ class FieldRoutes(var field: FieldInterface):
             val jsonValue: JsValue = Json.parse(json)
             val x: Int = (jsonValue \ "x").as[Int]
             val y: Int = (jsonValue \ "y").as[Int]
-            field = field.checkSquare(SquareCase.UpCase, x, y)
-            complete(field.toJson.toString)
+            val fieldValue: String = (jsonValue \ "field").as[String]
+            val updatedField: FieldInterface = field.fromJson(fieldValue).checkSquare(SquareCase.UpCase, x, y)
+            complete(updatedField.toJson.toString)
           }
         } ~
         path("rightCase") {
@@ -178,8 +227,9 @@ class FieldRoutes(var field: FieldInterface):
             val jsonValue: JsValue = Json.parse(json)
             val x: Int = (jsonValue \ "x").as[Int]
             val y: Int = (jsonValue \ "y").as[Int]
-            field = field.checkSquare(SquareCase.RightCase, x, y)
-            complete(field.toJson.toString)
+            val fieldValue: String = (jsonValue \ "field").as[String]
+            val updatedField: FieldInterface = field.fromJson(fieldValue).checkSquare(SquareCase.RightCase, x, y)
+            complete(updatedField.toJson.toString)
           }
         } ~
         path("leftCase") {
@@ -187,8 +237,9 @@ class FieldRoutes(var field: FieldInterface):
             val jsonValue: JsValue = Json.parse(json)
             val x: Int = (jsonValue \ "x").as[Int]
             val y: Int = (jsonValue \ "y").as[Int]
-            field = field.checkSquare(SquareCase.LeftCase, x, y)
-            complete(field.toJson.toString)
+            val fieldValue: String = (jsonValue \ "field").as[String]
+            val updatedField: FieldInterface = field.fromJson(fieldValue).checkSquare(SquareCase.LeftCase, x, y)
+            complete(updatedField.toJson.toString)
           }
         }
       }
@@ -202,18 +253,25 @@ class FieldRoutes(var field: FieldInterface):
           val jsonValue: JsValue = Json.parse(json)
           val playerIndex: Int = (jsonValue \ "playerIndex").as[Int]
           val points: Int = (jsonValue \ "points").as[Int]
-          field = field.addPoints(playerIndex, points).updatePlayer(playerIndex)
-          complete(field.toJson.toString)
+          val fieldValue: String = (jsonValue \ "field").as[String]
+          val updatedField: FieldInterface = field.fromJson(fieldValue)
+            .addPoints(playerIndex, points)
+            .updatePlayer(playerIndex)
+          complete(updatedField.toJson.toString)
         }
       }
     }
   }
 
-  private def handlePlayerNextRequests: Route = get {
+  private def handlePlayerNextRequests: Route = post {
     pathPrefix("player") {
       path("next") {
-        field = field.nextPlayer
-        complete(field.toJson.toString)
+        entity(as[String]) { json =>
+          val jsonValue: JsValue = Json.parse(json)
+          val fieldValue: String = (jsonValue \ "field").as[String]
+          val updatedField: FieldInterface = field.fromJson(fieldValue).nextPlayer
+          complete(updatedField.toJson.toString)
+        }
       }
     }
   }

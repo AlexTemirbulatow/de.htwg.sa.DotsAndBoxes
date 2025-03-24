@@ -4,7 +4,7 @@ import fieldComponent.FieldInterface
 import de.github.dotsandboxes.lib.Status
 
 object PlayerStrategy:
-  def updatePlayer(field: FieldInterface, preStatus: Vector[Vector[Status]], postStatus: Vector[Vector[Status]]): String =
+  def updatePlayer(field: String, preStatus: Vector[Vector[Status]], postStatus: Vector[Vector[Status]]): String =
     val difference = preStatus
       .zip(postStatus)
       .flatMap { case (preRow, postRow) =>

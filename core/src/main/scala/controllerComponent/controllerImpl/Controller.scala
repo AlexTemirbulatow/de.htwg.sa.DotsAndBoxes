@@ -56,7 +56,7 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, v
   override def getRowCell(row: Int, col: Int): Boolean = fieldRowCellHttp(row, col)
   override def getColCell(row: Int, col: Int): Boolean = fieldColCellHttp(row, col)
 
-  override def put(move: Move): String = undoManager.doStep(field, PutCommand(move, field))
+  override def put(move: Move): String = undoManager.doStep(field.toJson.toString, PutCommand(move, field))
   override def restart: FieldInterface = initGame(fieldBoardSizeHttp, fieldPlayerSizeHttp, playerType, computerDifficulty)
   override def undo: FieldInterface = undoManager.undoStep(field)
   override def redo: FieldInterface = undoManager.redoStep(field)
@@ -97,9 +97,9 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, v
         field = field.fromJson(doThis(move))
         val preStatus = fieldCurrentStatusHttp
         val movePosition = if fieldIsEdgeHttp(move) then EdgeState else MidState
-        field = field.fromJson(MoveStrategy.executeStrategy(movePosition, move, field))
+        field = field.fromJson(MoveStrategy.executeStrategy(movePosition, move, field.toJson.toString))
         val postStatus = fieldCurrentStatusHttp
-        field = field.fromJson(PlayerStrategy.updatePlayer(field, preStatus, postStatus))
+        field = field.fromJson(PlayerStrategy.updatePlayer(field.toJson.toString, preStatus, postStatus))
         notifyObservers(Event.Move)
         if gameEnded then notifyObservers(Event.End); Success(field)
         if !gameEnded && fieldCurrentPlayerTypeHttp == PlayerType.Computer then computerMove(field)
@@ -123,52 +123,75 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, v
     s"\n${{ fieldGameDataHttp("asString") }}\n${currentPlayer}s turn\n[points: ${currentPoints}]\n\n${moveString}"
 
   def fieldGameDataHttp(data: String): String =
-    Await.result(ModelRequest.getRequest(s"api/field/get/$data"), 5.seconds)
+    Await.result(ModelRequest.postRequest(s"api/field/get/$data", Json.obj(
+      "field" -> Json.toJson(field.toJson.toString)
+    )), 5.seconds)
 
   def fieldPlayerListHttp: Vector[Player] =
-    decode[Vector[Player]](Await.result(ModelRequest.getRequest("api/field/get/playerList"), 5.seconds))
+    decode[Vector[Player]](Await.result(ModelRequest.postRequest("api/field/get/playerList", Json.obj(
+      "field" -> Json.toJson(field.toJson.toString)
+    )), 5.seconds))
       .getOrElse(Vector.empty)
 
   def fieldCurrentStatusHttp: Vector[Vector[Status]] =
-    decode[Vector[Vector[Status]]](Await.result(ModelRequest.getRequest("api/field/get/currentStatus"), 5.seconds))
+    decode[Vector[Vector[Status]]](Await.result(ModelRequest.postRequest("api/field/get/currentStatus", Json.obj(
+      "field" -> Json.toJson(field.toJson.toString)
+    )), 5.seconds))
       .getOrElse(Vector.empty)
 
   def fieldBoardSizeHttp: BoardSize =
-    Try(BoardSize.valueOf(Await.result(ModelRequest.getRequest("api/field/get/boardSize"), 5.seconds))).getOrElse(BoardSize.Medium)
+    Try(BoardSize.valueOf(Await.result(ModelRequest.postRequest("api/field/get/boardSize", Json.obj(
+      "field" -> Json.toJson(field.toJson.toString)
+    )), 5.seconds))).getOrElse(BoardSize.Medium)
 
   def fieldPlayerSizeHttp: PlayerSize =
-    Try(PlayerSize.valueOf(Await.result(ModelRequest.getRequest("api/field/get/playerSize"), 5.seconds))).getOrElse(PlayerSize.Two)
+    Try(PlayerSize.valueOf(Await.result(ModelRequest.postRequest("api/field/get/playerSize", Json.obj(
+      "field" -> Json.toJson(field.toJson.toString)
+    )), 5.seconds))).getOrElse(PlayerSize.Two)
 
   def fieldPlayerTypeHttp: PlayerType =
-    Try(PlayerType.valueOf(Await.result(ModelRequest.getRequest("api/field/get/playerType"), 5.seconds))).getOrElse(PlayerType.Human)
+    Try(PlayerType.valueOf(Await.result(ModelRequest.postRequest("api/field/get/playerType", Json.obj(
+      "field" -> Json.toJson(field.toJson.toString)
+    )), 5.seconds))).getOrElse(PlayerType.Human)
 
   def fieldCurrentPlayerTypeHttp: PlayerType =
-    Try(PlayerType.valueOf(Await.result(ModelRequest.getRequest("api/field/get/currentPlayerType"), 5.seconds))).getOrElse(PlayerType.Human)
+    Try(PlayerType.valueOf(Await.result(ModelRequest.postRequest("api/field/get/currentPlayerType", Json.obj(
+      "field" -> Json.toJson(field.toJson.toString)
+    )), 5.seconds))).getOrElse(PlayerType.Human)
 
   def fieldStatusCellHttp(row: Int, col: Int): Status =
-    Try(Await.result(ModelRequest.getRequest(s"api/field/get/statusCell/$row/$col"), 5.seconds))
+    Try(Await.result(ModelRequest.postRequest(s"api/field/get/statusCell/$row/$col", Json.obj(
+      "field" -> Json.toJson(field.toJson.toString)
+    )), 5.seconds))
       .toOption
       .flatMap(response => Status.values.find(_.toString == response))
       .getOrElse(Status.Empty)
 
   def fieldRowCellHttp(row: Int, col: Int): Boolean =
-    Await.result(ModelRequest.getRequest(s"api/field/get/rowCell/$row/$col"), 5.seconds).toBoolean
+    Await.result(ModelRequest.postRequest(s"api/field/get/rowCell/$row/$col", Json.obj(
+      "field" -> Json.toJson(field.toJson.toString)
+    )), 5.seconds).toBoolean
 
   def fieldColCellHttp(row: Int, col: Int): Boolean =
-    Await.result(ModelRequest.getRequest(s"api/field/get/colCell/$row/$col"), 5.seconds).toBoolean
+    Await.result(ModelRequest.postRequest(s"api/field/get/colCell/$row/$col", Json.obj(
+      "field" -> Json.toJson(field.toJson.toString)
+    )), 5.seconds).toBoolean
 
   def fieldRowSizeHttp: Int =
-    Await.result(ModelRequest.getRequest(s"api/field/get/rowSize"), 5.seconds).toInt
+    Await.result(ModelRequest.postRequest(s"api/field/get/rowSize", Json.obj(
+      "field" -> Json.toJson(field.toJson.toString)
+    )), 5.seconds).toInt
 
   def fieldColSizeHttp: Int =
-    Await.result(ModelRequest.getRequest(s"api/field/get/colSize"), 5.seconds).toInt
+    Await.result(ModelRequest.postRequest(s"api/field/get/colSize", Json.obj(
+      "field" -> Json.toJson(field.toJson.toString)
+    )), 5.seconds).toInt
 
   def fieldIsEdgeHttp(move: Move): Boolean =
-    val jsonBody: JsObject = Json.obj(
+    Await.result(ModelRequest.postRequest("api/field/get/isEdge", Json.obj(
       "vec" -> Json.toJson(move.vec),
       "x" -> Json.toJson(move.x),
       "y" -> Json.toJson(move.y),
       "value" -> Json.toJson(move.value),
-      "field" -> Json.toJson(field.toJson)
-    )
-    Await.result(ModelRequest.postRequest("api/field/get/isEdge", jsonBody), 5.seconds).toBoolean
+      "field" -> Json.toJson(field.toJson.toString)
+    )), 5.seconds).toBoolean

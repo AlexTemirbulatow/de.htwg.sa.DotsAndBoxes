@@ -1,13 +1,14 @@
 package controllerComponent.controllerImpl.playerStrategy
 
 import api.util.ModelRequest
-import fieldComponent.FieldInterface
 import play.api.libs.json.Json
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 
 object NextPlayer extends PlayerState:
-  override def handle(field: FieldInterface): String = fieldPlayerNextHttp
+  override def handle(field: String): String = fieldPlayerNextHttp(field)
 
-  private def fieldPlayerNextHttp: String =
-    Await.result(ModelRequest.getRequest("api/field/player/next"), 5.seconds)
+  private def fieldPlayerNextHttp(field: String): String =
+    Await.result(ModelRequest.postRequest("api/field/player/next", Json.obj(
+      "field" -> field
+    )), 5.seconds)
