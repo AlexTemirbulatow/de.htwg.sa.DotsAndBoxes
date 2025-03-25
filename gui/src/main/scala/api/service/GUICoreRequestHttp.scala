@@ -73,10 +73,10 @@ object GUICoreRequestHttp:
   def publish(move: Move): Future[String] =
     GUICoreClient.postRequest("api/core/publish", Json.obj(
       "method" -> Json.toJson("put"),
-      "vec" -> Json.toJson(move.vec),
-      "x" -> Json.toJson(move.x),
-      "y" -> Json.toJson(move.y),
-      "value" -> Json.toJson(move.value)
+      "vec"    -> Json.toJson(move.vec),
+      "x"      -> Json.toJson(move.x),
+      "y"      -> Json.toJson(move.y),
+      "value"  -> Json.toJson(move.value)
     ))
 
   def publish(method: String): Future[String] =
@@ -91,7 +91,7 @@ object GUICoreRequestHttp:
       computerDifficulty: ComputerDifficulty
   ): Future[String] =
     GUICoreClient.postRequest("api/core/initGame", Json.obj(
-      "boardSize" -> Json.toJson(boardSize.toString),
+      "boardSize"  -> Json.toJson(boardSize.toString),
       "playerSize" -> Json.toJson(playerSize.toString),
       "playerType" -> Json.toJson(playerType.toString),
       "computerDifficulty" -> Json.toJson(computerDifficulty.toString)

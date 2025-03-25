@@ -13,10 +13,10 @@ object TUICoreRequestHttp:
   def publish(move: Move): Future[String] =
     TUICoreClient.postRequest("api/core/publish", Json.obj(
       "method" -> Json.toJson("put"),
-      "vec" -> Json.toJson(move.vec),
-      "x" -> Json.toJson(move.x),
-      "y" -> Json.toJson(move.y),
-      "value" -> Json.toJson(move.value)
+      "vec"    -> Json.toJson(move.vec),
+      "x"      -> Json.toJson(move.x),
+      "y"      -> Json.toJson(move.y),
+      "value"  -> Json.toJson(move.value)
     ))
 
   def publish(method: String): Future[String] =
@@ -34,9 +34,9 @@ object TUICoreRequestHttp:
       computerDifficulty: ComputerDifficulty
   ): Future[String] =
     TUICoreClient.postRequest("api/core/initGame", Json.obj(
-      "boardSize" -> Json.toJson(boardSize.toString),
-      "playerSize" -> Json.toJson(playerSize.toString),
-      "playerType" -> Json.toJson(playerType.toString),
+      "boardSize"          -> Json.toJson(boardSize.toString),
+      "playerSize"         -> Json.toJson(playerSize.toString),
+      "playerType"         -> Json.toJson(playerType.toString),
       "computerDifficulty" -> Json.toJson(computerDifficulty.toString)
     ))
 
