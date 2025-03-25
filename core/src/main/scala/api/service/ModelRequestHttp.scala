@@ -1,7 +1,7 @@
 package api.service
 
 import api.client.ModelClient
-import de.github.dotsandboxes.lib.{BoardSize, Move, Player, PlayerSize, PlayerType, Status}
+import de.github.dotsandboxes.lib.{BoardSize, Move, Player, PlayerSize, PlayerType, Status, CellData}
 import fieldComponent.FieldInterface
 import io.circe.generic.auto._
 import io.circe.parser.decode
@@ -31,6 +31,13 @@ object ModelRequestHttp:
     Await.result(ModelClient.postRequest(s"api/field/get/$data", Json.obj(
       "field" -> Json.toJson(fieldJsonString(field))
     )), 5.seconds)
+
+  def cellData(field: FieldInterface): CellData =
+    decode[CellData](
+      Await.result(ModelClient.postRequest(s"api/field/get/cellData", Json.obj(
+        "field" -> Json.toJson(fieldJsonString(field))
+      )), 5.seconds)
+    ).getOrElse(CellData(Vector.empty, Vector.empty, Vector.empty))
 
   def playerList(field: FieldInterface): Vector[Player] =
     decode[Vector[Player]](

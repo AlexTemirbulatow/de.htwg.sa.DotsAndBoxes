@@ -34,6 +34,9 @@ class CoreRoutes(val controller: ControllerInterface):
   }
 
   private def handleGameDataRequests: Route = pathPrefix("get") {
+    path("cellData") {
+      complete(controller.getCellData.asJson.toString)
+    } ~
     path("boardSize") {
       complete(controller.boardSize.toString)
     } ~

@@ -59,6 +59,11 @@ class FieldRoutes(val field: FieldInterface):
         complete(parsedField(json).toString)
       }
     } ~
+    path("cellData") {
+      entity(as[String]) { json =>
+        complete(parsedField(json).toCellData.asJson.toString)
+      }
+    } ~
     path("statusCell" / IntNumber / IntNumber) { (row, col) =>
       entity(as[String]) { json =>
         complete(parsedField(json).getStatusCell(row, col).toString)

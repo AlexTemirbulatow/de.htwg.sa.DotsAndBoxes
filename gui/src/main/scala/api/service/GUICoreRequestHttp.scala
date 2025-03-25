@@ -1,7 +1,7 @@
 package api.service
 
 import api.client.GUICoreClient
-import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, Move, Player, PlayerSize, PlayerType}
+import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, Move, Player, PlayerSize, PlayerType, CellData}
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import play.api.libs.json.Json
@@ -11,12 +11,14 @@ import scala.util.Try
 
 object GUICoreRequestHttp:
   def playerList: Vector[Player] =
-    val playerListString = Await.result(GUICoreClient.getRequest("api/core/get/playerList"), 5.seconds)
-    val decodedPlayers = decode[Vector[Player]](playerListString)
-    return decodedPlayers match {
-      case Right(playerList) => playerList
-      case Left(_)           => Vector.empty
-    }
+    decode[Vector[Player]](
+      Await.result(GUICoreClient.getRequest("api/core/get/playerList"), 5.seconds)
+    ).getOrElse(Vector.empty)
+
+  def cellData: CellData =
+    decode[CellData](
+      Await.result(GUICoreClient.getRequest("api/core/get/cellData"), 5.seconds)
+    ).getOrElse(CellData(Vector.empty, Vector.empty, Vector.empty))
 
   def boardSize: BoardSize =
     Try(BoardSize.valueOf(

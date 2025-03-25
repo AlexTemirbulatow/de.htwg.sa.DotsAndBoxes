@@ -1,6 +1,6 @@
 package fieldComponent
 
-import de.github.dotsandboxes.lib.{PlayerType, BoardSize, PlayerSize, SquareCase, Player, Status, Move}
+import de.github.dotsandboxes.lib.{PlayerType, BoardSize, PlayerSize, SquareCase, Player, Status, Move, CellData}
 import play.api.libs.json.JsObject
 
 trait FieldInterface:
@@ -46,6 +46,7 @@ trait FieldInterface:
   def rowSize(): Int
   def colSize(): Int
   def space(length: Int): String
+  def toCellData: CellData
   def toJson: JsObject
   def fromJson(jsonField: String): FieldInterface
   override def toString: String

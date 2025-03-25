@@ -1,7 +1,7 @@
 package guiComponent
 
 import api.service.GUICoreRequestHttp
-import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, Event, Move, PlayerSize, PlayerType}
+import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, Event, Move, PlayerSize, PlayerType, CellData}
 import java.awt.{Color, Cursor, Font, GradientPaint, RenderingHints}
 import java.io.File
 import javax.imageio.ImageIO
@@ -561,6 +561,7 @@ class GUI extends Frame:
 
   class CellPanel(x: Int, y: Int) extends GridPanel(gridSize(fieldSize())._2, gridSize(fieldSize())._1):
     opaque = false
+    private val cellData: CellData = GUICoreRequestHttp.cellData
     fieldBuilder
 
     private def fieldBuilder =
@@ -574,13 +575,13 @@ class GUI extends Frame:
 
     private def bar(row: Int, col: Int) =
       contents += dotImg
-      contents += CellButton(1, row, col, GUICoreRequestHttp.rowCell(row, col))
+      contents += CellButton(1, row, col, cellData.rowCells(row)(col))
 
     private def cell(row: Int, col: Int) =
-      contents += CellButton(2, row, col, GUICoreRequestHttp.colCell(row, col))
+      contents += CellButton(2, row, col, cellData.colCells(row)(col))
       if col != x then
         contents += new Label {
-          icon = GUICoreRequestHttp.statusCell(row, col) match
+          icon = cellData.statusCells(row)(col) match
             case "-" => takenNone
             case "B" => takenBlue
             case "R" => takenRed

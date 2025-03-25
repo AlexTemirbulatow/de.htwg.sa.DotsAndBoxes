@@ -10,7 +10,7 @@ import controllerImpl.command.{PutCommand, UndoManager}
 import controllerImpl.moveHandler.MoveValidator
 import controllerImpl.moveStrategy.{EdgeState, MidState, MoveStrategy}
 import controllerImpl.playerStrategy.PlayerStrategy
-import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, Event, Move, Player, PlayerSize, PlayerType, Status}
+import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, Event, Move, Player, PlayerSize, PlayerType, Status, CellData}
 import fieldComponent.FieldInterface
 import fieldComponent.fieldImpl.Field
 import fileIoComponent.FileIOInterface
@@ -37,6 +37,7 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, v
     case _: ComputerEasy   => ComputerDifficulty.Easy
     case _: ComputerMedium => ComputerDifficulty.Medium
     case _: ComputerHard   => ComputerDifficulty.Hard
+  override def getCellData: CellData = ModelRequestHttp.cellData(field)
   override def getStatusCell(row: Int, col: Int): Status = ModelRequestHttp.statusCell(row, col, field)
   override def getRowCell(row: Int, col: Int): Boolean = ModelRequestHttp.rowCell(row, col, field)
   override def getColCell(row: Int, col: Int): Boolean = ModelRequestHttp.colCell(row, col, field)

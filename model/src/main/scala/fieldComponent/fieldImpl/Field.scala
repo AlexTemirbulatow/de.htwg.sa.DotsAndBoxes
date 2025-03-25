@@ -3,7 +3,7 @@ package fieldComponent.fieldImpl
 import fieldComponent.FieldInterface
 import matrixComponent.MatrixInterface
 import matrixComponent.matrixImpl.Matrix
-import de.github.dotsandboxes.lib.{PlayerType, BoardSize, PlayerSize, SquareCase, Player, Status, Move}
+import de.github.dotsandboxes.lib.{PlayerType, BoardSize, PlayerSize, SquareCase, Player, Status, Move, CellData}
 import play.api.libs.json.{Json, JsObject, JsValue, JsLookupResult}
 import scala.util.Try
 
@@ -80,6 +80,12 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
   override def rowSize(): Int = matrix.rowSize()
   override def colSize(): Int = matrix.colSize()
   override def space(length: Int): String = " " * ((length - 1) / 2)
+  override def toCellData: CellData =
+    CellData(
+      Vector.tabulate(maxPosY, maxPosY)((row, col) => getRowCell(row, col)),
+      Vector.tabulate(maxPosX, maxPosY+1)((row, col) => getColCell(row, col)),
+      Vector.tabulate(maxPosX, maxPosY)((row, col) => getStatusCell(row, col).toString)
+    )
   override def toJson: JsObject =
     Json.obj(
       "field" -> Json.obj(

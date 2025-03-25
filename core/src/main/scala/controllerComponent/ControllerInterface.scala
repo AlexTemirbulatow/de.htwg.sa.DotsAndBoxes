@@ -2,7 +2,7 @@ package controllerComponent
 
 import computerComponent.ComputerInterface
 import controllerImpl.observer.Observable
-import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, Move, Player, PlayerSize, PlayerType, Status}
+import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, Move, Player, PlayerSize, PlayerType, Status, CellData}
 import fieldComponent.FieldInterface
 import scala.util.Try
 import scala.concurrent.Future
@@ -12,6 +12,7 @@ trait ControllerInterface extends Observable:
   def getComputerImpl(difficulty: ComputerDifficulty): ComputerInterface
   def getComputerDifficulty(computer: ComputerInterface): ComputerDifficulty
   def put(move: Move): String
+  def getCellData: CellData
   def getStatusCell(row: Int, col: Int): Status
   def getRowCell(row: Int, col: Int): Boolean
   def getColCell(row: Int, col: Int): Boolean
