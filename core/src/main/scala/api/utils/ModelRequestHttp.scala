@@ -1,6 +1,6 @@
-package api.util
+package api.utils
 
-import api.client.ModelClient
+import api.clients.ModelClient
 import de.github.dotsandboxes.lib.{BoardSize, Move, Player, PlayerSize, PlayerType, Status}
 import fieldComponent.FieldInterface
 import io.circe.generic.auto._

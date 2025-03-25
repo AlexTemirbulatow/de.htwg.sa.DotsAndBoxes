@@ -1,6 +1,6 @@
 package controllerComponent.controllerImpl.playerStrategy
 
-import api.util.ModelRequestHttp
+import api.utils.ModelRequestHttp
 import fieldComponent.FieldInterface
 
 object NextPlayer extends PlayerState:

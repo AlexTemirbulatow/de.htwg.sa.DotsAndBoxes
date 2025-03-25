@@ -1,4 +1,4 @@
-package api.client
+package api.clients
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
@@ -8,10 +8,10 @@ import org.slf4j.LoggerFactory
 import play.api.libs.json.JsObject
 import scala.concurrent.{ExecutionContext, Future}
 
-object TUICoreClient:
-  private val CORE_HOST = "localhost"
-  private val CORE_PORT = "8082"
-  private val CORE_BASE_URL = s"http://$CORE_HOST:$CORE_PORT/"
+object ModelClient:
+  private val MODEL_HOST = "localhost"
+  private val MODEL_PORT = "8080"
+  private val MODEL_BASE_URL = s"http://$MODEL_HOST:$MODEL_PORT/"
 
   private implicit val system: ActorSystem = ActorSystem()
   private implicit val ec: ExecutionContext = system.dispatcher
@@ -23,7 +23,7 @@ object TUICoreClient:
     sendRequest(
       HttpRequest(
         method = HttpMethods.GET,
-        uri = CORE_BASE_URL.concat(endpoint)
+        uri = MODEL_BASE_URL.concat(endpoint)
       )
     )
 
@@ -31,8 +31,8 @@ object TUICoreClient:
     sendRequest(
       HttpRequest(
         method = HttpMethods.POST,
-        uri = CORE_BASE_URL.concat(endpoint),
-        entity = HttpEntity(ContentTypes.`application/json`, json.toString)
+        uri = MODEL_BASE_URL.concat(endpoint),
+        entity = HttpEntity(ContentTypes.`application/json`, json.toString())
       )
     )
 
@@ -50,5 +50,5 @@ object TUICoreClient:
     }
 
   def shutdown: Future[Unit] =
-    logger.info("Shutting down TUICoreClient...")
+    logger.info("Shutting down Core ModelClient...")
     http.shutdownAllConnectionPools().flatMap(_ => system.terminate()).map(_ => ())
