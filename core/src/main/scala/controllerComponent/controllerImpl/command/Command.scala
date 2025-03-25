@@ -3,7 +3,7 @@ package controllerComponent.controllerImpl.command
 import fieldComponent.FieldInterface
 
 trait Command:
-  def doStep(field: String): String
+  def doStep(field: FieldInterface): String
   def undoStep(field: FieldInterface): FieldInterface
   def redoStep(field: FieldInterface): FieldInterface
 
@@ -11,7 +11,7 @@ class UndoManager:
   private var undoStack: List[Command] = Nil
   private var redoStack: List[Command] = Nil
 
-  def doStep(field: String, command: Command): String =
+  def doStep(field: FieldInterface, command: Command): String =
     undoStack = command :: undoStack
     command.doStep(field)
 

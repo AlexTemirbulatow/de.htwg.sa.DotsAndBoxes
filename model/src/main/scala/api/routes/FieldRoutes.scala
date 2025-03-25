@@ -22,7 +22,7 @@ class FieldRoutes(val field: FieldInterface):
   }
 
   private def handlePlaceRequests: Route = post {
-    pathPrefix("place") {
+    pathPrefix("put") {
       path("row") {
         entity(as[String]) { json =>
           val jsonValue: JsValue = Json.parse(json)

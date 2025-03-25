@@ -8,6 +8,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import api.modules.CoreModule.given_ControllerInterface
 import api.routes.CoreRoutes
+import api.util.ModelRequestHttp
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.StdIn
@@ -24,10 +25,10 @@ object CoreHttpServer:
   def run: Unit =
     val server = Http()
       .newServerAt(CORE_HOST, CORE_PORT)
-      .bind(routes(CoreRoutes(given_ControllerInterface, logger)))
-    logger.info(s"Core sever is running at http://$CORE_HOST:$CORE_PORT/api/\n\nPress RETURN to terminate...\n")
+      .bind(routes(CoreRoutes(given_ControllerInterface)))
+    logger.info(s"Core sever is running at http://$CORE_HOST:$CORE_PORT/api\n\nPress RETURN to terminate...\n")
     StdIn.readLine()
-    shutDown(server)
+    shutdown(server)
 
   private def routes(coreRoutes: CoreRoutes): Route =
     pathPrefix("api") {
@@ -40,9 +41,11 @@ object CoreHttpServer:
       )
     }
 
-  private def shutDown(server: Future[ServerBinding]): Unit = server
-    .flatMap(_.unbind())
-    .onComplete { _ =>
-      logger.info("Shutting down CoreHttpServer...")
-      system.terminate()
-    }
+  private def shutdown(server: Future[ServerBinding]): Unit =
+    server
+      .flatMap(_.unbind())
+      .onComplete { _ =>
+        logger.info("Shutting down CoreHttpServer...")
+        system.terminate()
+      }
+    ModelRequestHttp.shutdown

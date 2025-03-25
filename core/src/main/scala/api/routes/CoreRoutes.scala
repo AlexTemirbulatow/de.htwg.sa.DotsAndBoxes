@@ -4,16 +4,17 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import controllerComponent.ControllerInterface
-import play.api.libs.json.{JsValue, Json}
-import de.github.dotsandboxes.lib.{PlayerType, BoardSize, PlayerSize, Move, ComputerDifficulty, Status}
-import scala.util.Try
 import controllerComponent.controllerImpl.observer.ObserverHttp
-import org.slf4j.Logger
-import de.github.dotsandboxes.lib.Player
+import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, Move, PlayerSize, PlayerType, Status, Player}
 import io.circe.generic.auto._
 import io.circe.syntax._
+import org.slf4j.LoggerFactory
+import play.api.libs.json.{JsValue, Json}
+import scala.util.Try
 
-class CoreRoutes(val controller: ControllerInterface, val logger: Logger):
+class CoreRoutes(val controller: ControllerInterface):
+  private val logger = LoggerFactory.getLogger(getClass)
+
   def coreRoutes: Route = handleExceptions(exceptionHandler) {
     concat(
       handleControllerToStringRequest,
@@ -142,8 +143,8 @@ class CoreRoutes(val controller: ControllerInterface, val logger: Logger):
         val jsonValue: JsValue = Json.parse(json)
         val observerUrl: String = (jsonValue \ "url").as[String]
         controller.add(new ObserverHttp(observerUrl))
-        logger.info(s"Observer successfully registered at: $observerUrl")
-        complete(OK)  
+        logger.info(s"Observer registered at: $observerUrl")
+        complete(OK)
       }
     }
   }
@@ -154,7 +155,7 @@ class CoreRoutes(val controller: ControllerInterface, val logger: Logger):
         val jsonValue: JsValue = Json.parse(json)
         val observerUrl: String = (jsonValue \ "url").as[String]
         controller.remove(observerUrl)
-        logger.info(s"Observer successfully deregistered from: $observerUrl")
+        logger.info(s"Observer deregistered from: $observerUrl")
         complete(OK)
       }
     }

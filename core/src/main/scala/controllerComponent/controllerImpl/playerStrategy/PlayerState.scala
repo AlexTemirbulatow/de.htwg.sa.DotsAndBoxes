@@ -1,3 +1,5 @@
 package controllerComponent.controllerImpl.playerStrategy
 
-trait PlayerState { def handle(field: String): String }
+import fieldComponent.FieldInterface
+
+trait PlayerState { def handle(field: FieldInterface): String }

@@ -1,26 +1,11 @@
 package tuiComponent
 
-import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpMethods, HttpRequest, HttpResponse, StatusCode}
-import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, GameConfig, Move, PlayerSize, PlayerType, Event}
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, ExecutionContext, Future}
+import api.utils.TUICoreRequestHttp
+import de.github.dotsandboxes.lib.{Event, GameConfig, Move}
 import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}
-import spray.json.{JsBoolean, JsNumber, JsObject, JsString}
-import org.slf4j.LoggerFactory
 
 class TUI:
-  private val CORE_HOST = "localhost"
-  private val CORE_PORT = "8082"
-  private val CORE_BASE_URL = s"http://$CORE_HOST:$CORE_PORT/"
-
-  implicit val system: ActorSystem = ActorSystem()
-  implicit val executionContext: ExecutionContext = system.dispatcher
-
-  private val logger = LoggerFactory.getLogger(getClass)
-
   def run: Unit =
     println(welcome)
     println(help)
@@ -28,29 +13,29 @@ class TUI:
     gameLoop
 
   def update(event: Event): Unit = event match
-    case Event.Abort => sys.exit; system.terminate()
-    case Event.End   => print(finalStatsHttp)
-    case Event.Move  => print(controllerToStringHttp)
+    case Event.Abort => sys.exit
+    case Event.End   => print(TUICoreRequestHttp.finalStats)
+    case Event.Move  => print(TUICoreRequestHttp.toString)
 
   def gameLoop: Unit =
     analyzeInput(readLine) match
-      case Some(move) => controllerPublishHttp(move)
+      case Some(move) => TUICoreRequestHttp.publish(move)
       case None       =>
     gameLoop
 
   def analyzeInput(input: String): Option[Move] = input match
     case "q" => update(Event.Abort); None
-    case "z" => controllerPublishHttp("undo"); None
-    case "y" => controllerPublishHttp("redo"); None
-    case "s" => controllerPublishHttp("save"); None
-    case "l" => controllerPublishHttp("load"); None
-    case "r" => controllerRestartHttp; None
+    case "z" => TUICoreRequestHttp.publish("undo"); None
+    case "y" => TUICoreRequestHttp.publish("redo"); None
+    case "s" => TUICoreRequestHttp.publish("save"); None
+    case "l" => TUICoreRequestHttp.publish("load"); None
+    case "r" => TUICoreRequestHttp.restart; None
     case "h" => println(help); None
     case newGame if newGame.startsWith("NEW: ") =>
       val numbers = newGame.split(": ")(1).split(" ")
       val (boardSizeNum, playerSizeNum, playerTypeNum, computerDifficultyNum): (String, String, String, String) =
         (numbers(0), numbers(1), numbers(2), numbers(3))
-      controllerInitGameHttp(
+      TUICoreRequestHttp.initGame(
         GameConfig.boardSizes(boardSizeNum),
         GameConfig.playerSizes(playerSizeNum),
         GameConfig.playerType(playerTypeNum),
@@ -66,67 +51,6 @@ class TUI:
 
   def checkSyntax(vec: Char, x: Char, y: Char): Try[(Int, Int, Int)] =
     Try(vec.toString.toInt, x.toString.toInt, y.toString.toInt)
-
-  def getRequest(endpoint: String): Future[String] =
-    val request = HttpRequest(
-      method = HttpMethods.GET,
-      uri = CORE_BASE_URL.concat(endpoint)
-    )
-    val responseFuture: Future[HttpResponse] = Http().singleRequest(request)
-    responseFuture.flatMap { response =>
-      response.entity.toStrict(5.seconds).map(_.data.utf8String)
-    }
-
-  def postRequest(endpoint: String, json: JsObject): Future[StatusCode] =
-    val request = HttpRequest(
-      method = HttpMethods.POST,
-      uri = CORE_BASE_URL.concat(endpoint),
-      entity = HttpEntity(ContentTypes.`application/json`, json.compactPrint)
-    )
-    Http().singleRequest(request).map(_.status)
-
-  def controllerToStringHttp: String = Await.result(getRequest("api/core/"), 5.seconds)
-
-  def controllerPublishHttp(move: Move): Future[StatusCode] =
-    val jsonBody = JsObject(
-      "method" -> JsString("put"),
-      "vec" -> JsNumber(move.vec),
-      "x" -> JsNumber(move.x),
-      "y" -> JsNumber(move.y),
-      "value" -> JsBoolean(move.value)
-    )
-    postRequest("api/core/publish", jsonBody)
-
-  def controllerPublishHttp(method: String): Future[StatusCode] =
-    val jsonBody = JsObject(
-      "method" -> JsString(method)
-    )
-    postRequest("api/core/publish", jsonBody)
-
-  def controllerRestartHttp: Future[String] = getRequest("api/core/restart")
-
-  def controllerInitGameHttp(
-      boardSize: BoardSize,
-      playerSize: PlayerSize,
-      playerType: PlayerType,
-      computerDifficulty: ComputerDifficulty
-  ): Future[StatusCode] =
-    val jsonBody = JsObject(
-      "boardSize" -> JsString(boardSize.toString),
-      "playerSize" -> JsString(playerSize.toString),
-      "playerType" -> JsString(playerType.toString),
-      "computerDifficulty" -> JsString(computerDifficulty.toString)
-    )
-    postRequest("api/core/initGame", jsonBody)
-
-  def finalStatsHttp: String =
-    val winner = Await.result(getRequest("api/core/get/winner"), 5.seconds)
-    val stats  = Await.result(getRequest("api/core/get/stats"), 5.seconds)
-    "\n" +
-      winner + "\n" +
-      "_________________________" + "\n\n" +
-      stats +
-      "\n"
 
   def welcome: String =
     "\n" +
