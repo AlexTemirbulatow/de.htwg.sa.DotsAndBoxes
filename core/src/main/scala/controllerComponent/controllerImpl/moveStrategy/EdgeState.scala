@@ -1,6 +1,6 @@
 package controllerComponent.controllerImpl.moveStrategy
 
-import api.utils.ModelRequestHttp
+import api.service.ModelRequestHttp
 import de.github.dotsandboxes.lib.Move
 import fieldComponent.FieldInterface
 

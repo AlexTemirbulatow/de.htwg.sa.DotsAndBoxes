@@ -1,4 +1,4 @@
-package api.modules
+package api.module
 
 import fieldComponent.FieldInterface
 import fieldComponent.fieldImpl.Field

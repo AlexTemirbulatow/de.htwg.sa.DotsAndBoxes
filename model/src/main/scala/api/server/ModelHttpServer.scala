@@ -6,7 +6,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import api.modules.FieldModule.given_FieldInterface
+import api.module.FieldModule.given_FieldInterface
 import api.routes.FieldRoutes
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}

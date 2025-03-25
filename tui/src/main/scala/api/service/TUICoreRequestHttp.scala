@@ -1,6 +1,6 @@
-package api.utils
+package api.service
 
-import api.clients.TUICoreClient
+import api.client.TUICoreClient
 import de.github.dotsandboxes.lib.{Move, BoardSize, PlayerSize, PlayerType, ComputerDifficulty}
 import play.api.libs.json.Json
 import scala.concurrent.duration.DurationInt

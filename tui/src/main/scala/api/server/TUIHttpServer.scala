@@ -5,7 +5,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import api.routes.TUIRoutes
-import api.utils.TUICoreRequestHttp
+import api.service.TUICoreRequestHttp
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}
 import tuiComponent.TUI

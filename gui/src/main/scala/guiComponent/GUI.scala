@@ -1,6 +1,6 @@
 package guiComponent
 
-import api.utils.GUICoreRequestHttp
+import api.service.GUICoreRequestHttp
 import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, Event, Move, PlayerSize, PlayerType}
 import java.awt.{Color, Cursor, Font, GradientPaint, RenderingHints}
 import java.io.File

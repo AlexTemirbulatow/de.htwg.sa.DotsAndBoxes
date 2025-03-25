@@ -1,6 +1,6 @@
-package api.utils
+package api.service
 
-import api.clients.GUICoreClient
+import api.client.GUICoreClient
 import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, Move, Player, PlayerSize, PlayerType}
 import io.circe.generic.auto._
 import io.circe.parser.decode

@@ -1,4 +1,4 @@
-package api.modules
+package api.module
 
 import controllerComponent.ControllerInterface
 import controllerComponent.controllerImpl.Controller

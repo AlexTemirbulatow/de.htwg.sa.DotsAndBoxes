@@ -1,6 +1,6 @@
 package controllerComponent.controllerImpl.command
 
-import api.utils.ModelRequestHttp
+import api.service.ModelRequestHttp
 import de.github.dotsandboxes.lib.Move
 import fieldComponent.FieldInterface
 

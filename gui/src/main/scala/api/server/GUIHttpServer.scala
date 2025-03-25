@@ -5,7 +5,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import api.routes.GUIRoutes
-import api.utils.GUICoreRequestHttp
+import api.service.GUICoreRequestHttp
 import guiComponent.GUI
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}

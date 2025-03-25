@@ -1,4 +1,4 @@
-package api.modules
+package api.module
 
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
@@ -14,6 +14,7 @@ import computerComponent.computerMediumImpl.ComputerMedium
 import computerComponent.computerHardImpl.ComputerHard
 import controllerComponent.ControllerInterface
 import controllerComponent.controllerImpl.Controller
+import api.module.CoreModule
 
 class CoreModuleSpec extends AnyWordSpec {
   "CoreModule" should {

@@ -1,6 +1,6 @@
 package tuiComponent
 
-import api.utils.TUICoreRequestHttp
+import api.service.TUICoreRequestHttp
 import de.github.dotsandboxes.lib.{Event, GameConfig, Move}
 import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}

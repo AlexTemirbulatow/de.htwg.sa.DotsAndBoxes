@@ -6,9 +6,9 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import api.modules.CoreModule.given_ControllerInterface
+import api.module.CoreModule.given_ControllerInterface
 import api.routes.CoreRoutes
-import api.utils.ModelRequestHttp
+import api.service.ModelRequestHttp
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.StdIn

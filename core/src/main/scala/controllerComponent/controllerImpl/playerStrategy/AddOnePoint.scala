@@ -1,6 +1,6 @@
 package controllerComponent.controllerImpl.playerStrategy
 
-import api.utils.ModelRequestHttp
+import api.service.ModelRequestHttp
 import fieldComponent.FieldInterface
 
 object AddOnePoint extends PlayerState:

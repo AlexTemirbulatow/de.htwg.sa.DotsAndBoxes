@@ -1,7 +1,7 @@
 package controllerComponent
 package controllerImpl
 
-import api.utils.ModelRequestHttp
+import api.service.ModelRequestHttp
 import computerComponent.ComputerInterface
 import computerComponent.computerEasyImpl.ComputerEasy
 import computerComponent.computerHardImpl.ComputerHard
