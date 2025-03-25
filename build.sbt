@@ -1,10 +1,12 @@
 val scala3Version = "3.6.4"
 val akkaVersion = "2.8.5"
 val akkaHttpVersion = "10.5.3"
+
 val dotsandboxesLibVersion = "0.1.7-SNAPSHOT"
+val dotsandboxesLibUrl = "https://maven.pkg.github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes.library"
 
 lazy val commonSettings = Seq(
-  resolvers += "Github Packages" at "https://maven.pkg.github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes.library",
+  resolvers += "Github Packages" at dotsandboxesLibUrl,
   credentials += Credentials(
     "GitHub Package Registry",
     "maven.pkg.github.com",
