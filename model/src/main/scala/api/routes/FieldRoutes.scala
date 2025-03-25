@@ -3,12 +3,11 @@ package api.routes
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
+import de.github.dotsandboxes.lib.{Move, SquareCase}
 import fieldComponent.FieldInterface
 import io.circe.generic.auto._
 import io.circe.syntax._
-import de.github.dotsandboxes.lib.{Status, Move}
-import play.api.libs.json.{Json, JsValue}
-import de.github.dotsandboxes.lib.SquareCase
+import play.api.libs.json.{JsValue, Json}
 
 class FieldRoutes(val field: FieldInterface):
   def fieldRoutes: Route = handleExceptions(exceptionHandler) {

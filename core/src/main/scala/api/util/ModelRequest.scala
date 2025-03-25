@@ -2,7 +2,8 @@ package api.util
 
 import java.net.{HttpURLConnection, URL}
 import java.nio.charset.StandardCharsets
-import play.api.libs.json.{JsObject, Json}
+import org.slf4j.LoggerFactory
+import play.api.libs.json.JsObject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.io.Source
@@ -12,6 +13,8 @@ object ModelRequest:
   private val MODEL_HOST = "localhost"
   private val MODEL_PORT = "8080"
   private val MODEL_BASE_URL = s"http://$MODEL_HOST:$MODEL_PORT/"
+
+  val logger = LoggerFactory.getLogger(getClass)
 
   def postRequest(endpoint: String, json: JsObject): Future[String] =
     Future {
@@ -29,6 +32,6 @@ object ModelRequest:
         Source.fromInputStream(connection.getInputStream)
       }(_.mkString) match {
         case Success(content)   => content
-        case Failure(exception) => println(s"HTTP POST ERROR AT: $endpoint -- ${exception.getMessage}"); ""
+        case Failure(exception) => logger.error(s"HTTP POST ERROR AT ENDPOINT: $endpoint\n${exception}"); ""
       }
     }
