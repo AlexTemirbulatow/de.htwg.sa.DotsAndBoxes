@@ -81,12 +81,14 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
   override def colSize(): Int = matrix.colSize()
   override def space(length: Int): String = " " * ((length - 1) / 2)
   override def toCellData: CellData =
+    val (row, col) = boardSize.dimensions
     CellData(
-      Vector.tabulate(maxPosY, maxPosY)((row, col) => getRowCell(row, col)),
-      Vector.tabulate(maxPosX, maxPosY+1)((row, col) => getColCell(row, col)),
-      Vector.tabulate(maxPosX, maxPosY)((row, col) => getStatusCell(row, col).toString)
+      Vector.tabulate(col+1, row)((row, col) => getRowCell(row, col)),
+      Vector.tabulate(col, row+1)((row, col) => getColCell(row, col)),
+      Vector.tabulate(col, row)((row, col) => getStatusCell(row, col).toString)
     )
   override def toJson: JsObject =
+    val (row, col) = boardSize.dimensions
     Json.obj(
       "field" -> Json.obj(
         "boardSize" -> Json.toJson(boardSize.toString()),
@@ -95,20 +97,20 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
         "currentPlayer" -> Json.toJson(currentPlayerIndex),
         "status" -> Json.toJson(
           for
-            x <- 0 until maxPosX
-            y <- 0 until maxPosY
+            x <- 0 until col
+            y <- 0 until row
           yield Json.obj("x" -> x, "y" -> y, "value" -> Json.toJson(getStatusCell(x, y).toString))
         ),
         "rows" -> Json.toJson(
           for
-            x <- 0 until maxPosY
-            y <- 0 until maxPosY
+            x <- 0 until col+1
+            y <- 0 until row
           yield Json.obj("x" -> x, "y" -> y, "value" -> Json.toJson(getRowCell(x, y).toString.toBoolean))
         ),
         "cols" -> Json.toJson(
           for
-            x <- 0 until maxPosX
-            y <- 0 to maxPosY
+            x <- 0 until col
+            y <- 0 until row+1
           yield Json.obj("x" -> x, "y" -> y, "value" -> Json.toJson(getColCell(x, y).toString.toBoolean))
         ),
         "playerList" -> Json.toJson(

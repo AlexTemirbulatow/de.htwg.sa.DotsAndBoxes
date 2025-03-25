@@ -6,6 +6,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import fieldComponent.FieldInterface
 import fieldComponent.fieldImpl.Field
 import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, Status}
+import fileIoComponent.xmlImpl.FileIO
 
 class FileIoSpec extends AnyWordSpec {
   "A game state" when {

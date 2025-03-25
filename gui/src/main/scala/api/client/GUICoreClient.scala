@@ -10,7 +10,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object GUICoreClient:
   private val CORE_HOST = "localhost"
-  private val CORE_PORT = "8082"
+  private val CORE_PORT = "8083"
   private val CORE_BASE_URL = s"http://$CORE_HOST:$CORE_PORT/"
 
   private implicit val system: ActorSystem = ActorSystem()

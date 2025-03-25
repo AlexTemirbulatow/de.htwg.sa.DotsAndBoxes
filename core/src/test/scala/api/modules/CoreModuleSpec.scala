@@ -15,6 +15,8 @@ import computerComponent.computerHardImpl.ComputerHard
 import controllerComponent.ControllerInterface
 import controllerComponent.controllerImpl.Controller
 import api.module.CoreModule
+import fileIoComponent.jsonImpl.FileIO
+import fileIoComponent.xmlImpl.FileIO
 
 class CoreModuleSpec extends AnyWordSpec {
   "CoreModule" should {

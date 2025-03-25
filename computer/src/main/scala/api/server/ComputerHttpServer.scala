@@ -5,15 +5,15 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import api.module.FieldModule.given_FieldInterface
-import api.routes.FieldRoutes
+import api.module.ComputerModule.given_ComputerInterface
+import api.routes.ComputerRoutes
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.StdIn
 
-object ModelHttpServer:
-  private val MODEL_HOST = "localhost"
-  private val MODEL_PORT = 8080
+object ComputerHttpServer:
+  private val COMPUTER_HOST = "localhost"
+  private val COMPUTER_PORT = 8082
 
   implicit val system: ActorSystem = ActorSystem()
   implicit val executionContext: ExecutionContext = system.dispatcher
@@ -22,18 +22,18 @@ object ModelHttpServer:
 
   def run: Unit =
     val server = Http()
-      .newServerAt(MODEL_HOST, MODEL_PORT)
-      .bind(routes(FieldRoutes(given_FieldInterface)))
-    logger.info(s"Model server is running at http://$MODEL_HOST:$MODEL_PORT/api\n\nPress RETURN to terminate...\n")
+      .newServerAt(COMPUTER_HOST, COMPUTER_PORT)
+      .bind(routes(ComputerRoutes(given_ComputerInterface)))
+    logger.info(s"Computer server is running at http://$COMPUTER_HOST:$COMPUTER_PORT/api\n\nPress RETURN to terminate...\n")
     StdIn.readLine()
     shutdown(server)
 
-  private def routes(fieldRoutes: FieldRoutes): Route =
+  private def routes(computerRoutes: ComputerRoutes): Route =
     pathPrefix("api") {
       concat(
-        pathPrefix("field") {
+        pathPrefix("computer") {
           concat(
-            fieldRoutes.fieldRoutes
+            computerRoutes.computerRoutes
           )
         }
       )
@@ -42,6 +42,6 @@ object ModelHttpServer:
   private def shutdown(server: Future[ServerBinding]): Unit = server
     .flatMap(_.unbind())
     .onComplete { _ =>
-      logger.info("Shutting down ModelHttpServer...")
+      logger.info("Shutting down ComputerHttpServer...")
       system.terminate()
     }

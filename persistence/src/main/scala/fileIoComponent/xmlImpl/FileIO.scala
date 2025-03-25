@@ -23,6 +23,7 @@ class FileIO extends FileIOInterface:
       case Failure(e) => Left(e.getMessage)
     
   def fieldToXml(field: FieldInterface): Elem =
+    val (row, col) = field.boardSize.dimensions
     <field rowSize={field.maxPosY.toString} colSize={field.maxPosX.toString}>
       <playerList boardSize={field.boardSize.toString} playerSize={field.playerSize.toString} playerType={field.playerType.toString} currentPlayer={field.currentPlayerIndex.toString}>
         {field.playerList.indices.map(playerToXml(field, _))}
@@ -31,8 +32,8 @@ class FileIO extends FileIOInterface:
       <status>
         {
           for
-            x <- 0 until field.maxPosX
-            y <- 0 until field.maxPosY
+            x <- 0 until col
+            y <- 0 until row
           yield statusCellToXml(field, x, y)
         }
       </status>
@@ -40,8 +41,8 @@ class FileIO extends FileIOInterface:
       <rows>
         {
           for
-            x <- 0 until field.maxPosY
-            y <- 0 until field.maxPosY
+            x <- 0 until col+1
+            y <- 0 until row
           yield rowCellToXml(field, x, y)
         }
       </rows>
@@ -49,8 +50,8 @@ class FileIO extends FileIOInterface:
       <cols>
         {
           for
-            x <- 0 until field.maxPosX
-            y <- 0 to field.maxPosY
+            x <- 0 until col
+            y <- 0 until row+1
           yield colCellToXml(field, x, y)
         }
       </cols>

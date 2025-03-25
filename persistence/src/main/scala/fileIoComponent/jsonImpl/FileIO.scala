@@ -22,6 +22,7 @@ class FileIO extends FileIOInterface:
       case Failure(e) => Left(e.getMessage)
 
   def fieldToJson(field: FieldInterface): JsObject =
+    val (row, col) = field.boardSize.dimensions
     Json.obj(
       "field" -> Json.obj(
         "boardSize" -> Json.toJson(field.boardSize.toString()),
@@ -30,20 +31,20 @@ class FileIO extends FileIOInterface:
         "currentPlayer" -> Json.toJson(field.currentPlayerIndex),
         "status" -> Json.toJson(
           for
-            x <- 0 until field.maxPosX
-            y <- 0 until field.maxPosY
+            x <- 0 until col
+            y <- 0 until row
           yield Json.obj("x" -> x, "y" -> y, "value" -> Json.toJson(field.getStatusCell(x, y).toString))
         ),
         "rows" -> Json.toJson(
           for
-            x <- 0 until field.maxPosY
-            y <- 0 until field.maxPosY
+            x <- 0 until col+1
+            y <- 0 until row
           yield Json.obj("x" -> x, "y" -> y, "value" -> Json.toJson(field.getRowCell(x, y).toString.toBoolean))
         ),
         "cols" -> Json.toJson(
           for
-            x <- 0 until field.maxPosX
-            y <- 0 to field.maxPosY
+            x <- 0 until col
+            y <- 0 until row+1
           yield Json.obj("x" -> x, "y" -> y, "value" -> Json.toJson(field.getColCell(x, y).toString.toBoolean))
         ),
         "playerList" -> Json.toJson(

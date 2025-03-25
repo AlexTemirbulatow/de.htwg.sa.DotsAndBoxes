@@ -15,7 +15,7 @@ import scala.io.StdIn
 
 object CoreHttpServer:
   private val CORE_HOST = "localhost"
-  private val CORE_PORT = 8082
+  private val CORE_PORT = 8083
 
   implicit val system: ActorSystem = ActorSystem()
   implicit val executionContext: ExecutionContext = system.dispatcher
@@ -26,7 +26,7 @@ object CoreHttpServer:
     val server = Http()
       .newServerAt(CORE_HOST, CORE_PORT)
       .bind(routes(CoreRoutes(given_ControllerInterface)))
-    logger.info(s"Core sever is running at http://$CORE_HOST:$CORE_PORT/api\n\nPress RETURN to terminate...\n")
+    logger.info(s"Core server is running at http://$CORE_HOST:$CORE_PORT/api\n\nPress RETURN to terminate...\n")
     StdIn.readLine()
     shutdown(server)
 
