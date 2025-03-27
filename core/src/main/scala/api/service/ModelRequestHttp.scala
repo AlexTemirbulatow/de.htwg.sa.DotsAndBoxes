@@ -2,7 +2,7 @@ package api.service
 
 import api.client.ModelClient
 import common.model.fieldService.FieldInterface
-import common.model.fieldService.fieldJson.FieldJsonConverter
+import common.model.fieldService.converter.FieldConverter
 import de.github.dotsandboxes.lib.{BoardSize, CellData, Move, Player, PlayerSize, PlayerType, Status}
 import io.circe.generic.auto._
 import io.circe.parser.decode
@@ -28,8 +28,9 @@ object ModelRequestHttp:
       "y"     -> y
     )), 5.seconds)
 
-  def newGame(boardSize: BoardSize, status: Status, playerSize: PlayerSize, playerType: PlayerType): String =
+  def newGame(boardSize: BoardSize, status: Status, playerSize: PlayerSize, playerType: PlayerType, field: FieldInterface): String =
     Await.result(ModelClient.postRequest("api/field/newField", Json.obj(
+      "field"      -> fieldJsonString(field),
       "boardSize"  -> boardSize.toString,
       "status"     -> status.toString,
       "playerSize" -> playerSize.toString,
@@ -176,4 +177,4 @@ object ModelRequestHttp:
 
   def shutdown: Future[Unit] = ModelClient.shutdown
 
-  private def fieldJsonString(field: FieldInterface): String = FieldJsonConverter.toJson(field).toString
+  private def fieldJsonString(field: FieldInterface): String = FieldConverter.toJson(field).toString

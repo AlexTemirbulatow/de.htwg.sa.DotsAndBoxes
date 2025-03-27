@@ -3,7 +3,7 @@ package controllerImpl
 
 import api.service.{ComputerRequestHttp, ModelRequestHttp}
 import common.model.fieldService.FieldInterface
-import common.model.fieldService.fieldJson.FieldJsonConverter
+import common.model.fieldService.converter.FieldConverter
 import controllerImpl.command.{PutCommand, UndoManager}
 import controllerImpl.moveHandler.MoveValidator
 import controllerImpl.moveStrategy.{EdgeState, MidState, MoveStrategy}
@@ -21,7 +21,7 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, v
   val logger = LoggerFactory.getLogger(getClass)
 
   override def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, difficulty: ComputerDifficulty): FieldInterface =
-    field = fieldFromJson(ModelRequestHttp.newGame(boardSize, Status.Empty, playerSize, playerType))
+    field = fieldFromJson(ModelRequestHttp.newGame(boardSize, Status.Empty, playerSize, playerType, field))
     this.computerDifficulty = difficulty
     notifyObservers(Event.Move)
     field
@@ -84,7 +84,7 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, v
       calculateComputerMove(field)
     }
   override def calculateComputerMove(field: FieldInterface): FieldInterface =
-    val move: Move = ComputerRequestHttp.calculateMove(FieldJsonConverter.toJson(field).toString, getComputerDifficulty)
+    val move: Move = ComputerRequestHttp.calculateMove(FieldConverter.toJson(field).toString, getComputerDifficulty)
     publish(put, move) match
       case Success(updatedField) => updatedField
       case Failure(_)            => field

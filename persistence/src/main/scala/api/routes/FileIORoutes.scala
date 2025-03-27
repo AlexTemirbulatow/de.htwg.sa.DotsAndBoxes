@@ -32,7 +32,7 @@ class FileIORoutes(val fileIO: FileIOInterface):
     }
   }
 
-val exceptionHandler = ExceptionHandler {
+private val exceptionHandler = ExceptionHandler {
   case e: NoSuchElementException =>
     complete(NotFound -> e.getMessage)
   case e: IllegalArgumentException =>

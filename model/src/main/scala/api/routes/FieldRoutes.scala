@@ -4,14 +4,15 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import common.model.fieldService.FieldInterface
-import common.model.fieldService.fieldJson.FieldJsonConverter
+import common.model.fieldService.converter.FieldConverter
 import de.github.dotsandboxes.lib.{BoardSize, Move, PlayerSize, PlayerType, SquareCase, Status}
 import io.circe.generic.auto._
 import io.circe.syntax._
 import play.api.libs.json.{JsLookupResult, JsValue, Json}
 import scala.util.Try
+import fieldComponent.fieldImpl.FieldParser
 
-class FieldRoutes(val field: FieldInterface):
+class FieldRoutes:
   def fieldRoutes: Route = handleExceptions(exceptionHandler) {
     concat(
       handlePlaceRequests,
@@ -61,7 +62,8 @@ class FieldRoutes(val field: FieldInterface):
         val status: Status         = Status.values.find(_.toString == (jsonValue \ "status").as[String]).get
         val playerSize: PlayerSize = Try(PlayerSize.valueOf((jsonValue \ "playerSize").as[String])).get
         val playerType: PlayerType = Try(PlayerType.valueOf((jsonValue \ "playerType").as[String])).get
-        complete(fieldToJsonString(field.newField(boardSize, status, playerSize, playerType)))
+        val fieldResult: JsLookupResult = (jsonValue \ "field")
+        complete(fieldToJsonString(parsedField(fieldResult).newField(boardSize, status, playerSize, playerType)))
       }
     }
   }
@@ -330,16 +332,16 @@ class FieldRoutes(val field: FieldInterface):
   private def parsedField(json: String): FieldInterface =
     val jsonValue: JsValue = Json.parse(json)
     val fieldValue: String = (jsonValue \ "field").as[String]
-    field.fromJson(fieldValue)
+    FieldParser.fromJson(fieldValue)
 
   private def parsedField(fieldResult: JsLookupResult): FieldInterface =
     val fieldValue: String = fieldResult.as[String]
-    field.fromJson(fieldValue)
+    FieldParser.fromJson(fieldValue)
 
   private def fieldToJsonString(field: FieldInterface): String =
-    FieldJsonConverter.toJson(field).toString
+    FieldConverter.toJson(field).toString
 
-val exceptionHandler = ExceptionHandler {
+private val exceptionHandler = ExceptionHandler {
   case e: NoSuchElementException =>
     complete(NotFound -> e.getMessage)
   case e: IllegalArgumentException =>

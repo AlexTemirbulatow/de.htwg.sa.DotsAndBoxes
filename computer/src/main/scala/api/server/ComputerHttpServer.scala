@@ -23,7 +23,7 @@ object ComputerHttpServer:
   def run: Unit =
     val server = Http()
       .newServerAt(COMPUTER_HOST, COMPUTER_PORT)
-      .bind(routes(ComputerRoutes()))
+      .bind(routes(new ComputerRoutes))
     logger.info(s"Computer server is running at http://$COMPUTER_HOST:$COMPUTER_PORT/api\n\nPress RETURN to terminate...\n")
     StdIn.readLine()
     shutdown(server)

@@ -1,9 +1,9 @@
-package common.model.fieldService.fieldJson
+package common.model.fieldService.converter
 
 import common.model.fieldService.FieldInterface
 import play.api.libs.json.{JsObject, Json}
 
-object FieldJsonConverter:
+object FieldConverter:
   def toJson(field: FieldInterface): JsObject =
     val (row, col) = field.boardSize.dimensions
     Json.obj(

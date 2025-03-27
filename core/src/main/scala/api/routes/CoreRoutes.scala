@@ -5,7 +5,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import controllerComponent.ControllerInterface
 import controllerComponent.controllerImpl.observer.ObserverHttp
-import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, Move, PlayerSize, PlayerType, Status, Player}
+import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, Move, Player, PlayerSize, PlayerType, Status}
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.slf4j.LoggerFactory
@@ -164,7 +164,7 @@ class CoreRoutes(val controller: ControllerInterface):
     }
   }
 
-val exceptionHandler = ExceptionHandler {
+private val exceptionHandler = ExceptionHandler {
   case e: NoSuchElementException =>
     complete(NotFound -> e.getMessage)
   case e: IllegalArgumentException =>

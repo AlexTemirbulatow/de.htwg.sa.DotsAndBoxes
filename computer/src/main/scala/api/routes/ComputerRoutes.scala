@@ -40,7 +40,7 @@ private def computerFactory(difficulty: ComputerDifficulty): ComputerInterface =
   case ComputerDifficulty.Medium => new ComputerMedium()
   case ComputerDifficulty.Hard   => new ComputerHard()
 
-val exceptionHandler = ExceptionHandler {
+private val exceptionHandler = ExceptionHandler {
   case e: NoSuchElementException =>
     complete(NotFound -> e.getMessage)
   case e: IllegalArgumentException =>

@@ -5,7 +5,6 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import api.module.FieldModule.given_FieldInterface
 import api.routes.FieldRoutes
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}
@@ -23,7 +22,7 @@ object ModelHttpServer:
   def run: Unit =
     val server = Http()
       .newServerAt(MODEL_HOST, MODEL_PORT)
-      .bind(routes(FieldRoutes(given_FieldInterface)))
+      .bind(routes(new FieldRoutes))
     logger.info(s"Model server is running at http://$MODEL_HOST:$MODEL_PORT/api\n\nPress RETURN to terminate...\n")
     StdIn.readLine()
     shutdown(server)

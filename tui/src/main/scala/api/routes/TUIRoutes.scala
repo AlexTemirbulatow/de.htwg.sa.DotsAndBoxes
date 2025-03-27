@@ -4,8 +4,9 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import de.github.dotsandboxes.lib.Event
+import tuiComponent.TUI
 
-class TUIRoutes(val tui: tuiComponent.TUI):
+class TUIRoutes(val tui: TUI):
   def tuiRoutes: Route = handleExceptions(exceptionHandler) {
     concat(
       handleEventRequests
@@ -30,7 +31,7 @@ class TUIRoutes(val tui: tuiComponent.TUI):
     }
   }
 
-val exceptionHandler = ExceptionHandler {
+private val exceptionHandler = ExceptionHandler {
   case e: NoSuchElementException =>
     complete(NotFound -> e.getMessage)
   case e: IllegalArgumentException =>
