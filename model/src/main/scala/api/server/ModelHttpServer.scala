@@ -23,7 +23,7 @@ object ModelHttpServer:
     val server = Http()
       .newServerAt(MODEL_HOST, MODEL_PORT)
       .bind(routes(new FieldRoutes))
-    logger.info(s"Model server is running at http://$MODEL_HOST:$MODEL_PORT/api\n\nPress RETURN to terminate...\n")
+    logger.info(s"Model Service -- Http Server is running at http://$MODEL_HOST:$MODEL_PORT/api/field\n\nPress RETURN to terminate...\n")
     StdIn.readLine()
     shutdown(server)
 
@@ -41,6 +41,6 @@ object ModelHttpServer:
   private def shutdown(server: Future[ServerBinding]): Unit = server
     .flatMap(_.unbind())
     .onComplete { _ =>
-      logger.info("Shutting down ModelHttpServer...")
+      logger.info("Model Service -- Shutting Down Http Server...")
       system.terminate()
     }

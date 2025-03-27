@@ -41,5 +41,5 @@ object GUIHttpServer:
     }
 
   private def shutdown: Future[Unit] =
-    logger.info("Shutting down GUIHttpServer...")
+    logger.info("GUI Service -- Shutting Down Http Server...")
     CoreRequestHttp.deregisterGUIObserver(GUI_OBSERVER_URL)

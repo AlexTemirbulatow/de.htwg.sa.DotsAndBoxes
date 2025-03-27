@@ -24,7 +24,7 @@ object FileIOHttpServer:
     val server = Http()
       .newServerAt(FILEIO_HOST, FILEIO_PORT)
       .bind(routes(FileIORoutes(given_FileIOInterface)))
-    logger.info(s"FileIO server is running at http://$FILEIO_HOST:$FILEIO_PORT/api\n\nPress RETURN to terminate...\n")
+    logger.info(s"FileIO Service -- is running at http://$FILEIO_HOST:$FILEIO_PORT/api/fileIO\n\nPress RETURN to terminate...\n")
     StdIn.readLine()
     shutdown(server)
 
@@ -42,6 +42,6 @@ object FileIOHttpServer:
   private def shutdown(server: Future[ServerBinding]): Unit = server
     .flatMap(_.unbind())
     .onComplete { _ =>
-      logger.info("Shutting down FileIOHttpServer...")
+      logger.info("FileIO Service -- Shutting Down Http Server...")
       system.terminate()
     }

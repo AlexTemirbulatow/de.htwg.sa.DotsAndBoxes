@@ -41,5 +41,5 @@ object TUIHttpServer:
     }
 
   private def shutdown: Future[Unit] =
-    logger.info("Shutting down TUIHttpServer...")
+    logger.info("TUI Service -- Shutting Down Http Server...")
     CoreRequestHttp.deregisterTUIObserver(TUI_OBSERVER_URL)
