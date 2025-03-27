@@ -47,6 +47,9 @@ class CoreRoutes(val controller: ControllerInterface):
     path("playerType") {
       complete(controller.playerType.toString)
     } ~
+    path("currentPlayerType") {
+      complete(controller.currentPlayerType.toString)
+    } ~
     path("computerDifficulty") {
       complete(controller.getComputerDifficulty.toString)
     } ~

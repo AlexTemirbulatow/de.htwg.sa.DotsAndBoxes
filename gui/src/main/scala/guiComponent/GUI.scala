@@ -562,6 +562,7 @@ class GUI extends Frame:
   class CellPanel(x: Int, y: Int) extends GridPanel(gridSize(fieldSize())._2, gridSize(fieldSize())._1):
     opaque = false
     private val cellData: CellData = CoreRequestHttp.cellData
+    private val currentPlayerType: PlayerType = CoreRequestHttp.currentPlayerType
     fieldBuilder
 
     private def fieldBuilder =
@@ -575,10 +576,10 @@ class GUI extends Frame:
 
     private def bar(row: Int, col: Int) =
       contents += dotImg
-      contents += CellButton(1, row, col, cellData.rowCells(row)(col))
+      contents += CellButton(1, row, col, cellData.rowCells(row)(col), currentPlayerType)
 
     private def cell(row: Int, col: Int) =
-      contents += CellButton(2, row, col, cellData.colCells(row)(col))
+      contents += CellButton(2, row, col, cellData.colCells(row)(col), currentPlayerType)
       if col != x then
         contents += new Label {
           icon = cellData.statusCells(row)(col) match
@@ -596,14 +597,15 @@ class GUI extends Frame:
         super.paintComponent(g)
     }
 
-  class CellButton(vec: Int, x: Int, y: Int, status: Boolean) extends Button:
+  class CellButton(vec: Int, x: Int, y: Int, status: Boolean, currentPlayerType: PlayerType) extends Button:
     listenTo(mouse.moves, mouse.clicks)
+    val isComputerTurn: Boolean = currentPlayerType == PlayerType.Computer
     background = currentTheme._1
     borderPainted = false
     focusPainted = false
     opaque = false
     cursor = new Cursor(Cursor.HAND_CURSOR)
-    enabled = !status
+    enabled = if isComputerTurn then false else !status
     lineBuilder
 
     private def lineBuilder =
@@ -617,9 +619,9 @@ class GUI extends Frame:
 
     reactions += {
       case MouseClicked(source) =>
-        CoreRequestHttp.publish(Move(vec, x, y, true))
+        if !isComputerTurn then CoreRequestHttp.publish(Move(vec, x, y, true))
       case MouseEntered(source) =>
-        vec match
+        if !isComputerTurn then vec match
           case 1 => if !status then icon = untakenBar
           case 2 => if !status then icon = untakenCol
       case MouseExited(source) => if !status then icon = takenNone

@@ -53,6 +53,7 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, v
   override def playerSize: PlayerSize = ModelRequestHttp.playerSize(field)
   override def playerType: PlayerType = ModelRequestHttp.playerType(field)
   override def playerList: Vector[Player] = ModelRequestHttp.playerList(field)
+  override def currentPlayerType: PlayerType = ModelRequestHttp.currentPlayerType(field)
   override def currentPlayer: String = ModelRequestHttp.gameData("currentPlayer", field)
   override def currentPoints: Int = ModelRequestHttp.gameData("currentPoints", field).toInt
   override def gameEnded: Boolean = ModelRequestHttp.gameData("gameEnded", field).toBoolean
@@ -78,7 +79,7 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, v
         field = fieldFromJson(PlayerStrategy.updatePlayer(field, preStatus, postStatus))
         notifyObservers(Event.Move)
         if gameEnded then notifyObservers(Event.End); Success(field)
-        if !gameEnded && ModelRequestHttp.currentPlayerType(field) == PlayerType.Computer then computerMove(field)
+        if !gameEnded && currentPlayerType == PlayerType.Computer then computerMove(field)
         Success(field)
   override def computerMove(field: FieldInterface): Future[FieldInterface] =
     Future {

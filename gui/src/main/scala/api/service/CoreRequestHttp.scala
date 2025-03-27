@@ -39,6 +39,11 @@ object CoreRequestHttp:
       Await.result(CoreClient.getRequest("api/core/get/playerType"), 5.seconds)
     )).getOrElse(throw new RuntimeException("Invalid Player Type."))
 
+  def currentPlayerType: PlayerType =
+    Try(PlayerType.valueOf(
+      Await.result(CoreClient.getRequest("api/core/get/currentPlayerType"), 5.seconds)
+    )).getOrElse(throw new RuntimeException("Invalid Player Type."))
+
   def computerDifficulty: ComputerDifficulty =
     Try(ComputerDifficulty.valueOf(
       Await.result(CoreClient.getRequest("api/core/get/computerDifficulty"), 5.seconds)

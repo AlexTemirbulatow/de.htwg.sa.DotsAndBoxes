@@ -26,6 +26,7 @@ trait ControllerInterface extends Observable:
   def playerType: PlayerType
   def playerList: Vector[Player]
   def currentPlayer: String
+  def currentPlayerType: PlayerType
   def currentPoints: Int
   def gameEnded: Boolean
   def winner: String
