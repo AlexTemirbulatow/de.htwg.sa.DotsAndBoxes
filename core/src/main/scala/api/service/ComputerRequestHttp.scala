@@ -9,6 +9,8 @@ import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
 
 object ComputerRequestHttp:
+  def connect = ComputerClient.getRequest("api/computer/connect")
+
   def calculateMove(fieldValue: String, difficulty: ComputerDifficulty): Move =
     decode[Move](
       Await.result(ComputerClient.postRequest("api/computer/get/move", Json.obj(

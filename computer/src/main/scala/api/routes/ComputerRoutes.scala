@@ -1,6 +1,7 @@
 package api.routes
 
-import akka.http.scaladsl.model.StatusCodes._
+import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.model.StatusCodes.{Conflict, InternalServerError, NotFound}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import computerComponent.ComputerInterface
@@ -16,8 +17,15 @@ import scala.util.Try
 class ComputerRoutes:
   def computerRoutes: Route = handleExceptions(exceptionHandler) {
     concat(
+      handleConnectRequest,
       handleComputerMoveRequest
     )
+  }
+
+  private def handleConnectRequest: Route = get {
+    path("connect") {
+      complete(StatusCodes.OK)
+    }
   }
 
   private def handleComputerMoveRequest: Route = post {

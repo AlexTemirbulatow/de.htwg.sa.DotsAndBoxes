@@ -1,16 +1,16 @@
 package api.routes
 
-import akka.http.scaladsl.model.StatusCodes._
+import akka.http.scaladsl.model.StatusCodes.{BadRequest, Conflict, InternalServerError, NotFound}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import common.model.fieldService.FieldInterface
 import common.model.fieldService.converter.FieldConverter
 import de.github.dotsandboxes.lib.{BoardSize, Move, PlayerSize, PlayerType, SquareCase, Status}
+import fieldComponent.fieldImpl.FieldParser
 import io.circe.generic.auto._
 import io.circe.syntax._
 import play.api.libs.json.{JsLookupResult, JsValue, Json}
 import scala.util.Try
-import fieldComponent.fieldImpl.FieldParser
 
 class FieldRoutes:
   def fieldRoutes: Route = handleExceptions(exceptionHandler) {

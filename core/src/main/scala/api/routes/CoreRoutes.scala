@@ -1,6 +1,7 @@
 package api.routes
 
-import akka.http.scaladsl.model.StatusCodes._
+import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.model.StatusCodes.{BadRequest, Conflict, InternalServerError, NotFound}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import controllerComponent.ControllerInterface
@@ -90,7 +91,7 @@ class CoreRoutes(val controller: ControllerInterface):
   private def handleRestartGameRequest: Route = get {
     path("restart") {
       controller.restart
-      complete(OK)
+      complete(StatusCodes.OK)
     }
   }
 
@@ -103,7 +104,7 @@ class CoreRoutes(val controller: ControllerInterface):
         val playerType: PlayerType = Try(PlayerType.valueOf((jsonValue \ "playerType").as[String])).getOrElse(PlayerType.Human)
         val computerDifficulty: ComputerDifficulty = Try(ComputerDifficulty.valueOf((jsonValue \ "computerDifficulty").as[String])).getOrElse(ComputerDifficulty.Medium)
         controller.initGame(boardSize, playerSize, playerType, computerDifficulty)
-        complete(OK)
+        complete(StatusCodes.OK)
       }
     }
   }
@@ -120,19 +121,19 @@ class CoreRoutes(val controller: ControllerInterface):
             val y: Int = (jsonValue \ "y").as[Int]
             val value: Boolean = (jsonValue \ "value").as[Boolean]
             controller.publish(controller.put, Move(vec, x, y, value))
-            complete(OK)
+            complete(StatusCodes.OK)
           case "undo" =>
             controller.publish(controller.undo)
-            complete(OK)
+            complete(StatusCodes.OK)
           case "redo" =>
             controller.publish(controller.redo)
-            complete(OK)
+            complete(StatusCodes.OK)
           case "save" =>
             controller.publish(controller.save)
-            complete(OK)
+            complete(StatusCodes.OK)
           case "load" =>
             controller.publish(controller.load)
-            complete(OK)
+            complete(StatusCodes.OK)
           case _ =>
             complete(BadRequest, "Invalid method")
         }
@@ -147,7 +148,7 @@ class CoreRoutes(val controller: ControllerInterface):
         val observerUrl: String = (jsonValue \ "url").as[String]
         controller.add(new ObserverHttp(observerUrl))
         logger.info(s"Observer registered at: $observerUrl")
-        complete(OK)
+        complete(StatusCodes.OK)
       }
     }
   }
@@ -159,7 +160,7 @@ class CoreRoutes(val controller: ControllerInterface):
         val observerUrl: String = (jsonValue \ "url").as[String]
         controller.remove(observerUrl)
         logger.info(s"Observer deregistered from: $observerUrl")
-        complete(OK)
+        complete(StatusCodes.OK)
       }
     }
   }

@@ -47,5 +47,4 @@ trait FieldInterface:
   def colSize(): Int
   def space(length: Int): String
   def toCellData: CellData
-  def fromJson(jsonField: String): FieldInterface
   override def toString: String

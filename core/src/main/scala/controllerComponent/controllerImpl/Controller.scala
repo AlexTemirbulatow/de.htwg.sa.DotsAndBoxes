@@ -9,6 +9,7 @@ import controllerImpl.moveHandler.MoveValidator
 import controllerImpl.moveStrategy.{EdgeState, MidState, MoveStrategy}
 import controllerImpl.playerStrategy.PlayerStrategy
 import de.github.dotsandboxes.lib.{BoardSize, CellData, ComputerDifficulty, Event, Move, Player, PlayerSize, PlayerType, Status}
+import fieldComponent.fieldImpl.FieldParser
 import fileIoComponent.FileIOInterface
 import org.slf4j.LoggerFactory
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -21,6 +22,7 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, v
   val logger = LoggerFactory.getLogger(getClass)
 
   override def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, difficulty: ComputerDifficulty): FieldInterface =
+    if playerType == PlayerType.Computer then ComputerRequestHttp.connect
     field = fieldFromJson(ModelRequestHttp.newGame(boardSize, Status.Empty, playerSize, playerType, field))
     this.computerDifficulty = difficulty
     notifyObservers(Event.Move)
@@ -94,4 +96,4 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, v
     s"\n${ModelRequestHttp.gameData("asString", field)}\n${currentPlayer}s turn\n[points: ${currentPoints}]\n\n${moveString}"
 
   private def fieldFromJson(fieldValue: String): FieldInterface =
-    field.fromJson(fieldValue)
+    FieldParser.fromJson(fieldValue)
