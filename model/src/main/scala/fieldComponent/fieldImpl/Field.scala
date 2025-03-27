@@ -1,16 +1,20 @@
 package fieldComponent.fieldImpl
 
-import fieldComponent.FieldInterface
+import common.model.fieldService.FieldInterface
 import matrixComponent.MatrixInterface
 import matrixComponent.matrixImpl.Matrix
 import de.github.dotsandboxes.lib.{PlayerType, BoardSize, PlayerSize, SquareCase, Player, Status, Move, CellData}
-import play.api.libs.json.{Json, JsObject, JsValue, JsLookupResult}
+import play.api.libs.json.{Json, JsValue, JsLookupResult}
 import scala.util.Try
+import de.github.dotsandboxes.lib.ComputerDifficulty
 
 case class Field(matrix: MatrixInterface) extends FieldInterface:
   def this(boardSize: BoardSize, status: Status, playerSize: PlayerSize, playerType: PlayerType) =
     this(new Matrix(boardSize, status, playerSize, playerType))
-  
+
+  override def newField(boardSize: BoardSize, status: Status, playerSize: PlayerSize, playerType: PlayerType): FieldInterface =
+    new Field(new Matrix(boardSize, status, playerSize, playerType))
+
   override def bar(
     length: Int,
     cellNum: Int,
@@ -86,38 +90,6 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
       Vector.tabulate(col+1, row)((row, col) => getRowCell(row, col)),
       Vector.tabulate(col, row+1)((row, col) => getColCell(row, col)),
       Vector.tabulate(col, row)((row, col) => getStatusCell(row, col).toString)
-    )
-  override def toJson: JsObject =
-    val (row, col) = boardSize.dimensions
-    Json.obj(
-      "field" -> Json.obj(
-        "boardSize" -> Json.toJson(boardSize.toString()),
-        "playerSize" -> Json.toJson(playerSize.toString()),
-        "playerType" -> Json.toJson(playerType.toString()),
-        "currentPlayer" -> Json.toJson(currentPlayerIndex),
-        "status" -> Json.toJson(
-          for
-            x <- 0 until col
-            y <- 0 until row
-          yield Json.obj("x" -> x, "y" -> y, "value" -> Json.toJson(getStatusCell(x, y).toString))
-        ),
-        "rows" -> Json.toJson(
-          for
-            x <- 0 until col+1
-            y <- 0 until row
-          yield Json.obj("x" -> x, "y" -> y, "value" -> Json.toJson(getRowCell(x, y).toString.toBoolean))
-        ),
-        "cols" -> Json.toJson(
-          for
-            x <- 0 until col
-            y <- 0 until row+1
-          yield Json.obj("x" -> x, "y" -> y, "value" -> Json.toJson(getColCell(x, y).toString.toBoolean))
-        ),
-        "playerList" -> Json.toJson(
-          for playerIndex <- 0 until playerList.size
-          yield Json.obj("index" -> playerIndex, "points" -> Json.toJson(getPoints(playerIndex)))
-        )
-      )
     )
   override def fromJson(jsonField: String): FieldInterface =
     val json: JsValue = Json.parse(jsonField)

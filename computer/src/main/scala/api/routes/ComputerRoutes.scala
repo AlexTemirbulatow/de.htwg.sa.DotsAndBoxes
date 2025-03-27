@@ -4,9 +4,16 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import computerComponent.ComputerInterface
+import computerComponent.computerEasyImpl.ComputerEasy
+import computerComponent.computerHardImpl.ComputerHard
+import computerComponent.computerMediumImpl.ComputerMedium
+import de.github.dotsandboxes.lib.ComputerDifficulty
+import io.circe.generic.auto._
+import io.circe.syntax._
 import play.api.libs.json.{JsValue, Json}
+import scala.util.Try
 
-class ComputerRoutes(val computer: ComputerInterface):
+class ComputerRoutes:
   def computerRoutes: Route = handleExceptions(exceptionHandler) {
     concat(
       handleComputerMoveRequest
@@ -17,12 +24,21 @@ class ComputerRoutes(val computer: ComputerInterface):
     pathPrefix("get") {
       path("move") {
         entity(as[String]) { json =>
-          val jsonValue: JsValue = Json.parse(json) 
-          complete("")
+          val jsonValue: JsValue = Json.parse(json)
+          val fieldValue: String = (jsonValue \ "field").as[String]
+          val difficulty: ComputerDifficulty =
+            Try(ComputerDifficulty.valueOf((jsonValue \ "difficulty").as[String])).getOrElse(ComputerDifficulty.Medium)
+          val computer: ComputerInterface = computerFactory(difficulty)
+          complete(computer.calculateMove(fieldValue).get.asJson.toString)
         }
       }
     }
   }
+
+private def computerFactory(difficulty: ComputerDifficulty): ComputerInterface = difficulty match
+  case ComputerDifficulty.Easy   => new ComputerEasy()
+  case ComputerDifficulty.Medium => new ComputerMedium()
+  case ComputerDifficulty.Hard   => new ComputerHard()
 
 val exceptionHandler = ExceptionHandler {
   case e: NoSuchElementException =>

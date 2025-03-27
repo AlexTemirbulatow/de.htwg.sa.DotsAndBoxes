@@ -3,7 +3,7 @@ package controllerComponent.controllerImpl.moveStrategy
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 
-import fieldComponent.FieldInterface
+import common.model.fieldService.FieldInterface
 import fieldComponent.fieldImpl.Field
 import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, Status, Move}
 

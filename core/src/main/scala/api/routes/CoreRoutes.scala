@@ -47,7 +47,7 @@ class CoreRoutes(val controller: ControllerInterface):
       complete(controller.playerType.toString)
     } ~
     path("computerDifficulty") {
-      complete(controller.computerDifficulty.toString)
+      complete(controller.getComputerDifficulty.toString)
     } ~
     path("statusCell" / IntNumber / IntNumber) { (row, col) =>
       val status: Status = controller.getStatusCell(row, col)

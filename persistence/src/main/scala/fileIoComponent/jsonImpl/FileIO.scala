@@ -6,7 +6,7 @@ import scala.io.Source
 import scala.util.{Success, Failure, Try}
 
 import fileIoComponent.FileIOInterface
-import fieldComponent.FieldInterface
+import common.model.fieldService.FieldInterface
 import fieldComponent.fieldImpl.Field
 import de.github.dotsandboxes.lib.{PlayerType, BoardSize, PlayerSize, Status}
 

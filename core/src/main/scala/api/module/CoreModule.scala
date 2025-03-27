@@ -1,17 +1,15 @@
 package api.module
 
+import common.model.fieldService.FieldInterface
 import controllerComponent.ControllerInterface
 import controllerComponent.controllerImpl.Controller
-import fieldComponent.FieldInterface
+import de.github.dotsandboxes.lib.{BoardSize, Status, PlayerSize, PlayerType, ComputerDifficulty}
 import fieldComponent.fieldImpl.Field
 import fileIoComponent.FileIOInterface
-import fileIoComponent.jsonImpl.FileIO
-import computerComponent.ComputerInterface
-import computerComponent.computerMediumImpl.ComputerMedium
-import de.github.dotsandboxes.lib.{PlayerType, PlayerSize, BoardSize, Status}
+import fileIoComponent.{jsonImpl, xmlImpl}
 
 object CoreModule:
   given FieldInterface = new Field(BoardSize.Medium, Status.Empty, PlayerSize.Two, PlayerType.Human)
-  given FileIOInterface = FileIO()
-  given ComputerInterface = ComputerMedium()
+  given FileIOInterface = jsonImpl.FileIO()
+  given ComputerDifficulty = ComputerDifficulty.Medium
   given ControllerInterface = Controller()

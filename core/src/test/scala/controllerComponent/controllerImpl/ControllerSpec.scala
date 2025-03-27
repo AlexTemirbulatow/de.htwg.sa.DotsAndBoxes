@@ -10,16 +10,11 @@ import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 
 import observer.Observer
-import fieldComponent.FieldInterface
+import common.model.fieldService.FieldInterface
 import fieldComponent.fieldImpl.Field
 import fileIoComponent.xmlImpl.FileIO
 import fileIoComponent.FileIOInterface
-import computerComponent.computerEasyImpl.ComputerEasy
-import computerComponent.computerMediumImpl.ComputerMedium
-import computerComponent.computerHardImpl.ComputerHard
-import computerComponent.ComputerInterface
 import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, ComputerDifficulty, Player, Status, Move, Event}
-
 
 class ControllerSpec extends AnyWordSpec with Eventually {
   /*

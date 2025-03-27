@@ -1,13 +1,13 @@
-package fieldComponent
+package common.model.fieldService
 
 import de.github.dotsandboxes.lib.{PlayerType, BoardSize, PlayerSize, SquareCase, Player, Status, Move, CellData}
-import play.api.libs.json.JsObject
 
 trait FieldInterface:
   val maxPosX: Int
   val maxPosY: Int
   val vectorRow: Vector[Vector[Boolean]]
   val vectorCol: Vector[Vector[Boolean]]
+  def newField(boardSize: BoardSize, status: Status, playerSize: PlayerSize, playerType: PlayerType): FieldInterface
   def bar(length: Int, cellNum: Int, rowIndex: Int, rowFunc: (Int, Int, Int) => String): String
   def cells(rowSize: Int, length: Int, height: Int, colFunc: (Int, Int, Int) => String): String
   def mesh(length: Int, height: Int): String
@@ -47,6 +47,5 @@ trait FieldInterface:
   def colSize(): Int
   def space(length: Int): String
   def toCellData: CellData
-  def toJson: JsObject
   def fromJson(jsonField: String): FieldInterface
   override def toString: String

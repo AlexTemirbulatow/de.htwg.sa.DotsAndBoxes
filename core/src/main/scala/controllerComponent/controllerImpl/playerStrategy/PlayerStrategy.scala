@@ -1,6 +1,6 @@
 package controllerComponent.controllerImpl.playerStrategy
 
-import fieldComponent.FieldInterface
+import common.model.fieldService.FieldInterface
 import de.github.dotsandboxes.lib.Status
 
 object PlayerStrategy:

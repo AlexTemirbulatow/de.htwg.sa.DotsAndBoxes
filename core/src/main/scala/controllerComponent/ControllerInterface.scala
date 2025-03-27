@@ -1,16 +1,13 @@
 package controllerComponent
 
-import computerComponent.ComputerInterface
+import common.model.fieldService.FieldInterface
 import controllerImpl.observer.Observable
-import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, Move, Player, PlayerSize, PlayerType, Status, CellData}
-import fieldComponent.FieldInterface
-import scala.util.Try
+import de.github.dotsandboxes.lib.{BoardSize, CellData, ComputerDifficulty, Move, Player, PlayerSize, PlayerType, Status}
 import scala.concurrent.Future
+import scala.util.Try
 
 trait ControllerInterface extends Observable:
   def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, computerDifficulty: ComputerDifficulty): FieldInterface
-  def getComputerImpl(difficulty: ComputerDifficulty): ComputerInterface
-  def getComputerDifficulty(computer: ComputerInterface): ComputerDifficulty
   def put(move: Move): String
   def getCellData: CellData
   def getStatusCell(row: Int, col: Int): Status
@@ -23,7 +20,7 @@ trait ControllerInterface extends Observable:
   def load: FieldInterface
   def colSize(): Int
   def rowSize(): Int
-  def computerDifficulty: ComputerDifficulty
+  def getComputerDifficulty: ComputerDifficulty
   def boardSize: BoardSize
   def playerSize: PlayerSize
   def playerType: PlayerType

@@ -2,7 +2,7 @@ package controllerComponent.controllerImpl.command
 
 import api.service.ModelRequestHttp
 import de.github.dotsandboxes.lib.Move
-import fieldComponent.FieldInterface
+import common.model.fieldService.FieldInterface
 
 class PutCommand(move: Move, var field: FieldInterface) extends Command:
   override def doStep(field: FieldInterface): String =

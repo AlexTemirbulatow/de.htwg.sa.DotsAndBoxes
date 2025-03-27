@@ -6,6 +6,8 @@ val dotsandboxesLibVersion = "0.1.7-SNAPSHOT"
 val dotsandboxesLibUrl = "https://maven.pkg.github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes.library"
 
 lazy val commonSettings = Seq(
+  version := "0.1.0-SNAPSHOT",
+  scalaVersion := scala3Version,
   resolvers += "Github Packages" at dotsandboxesLibUrl,
   credentials += Credentials(
     "GitHub Package Registry",
@@ -35,67 +37,59 @@ lazy val commonSettings = Seq(
 lazy val root = project
   .in(file("."))
   .settings(
-    name := "dotsandboxes",
-    version := "0.1.0-SNAPSHOT",
-    scalaVersion := scala3Version,
+    name := "dotsandboxes"
+  )
+  .aggregate(common, core, model, computer, persistence, gui, tui)
+
+lazy val common = project
+  .in(file("common"))
+  .settings(
+    name := "common"
   )
   .settings(commonSettings)
-  .aggregate(core, model, computer, persistence, gui, tui)
 
 lazy val core = project
   .in(file("core"))
   .settings(
-    name := "core",
-    version := "0.1.0-SNAPSHOT",
-    scalaVersion := scala3Version
+    name := "core"
   )
   .settings(commonSettings)
-  .dependsOn(model, computer, persistence)
+  .dependsOn(model, persistence, common)
 
 lazy val model = project
   .in(file("model"))
   .settings(
-    name := "model",
-    version := "0.1.0-SNAPSHOT",
-    scalaVersion := scala3Version
+    name := "model"
   )
   .settings(commonSettings)
+  .dependsOn(common)
 
 lazy val computer = project
   .in(file("computer"))
   .settings(
-    name := "computer",
-    version := "0.1.0-SNAPSHOT",
-    scalaVersion := scala3Version
+    name := "computer"
   )
   .settings(commonSettings)
-  .dependsOn(model)
 
 lazy val persistence = project
   .in(file("persistence"))
   .settings(
-    name := "persistence",
-    version := "0.1.0-SNAPSHOT",
-    scalaVersion := scala3Version
+    name := "persistence"
   )
   .settings(commonSettings)
-  .dependsOn(model)
+  .dependsOn(model, common)
 
 lazy val gui = project
   .in(file("gui"))
   .settings(
-    name := "gui",
-    version := "0.1.0-SNAPSHOT",
-    scalaVersion := scala3Version
+    name := "gui"
   )
   .settings(commonSettings)
 
 lazy val tui = project
   .in(file("tui"))
   .settings(
-    name := "tui",
-    version := "0.1.0-SNAPSHOT",
-    scalaVersion := scala3Version
+    name := "tui"
   )
   .settings(commonSettings)
 

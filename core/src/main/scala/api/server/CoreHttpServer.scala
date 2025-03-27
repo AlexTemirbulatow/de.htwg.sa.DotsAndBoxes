@@ -8,6 +8,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import api.module.CoreModule.given_ControllerInterface
 import api.routes.CoreRoutes
+import api.service.ComputerRequestHttp
 import api.service.ModelRequestHttp
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}
@@ -49,3 +50,4 @@ object CoreHttpServer:
         system.terminate()
       }
     ModelRequestHttp.shutdown
+    ComputerRequestHttp.shutdown

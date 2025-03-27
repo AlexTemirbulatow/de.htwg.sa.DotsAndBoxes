@@ -1,7 +1,7 @@
 package controllerComponent.controllerImpl.moveHandler
 
 import scala.util.{Failure, Success, Try}
-import fieldComponent.FieldInterface
+import common.model.fieldService.FieldInterface
 import de.github.dotsandboxes.lib.Move
 
 object MoveValidator:

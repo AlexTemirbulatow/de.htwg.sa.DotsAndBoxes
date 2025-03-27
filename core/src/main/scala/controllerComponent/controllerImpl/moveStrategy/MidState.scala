@@ -2,7 +2,7 @@ package controllerComponent.controllerImpl.moveStrategy
 
 import api.service.ModelRequestHttp
 import de.github.dotsandboxes.lib.Move
-import fieldComponent.FieldInterface
+import common.model.fieldService.FieldInterface
 
 object MidState extends MoveState:
   override def handle(move: Move, field: FieldInterface): String =

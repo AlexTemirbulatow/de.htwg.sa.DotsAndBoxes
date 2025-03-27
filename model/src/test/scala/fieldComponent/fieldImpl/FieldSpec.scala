@@ -3,7 +3,7 @@ package fieldComponent.fieldImpl
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 
-import fieldComponent.FieldInterface
+import common.model.fieldService.FieldInterface
 import matrixComponent.matrixImpl.Matrix
 import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, SquareCase, Player, Status, Move}
 
