@@ -5,7 +5,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import api.routes.GUIRoutes
-import api.service.GUICoreRequestHttp
+import api.service.CoreRequestHttp
 import guiComponent.GUI
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}
@@ -21,7 +21,7 @@ object GUIHttpServer:
   private val logger = LoggerFactory.getLogger(getClass)
 
   def run: Unit =
-    GUICoreRequestHttp.registerGUIObserver(GUI_OBSERVER_URL)
+    CoreRequestHttp.registerGUIObserver(GUI_OBSERVER_URL)
     val gui = GUI()
     val server = Http()
       .newServerAt(GUI_HOST, GUI_PORT)
@@ -42,4 +42,4 @@ object GUIHttpServer:
 
   private def shutdown: Future[Unit] =
     logger.info("Shutting down GUIHttpServer...")
-    GUICoreRequestHttp.deregisterGUIObserver(GUI_OBSERVER_URL)
+    CoreRequestHttp.deregisterGUIObserver(GUI_OBSERVER_URL)

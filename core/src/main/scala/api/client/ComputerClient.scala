@@ -50,5 +50,5 @@ object ComputerClient:
     }
 
   def shutdown: Future[Unit] =
-    logger.info("Shutting down Core ComputerClient...")
+    logger.info("Core Service -- Shutting Down Computer Client...")
     http.shutdownAllConnectionPools().flatMap(_ => system.terminate()).map(_ => ())

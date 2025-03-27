@@ -1,6 +1,6 @@
 package tuiComponent
 
-import api.service.TUICoreRequestHttp
+import api.service.CoreRequestHttp
 import de.github.dotsandboxes.lib.{Event, GameConfig, Move}
 import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}
@@ -14,28 +14,28 @@ class TUI:
 
   def update(event: Event): Unit = event match
     case Event.Abort => sys.exit
-    case Event.End   => print(TUICoreRequestHttp.finalStats)
-    case Event.Move  => print(TUICoreRequestHttp.toString)
+    case Event.End   => print(CoreRequestHttp.finalStats)
+    case Event.Move  => print(CoreRequestHttp.toString)
 
   def gameLoop: Unit =
     analyzeInput(readLine) match
-      case Some(move) => TUICoreRequestHttp.publish(move)
+      case Some(move) => CoreRequestHttp.publish(move)
       case None       =>
     gameLoop
 
   def analyzeInput(input: String): Option[Move] = input match
     case "q" => update(Event.Abort); None
-    case "z" => TUICoreRequestHttp.publish("undo"); None
-    case "y" => TUICoreRequestHttp.publish("redo"); None
-    case "s" => TUICoreRequestHttp.publish("save"); None
-    case "l" => TUICoreRequestHttp.publish("load"); None
-    case "r" => TUICoreRequestHttp.restart; None
+    case "z" => CoreRequestHttp.publish("undo"); None
+    case "y" => CoreRequestHttp.publish("redo"); None
+    case "s" => CoreRequestHttp.publish("save"); None
+    case "l" => CoreRequestHttp.publish("load"); None
+    case "r" => CoreRequestHttp.restart; None
     case "h" => println(help); None
     case newGame if newGame.startsWith("NEW: ") =>
       val numbers = newGame.split(": ")(1).split(" ")
       val (boardSizeNum, playerSizeNum, playerTypeNum, computerDifficultyNum): (String, String, String, String) =
         (numbers(0), numbers(1), numbers(2), numbers(3))
-      TUICoreRequestHttp.initGame(
+      CoreRequestHttp.initGame(
         GameConfig.boardSizes(boardSizeNum),
         GameConfig.playerSizes(playerSizeNum),
         GameConfig.playerType(playerTypeNum),

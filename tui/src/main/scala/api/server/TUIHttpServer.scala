@@ -5,7 +5,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import api.routes.TUIRoutes
-import api.service.TUICoreRequestHttp
+import api.service.CoreRequestHttp
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}
 import tuiComponent.TUI
@@ -21,7 +21,7 @@ object TUIHttpServer:
   private val logger = LoggerFactory.getLogger(getClass)
 
   def run: Unit =
-    TUICoreRequestHttp.registerTUIObserver(TUI_OBSERVER_URL)
+    CoreRequestHttp.registerTUIObserver(TUI_OBSERVER_URL)
     val tui = new TUI
     val server = Http()
       .newServerAt(TUI_HOST, TUI_PORT)
@@ -42,4 +42,4 @@ object TUIHttpServer:
 
   private def shutdown: Future[Unit] =
     logger.info("Shutting down TUIHttpServer...")
-    TUICoreRequestHttp.deregisterTUIObserver(TUI_OBSERVER_URL)
+    CoreRequestHttp.deregisterTUIObserver(TUI_OBSERVER_URL)

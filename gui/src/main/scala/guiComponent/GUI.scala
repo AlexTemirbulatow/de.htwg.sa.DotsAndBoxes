@@ -1,6 +1,6 @@
 package guiComponent
 
-import api.service.GUICoreRequestHttp
+import api.service.CoreRequestHttp
 import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, Event, Move, PlayerSize, PlayerType, CellData}
 import java.awt.{Color, Cursor, Font, GradientPaint, RenderingHints}
 import java.io.File
@@ -104,7 +104,7 @@ class GUI extends Frame:
       }
     }
 
-    val restartGameButton: Button = new Button(Action("") { if !inMainMenu then GUICoreRequestHttp.restart }) {
+    val restartGameButton: Button = new Button(Action("") { if !inMainMenu then CoreRequestHttp.restart }) {
       icon = restart
       contentAreaFilled = false
       borderPainted = false
@@ -128,7 +128,7 @@ class GUI extends Frame:
       }
     }
 
-    val undoButton: Button = new Button(Action("") { if !inMainMenu then GUICoreRequestHttp.publish("undo") }) {
+    val undoButton: Button = new Button(Action("") { if !inMainMenu then CoreRequestHttp.publish("undo") }) {
       icon = undo
       contentAreaFilled = false
       borderPainted = false
@@ -152,7 +152,7 @@ class GUI extends Frame:
       }
     }
 
-    val redoButton: Button = new Button(Action("") { if !inMainMenu then GUICoreRequestHttp.publish("redo") }) {
+    val redoButton: Button = new Button(Action("") { if !inMainMenu then CoreRequestHttp.publish("redo") }) {
       icon = redo
       contentAreaFilled = false
       borderPainted = false
@@ -200,8 +200,8 @@ class GUI extends Frame:
       tooltip = "Settings"
       cursor = new Cursor(Cursor.HAND_CURSOR)
       contents += MenuItem(Action("Exit") { update(Event.Abort) })
-      contents += MenuItem(Action("Save") { if !inMainMenu then GUICoreRequestHttp.publish("save") })
-      contents += MenuItem(Action("Load") { if !inMainMenu then GUICoreRequestHttp.publish("load") })
+      contents += MenuItem(Action("Save") { if !inMainMenu then CoreRequestHttp.publish("save") })
+      contents += MenuItem(Action("Load") { if !inMainMenu then CoreRequestHttp.publish("load") })
     }
 
     val menuBarPanel = new GridBagPanel {
@@ -330,10 +330,10 @@ class GUI extends Frame:
       border = Swing.EmptyBorder(0, 0, 0, 0)
     }
 
-    var selectedBoardSize: BoardSize = GUICoreRequestHttp.boardSize
-    var selectedPlayerSize: PlayerSize = GUICoreRequestHttp.playerSize
-    var selectedPlayerType: PlayerType = GUICoreRequestHttp.playerType
-    var selectedDifficulty: ComputerDifficulty = GUICoreRequestHttp.computerDifficulty
+    var selectedBoardSize: BoardSize = CoreRequestHttp.boardSize
+    var selectedPlayerSize: PlayerSize = CoreRequestHttp.playerSize
+    var selectedPlayerType: PlayerType = CoreRequestHttp.playerType
+    var selectedDifficulty: ComputerDifficulty = CoreRequestHttp.computerDifficulty
 
     val boardSelection = createSelectionPanel(
       "Board Size",
@@ -398,7 +398,7 @@ class GUI extends Frame:
         case MouseEntered(_) => background = new Color(63, 130, 160)
         case MouseExited(_)  => background = new Color(63, 144, 163)
         case ButtonClicked(_) =>
-          GUICoreRequestHttp.initGame(
+          CoreRequestHttp.initGame(
             selectedBoardSize,
             selectedPlayerSize,
             selectedPlayerType,
@@ -443,7 +443,7 @@ class GUI extends Frame:
   def update(event: Event): Unit = event match
     case Event.Abort => sys.exit
     case Event.End   => switchContent(revise(playerResult)); inMainMenu = false
-    case Event.Move  => switchContent(revise(if GUICoreRequestHttp.gameEnded then playerResult else playerTurn)); inMainMenu = false
+    case Event.Move  => switchContent(revise(if CoreRequestHttp.gameEnded then playerResult else playerTurn)); inMainMenu = false
 
   override def closeOperation: Unit = update(Event.Abort)
 
@@ -470,7 +470,7 @@ class GUI extends Frame:
     if inMainMenu then switchContent(setupMainMenu) else update(Event.Move)
 
   def fieldSize(): (Int, Int) =
-    (GUICoreRequestHttp.colSize - 1, GUICoreRequestHttp.rowSize - 1)
+    (CoreRequestHttp.colSize - 1, CoreRequestHttp.rowSize - 1)
 
   def gridSize(fieldSize: (Int, Int)): (Int, Int) =
     ((fieldSize._1 + fieldSize._1 + 1), (fieldSize._2 + fieldSize._2 + 1))
@@ -486,13 +486,13 @@ class GUI extends Frame:
   def playerTurn: FlowPanel = new FlowPanel {
     background = currentTheme._1
     contents += new Label {
-      icon = GUICoreRequestHttp.currentPlayer match
-        case "Blue"   => if GUICoreRequestHttp.playerList(0).playerType == PlayerType.Human then playerBlue else playerBlueComputer
-        case "Red"    => if GUICoreRequestHttp.playerList(1).playerType == PlayerType.Human then playerRed else playerRedComputer
-        case "Green"  => if GUICoreRequestHttp.playerList(2).playerType == PlayerType.Human then playerGreen else playerGreenComputer
-        case "Yellow" => if GUICoreRequestHttp.playerList(3).playerType == PlayerType.Human then playerYellow else playerYellowComputer
+      icon = CoreRequestHttp.currentPlayer match
+        case "Blue"   => if CoreRequestHttp.playerList(0).playerType == PlayerType.Human then playerBlue else playerBlueComputer
+        case "Red"    => if CoreRequestHttp.playerList(1).playerType == PlayerType.Human then playerRed else playerRedComputer
+        case "Green"  => if CoreRequestHttp.playerList(2).playerType == PlayerType.Human then playerGreen else playerGreenComputer
+        case "Yellow" => if CoreRequestHttp.playerList(3).playerType == PlayerType.Human then playerYellow else playerYellowComputer
     }
-    val label = Label(s" Turn [points: ${GUICoreRequestHttp.currentPoints}]")
+    val label = Label(s" Turn [points: ${CoreRequestHttp.currentPoints}]")
     label.foreground = currentTheme._3
     label.font = Font("Comic Sans MS", 0, 35)
     contents += label
@@ -505,10 +505,10 @@ class GUI extends Frame:
   def playerResult: FlowPanel = new FlowPanel {
     background = currentTheme._1
     val fontType = Font("Comic Sans MS", 0, 35)
-    GUICoreRequestHttp.winner match
+    CoreRequestHttp.winner match
       case "It's a draw!" =>
         contents += new Label {
-          val label = Label(GUICoreRequestHttp.winner)
+          val label = Label(CoreRequestHttp.winner)
           label.font = fontType
           label.foreground = currentTheme._3
           label.border = LineBorder(currentTheme._1, 10)
@@ -516,11 +516,11 @@ class GUI extends Frame:
         }
       case _ =>
         contents += new Label {
-          icon = GUICoreRequestHttp.winner.substring(7) match
-            case "Blue wins!"   => if GUICoreRequestHttp.playerList(0).playerType == PlayerType.Human then playerBlue else playerBlueComputer
-            case "Red wins!"    => if GUICoreRequestHttp.playerList(1).playerType == PlayerType.Human then playerRed else playerRedComputer
-            case "Green wins!"  => if GUICoreRequestHttp.playerList(2).playerType == PlayerType.Human then playerGreen else playerGreenComputer
-            case "Yellow wins!" => if GUICoreRequestHttp.playerList(3).playerType == PlayerType.Human then playerYellow else playerYellowComputer
+          icon = CoreRequestHttp.winner.substring(7) match
+            case "Blue wins!"   => if CoreRequestHttp.playerList(0).playerType == PlayerType.Human then playerBlue else playerBlueComputer
+            case "Red wins!"    => if CoreRequestHttp.playerList(1).playerType == PlayerType.Human then playerRed else playerRedComputer
+            case "Green wins!"  => if CoreRequestHttp.playerList(2).playerType == PlayerType.Human then playerGreen else playerGreenComputer
+            case "Yellow wins!" => if CoreRequestHttp.playerList(3).playerType == PlayerType.Human then playerYellow else playerYellowComputer
         }
         val label = Label(" wins!")
         label.font = fontType
@@ -534,7 +534,7 @@ class GUI extends Frame:
 
   def playerScoreboard: FlowPanel = new FlowPanel {
     background = currentTheme._2
-    contents ++= GUICoreRequestHttp.playerList.map { player =>
+    contents ++= CoreRequestHttp.playerList.map { player =>
       val label = new Label {
         icon = player.playerId match
           case "Blue"   => if player.playerType == PlayerType.Human then statsBlue else statsBlueComputer
@@ -561,7 +561,7 @@ class GUI extends Frame:
 
   class CellPanel(x: Int, y: Int) extends GridPanel(gridSize(fieldSize())._2, gridSize(fieldSize())._1):
     opaque = false
-    private val cellData: CellData = GUICoreRequestHttp.cellData
+    private val cellData: CellData = CoreRequestHttp.cellData
     fieldBuilder
 
     private def fieldBuilder =
@@ -617,7 +617,7 @@ class GUI extends Frame:
 
     reactions += {
       case MouseClicked(source) =>
-        GUICoreRequestHttp.publish(Move(vec, x, y, true))
+        CoreRequestHttp.publish(Move(vec, x, y, true))
       case MouseEntered(source) =>
         vec match
           case 1 => if !status then icon = untakenBar

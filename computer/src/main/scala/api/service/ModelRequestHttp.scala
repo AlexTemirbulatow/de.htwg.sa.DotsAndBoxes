@@ -5,8 +5,8 @@ import de.github.dotsandboxes.lib.SquareCase
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import play.api.libs.json.Json
-import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, Future}
 
 object ModelRequestHttp:
   def allAvailableCoords(fieldValue: String): Vector[(Int, Int, Int)] =
@@ -14,7 +14,9 @@ object ModelRequestHttp:
       Await.result(ModelClient.postRequest("api/field/get/allAvailableCoords", Json.obj(
         "field" -> fieldValue
       )), 5.seconds)
-    ).getOrElse(Vector.empty)
+    ) match
+      case Right(coords) => coords
+      case Left(error)   => throw new RuntimeException(s"Error decoding Vector[(Int, Int, Int)]: ${error.getMessage}")
 
   def maxPosX(fieldValue: String): Int =
     Await.result(ModelClient.postRequest(s"api/field/get/maxPosX", Json.obj(
@@ -46,7 +48,9 @@ object ModelRequestHttp:
         "x"          -> x,
         "y"          -> y
       )), 5.seconds)
-    ).getOrElse(Vector.empty)
+    ) match
+      case Right(values) => values
+      case Left(error)   => throw new RuntimeException(s"Error decoding Vector[Boolean]: ${error.getMessage}")
 
   def cellsToCheck(fieldValue: String, squareCase: SquareCase, x: Int, y: Int): Vector[(Int, Int, Int)] =
     decode[Vector[(Int, Int, Int)]](
@@ -56,7 +60,9 @@ object ModelRequestHttp:
         "x"          -> x,
         "y"          -> y
       )), 5.seconds)
-    ).getOrElse(Vector.empty)
+    ) match
+      case Right(cells) => cells
+      case Left(error)  => throw new RuntimeException(s"Error decoding Vector[(Int, Int, Int)]: ${error.getMessage}")
 
   def putRow(fieldValue: String, x: Int, y: Int, value: Boolean): String =
     Await.result(ModelClient.postRequest(s"api/field/put/row", Json.obj(

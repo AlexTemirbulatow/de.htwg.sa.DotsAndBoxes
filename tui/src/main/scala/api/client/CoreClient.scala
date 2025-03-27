@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory
 import play.api.libs.json.JsObject
 import scala.concurrent.{ExecutionContext, Future}
 
-object GUICoreClient:
+object CoreClient:
   private val CORE_HOST = "localhost"
-  private val CORE_PORT = "8083"
+  private val CORE_PORT = 8083
   private val CORE_BASE_URL = s"http://$CORE_HOST:$CORE_PORT/"
 
   private implicit val system: ActorSystem = ActorSystem()
@@ -50,5 +50,5 @@ object GUICoreClient:
     }
 
   def shutdown: Future[Unit] =
-    logger.info("Shutting down GUICoreClient...")
+    logger.info("TUI Service -- Shutting Down Core Client...")
     http.shutdownAllConnectionPools().flatMap(_ => system.terminate()).map(_ => ())

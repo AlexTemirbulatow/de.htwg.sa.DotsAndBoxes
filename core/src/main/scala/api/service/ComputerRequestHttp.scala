@@ -15,6 +15,8 @@ object ComputerRequestHttp:
         "field"      -> fieldValue,
         "difficulty" -> difficulty.toString
       )), 5.seconds)
-    ).getOrElse(throw new RuntimeException("Error decoding a Move"))
+    ) match
+      case Right(move) => move
+      case Left(error) => throw new RuntimeException(s"Error decoding Move: ${error.getMessage}")
 
   def shutdown: Future[Unit] = ComputerClient.shutdown
