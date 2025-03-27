@@ -13,7 +13,7 @@ import scala.util.Try
 
 object ModelRequestHttp:
   def putRow(x: Int, y: Int, value: Boolean, field: FieldInterface): String =
-    Await.result(ModelClient.postRequest(s"api/field/put/row", Json.obj(
+    Await.result(ModelClient.postRequest(s"api/model/field/put/row", Json.obj(
       "field" -> fieldJsonString(field),
       "value" -> value,
       "x"     -> x,
@@ -21,7 +21,7 @@ object ModelRequestHttp:
     )), 5.seconds)
 
   def putCol(x: Int, y: Int, value: Boolean, field: FieldInterface): String =
-    Await.result(ModelClient.postRequest(s"api/field/put/col", Json.obj(
+    Await.result(ModelClient.postRequest(s"api/model/field/put/col", Json.obj(
       "field" -> fieldJsonString(field),
       "value" -> value,
       "x"     -> x,
@@ -29,7 +29,7 @@ object ModelRequestHttp:
     )), 5.seconds)
 
   def newGame(boardSize: BoardSize, status: Status, playerSize: PlayerSize, playerType: PlayerType, field: FieldInterface): String =
-    Await.result(ModelClient.postRequest("api/field/newField", Json.obj(
+    Await.result(ModelClient.postRequest("api/model/field/newField", Json.obj(
       "field"      -> fieldJsonString(field),
       "boardSize"  -> boardSize.toString,
       "status"     -> status.toString,
@@ -38,13 +38,13 @@ object ModelRequestHttp:
     )), 5.seconds)
 
   def gameData(data: String, field: FieldInterface): String =
-    Await.result(ModelClient.postRequest(s"api/field/get/$data", Json.obj(
+    Await.result(ModelClient.postRequest(s"api/model/field/get/$data", Json.obj(
       "field" -> fieldJsonString(field)
     )), 5.seconds)
 
   def cellData(field: FieldInterface): CellData =
     decode[CellData](
-      Await.result(ModelClient.postRequest(s"api/field/get/cellData", Json.obj(
+      Await.result(ModelClient.postRequest(s"api/model/field/get/cellData", Json.obj(
         "field" -> fieldJsonString(field)
       )), 5.seconds)
     ) match
@@ -53,7 +53,7 @@ object ModelRequestHttp:
 
   def playerList(field: FieldInterface): Vector[Player] =
     decode[Vector[Player]](
-      Await.result(ModelClient.postRequest("api/field/get/playerList", Json.obj(
+      Await.result(ModelClient.postRequest("api/model/field/get/playerList", Json.obj(
         "field" -> fieldJsonString(field)
       )), 5.seconds)
     ) match
@@ -62,7 +62,7 @@ object ModelRequestHttp:
 
   def currentStatus(field: FieldInterface): Vector[Vector[Status]] =
     decode[Vector[Vector[Status]]](
-      Await.result(ModelClient.postRequest("api/field/get/currentStatus", Json.obj(
+      Await.result(ModelClient.postRequest("api/model/field/get/currentStatus", Json.obj(
         "field" -> fieldJsonString(field)
       )), 5.seconds)
     ) match
@@ -71,34 +71,34 @@ object ModelRequestHttp:
 
   def boardSize(field: FieldInterface): BoardSize =
     Try(BoardSize.valueOf(
-      Await.result(ModelClient.postRequest("api/field/get/boardSize", Json.obj(
+      Await.result(ModelClient.postRequest("api/model/field/get/boardSize", Json.obj(
         "field" -> fieldJsonString(field)
       )), 5.seconds)
     )).getOrElse(throw new RuntimeException("Invalid Board Size."))
 
   def playerSize(field: FieldInterface): PlayerSize =
     Try(PlayerSize.valueOf(
-      Await.result(ModelClient.postRequest("api/field/get/playerSize", Json.obj(
+      Await.result(ModelClient.postRequest("api/model/field/get/playerSize", Json.obj(
         "field" -> fieldJsonString(field)
       )), 5.seconds)
     )).getOrElse(throw new RuntimeException("Invalid Player Size."))
 
   def playerType(field: FieldInterface): PlayerType =
     Try(PlayerType.valueOf(
-      Await.result(ModelClient.postRequest("api/field/get/playerType", Json.obj(
+      Await.result(ModelClient.postRequest("api/model/field/get/playerType", Json.obj(
         "field" -> fieldJsonString(field)
       )), 5.seconds)
     )).getOrElse(throw new RuntimeException("Invalid Player Type."))
 
   def currentPlayerType(field: FieldInterface): PlayerType =
     Try(PlayerType.valueOf(
-      Await.result(ModelClient.postRequest("api/field/get/currentPlayerType", Json.obj(
+      Await.result(ModelClient.postRequest("api/model/field/get/currentPlayerType", Json.obj(
         "field" -> fieldJsonString(field)
       )), 5.seconds)
     )).getOrElse(throw new RuntimeException("Invalid Player Type."))
 
   def statusCell(row: Int, col: Int, field: FieldInterface): Status =
-    Try(Await.result(ModelClient.postRequest(s"api/field/get/statusCell/$row/$col", Json.obj(
+    Try(Await.result(ModelClient.postRequest(s"api/model/field/get/statusCell/$row/$col", Json.obj(
       "field" -> fieldJsonString(field)
     )), 5.seconds))
       .toOption
@@ -106,37 +106,37 @@ object ModelRequestHttp:
       .getOrElse(throw new RuntimeException("Invalid Status."))
 
   def rowCell(row: Int, col: Int, field: FieldInterface): Boolean =
-    Await.result(ModelClient.postRequest(s"api/field/get/rowCell/$row/$col", Json.obj(
+    Await.result(ModelClient.postRequest(s"api/model/field/get/rowCell/$row/$col", Json.obj(
       "field" -> fieldJsonString(field)
     )), 5.seconds).toBoolean
 
   def colCell(row: Int, col: Int, field: FieldInterface): Boolean =
-    Await.result(ModelClient.postRequest(s"api/field/get/colCell/$row/$col", Json.obj(
+    Await.result(ModelClient.postRequest(s"api/model/field/get/colCell/$row/$col", Json.obj(
       "field" -> fieldJsonString(field)
     )), 5.seconds).toBoolean
 
   def rowSize(field: FieldInterface): Int =
-    Await.result(ModelClient.postRequest(s"api/field/get/rowSize", Json.obj(
+    Await.result(ModelClient.postRequest(s"api/model/field/get/rowSize", Json.obj(
       "field" -> fieldJsonString(field)
     )), 5.seconds).toInt
 
   def colSize(field: FieldInterface): Int =
-    Await.result(ModelClient.postRequest(s"api/field/get/colSize", Json.obj(
+    Await.result(ModelClient.postRequest(s"api/model/field/get/colSize", Json.obj(
       "field" -> fieldJsonString(field)
     )), 5.seconds).toInt
 
   def maxPosX(field: FieldInterface): Int =
-    Await.result(ModelClient.postRequest(s"api/field/get/maxPosX", Json.obj(
+    Await.result(ModelClient.postRequest(s"api/model/field/get/maxPosX", Json.obj(
       "field" -> fieldJsonString(field)
     )), 5.seconds).toInt
 
   def maxPosY(field: FieldInterface): Int =
-    Await.result(ModelClient.postRequest(s"api/field/get/maxPosY", Json.obj(
+    Await.result(ModelClient.postRequest(s"api/model/field/get/maxPosY", Json.obj(
       "field" -> fieldJsonString(field)
     )), 5.seconds).toInt
 
   def isEdge(move: Move, field: FieldInterface): Boolean =
-    Await.result(ModelClient.postRequest("api/field/get/isEdge", Json.obj(
+    Await.result(ModelClient.postRequest("api/model/field/get/isEdge", Json.obj(
       "field" -> fieldJsonString(field),
       "value" -> move.value,
       "vec"   -> move.vec,
@@ -145,31 +145,31 @@ object ModelRequestHttp:
     )), 5.seconds).toBoolean
 
   def playerIndex(field: FieldInterface): Int =
-    Await.result(ModelClient.postRequest("api/field/get/playerIndex", Json.obj(
+    Await.result(ModelClient.postRequest("api/model/field/get/playerIndex", Json.obj(
       "field" -> fieldJsonString(field)
     )), 5.seconds).toInt
 
   def addPlayerPoints(points: Int, field: FieldInterface): String =
-    Await.result(ModelClient.postRequest("api/field/player/add", Json.obj(
+    Await.result(ModelClient.postRequest("api/model/field/player/add", Json.obj(
       "field"       -> fieldJsonString(field),
       "playerIndex" -> playerIndex(field),
       "points"      -> points
     )), 5.seconds)
 
   def nextPlayer(field: FieldInterface): String =
-    Await.result(ModelClient.postRequest("api/field/player/next", Json.obj(
+    Await.result(ModelClient.postRequest("api/model/field/player/next", Json.obj(
       "field" -> fieldJsonString(field)
     )), 5.seconds)
 
   def squareCase(squareCase: String, x: Int, y: Int, field: FieldInterface): String =
-    Await.result(ModelClient.postRequest(s"api/field/checkSquare/edgeState/$squareCase", Json.obj(
+    Await.result(ModelClient.postRequest(s"api/model/field/checkSquare/edgeState/$squareCase", Json.obj(
       "field" -> fieldJsonString(field),
       "x"     -> x,
       "y"     -> y
     )), 5.seconds)
 
   def squareState(squareState: String, x: Int, y: Int, field: FieldInterface): String =
-    Await.result(ModelClient.postRequest(s"api/field/checkSquare/midState/$squareState", Json.obj(
+    Await.result(ModelClient.postRequest(s"api/model/field/checkSquare/midState/$squareState", Json.obj(
       "field" -> fieldJsonString(field),
       "x"     -> x,
       "y"     -> y

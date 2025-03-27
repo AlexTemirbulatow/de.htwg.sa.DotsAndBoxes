@@ -11,7 +11,7 @@ import scala.concurrent.{Await, Future}
 object ModelRequestHttp:
   def allAvailableCoords(fieldValue: String): Vector[(Int, Int, Int)] =
     decode[Vector[(Int, Int, Int)]](
-      Await.result(ModelClient.postRequest("api/field/get/allAvailableCoords", Json.obj(
+      Await.result(ModelClient.postRequest("api/model/field/get/allAvailableCoords", Json.obj(
         "field" -> fieldValue
       )), 5.seconds)
     ) match
@@ -19,12 +19,12 @@ object ModelRequestHttp:
       case Left(error)   => throw new RuntimeException(s"Error decoding Vector[(Int, Int, Int)]: ${error.getMessage}")
 
   def maxPosX(fieldValue: String): Int =
-    Await.result(ModelClient.postRequest(s"api/field/get/maxPosX", Json.obj(
+    Await.result(ModelClient.postRequest(s"api/model/field/get/maxPosX", Json.obj(
       "field" -> fieldValue
     )), 5.seconds).toInt
 
   def maxPosY(fieldValue: String): Int =
-    Await.result(ModelClient.postRequest(s"api/field/get/maxPosY", Json.obj(
+    Await.result(ModelClient.postRequest(s"api/model/field/get/maxPosY", Json.obj(
       "field" -> fieldValue
     )), 5.seconds).toInt
 
@@ -42,7 +42,7 @@ object ModelRequestHttp:
 
   def checkAllCells(fieldValue: String, squareCase: SquareCase, x: Int, y: Int): Vector[Boolean] =
     decode[Vector[Boolean]](
-      Await.result(ModelClient.postRequest("api/field/checkAllCells", Json.obj(
+      Await.result(ModelClient.postRequest("api/model/field/checkAllCells", Json.obj(
         "field"      -> fieldValue,
         "squareCase" -> squareCase.toString,
         "x"          -> x,
@@ -54,7 +54,7 @@ object ModelRequestHttp:
 
   def cellsToCheck(fieldValue: String, squareCase: SquareCase, x: Int, y: Int): Vector[(Int, Int, Int)] =
     decode[Vector[(Int, Int, Int)]](
-      Await.result(ModelClient.postRequest("api/field/cellsToCheck", Json.obj(
+      Await.result(ModelClient.postRequest("api/model/field/cellsToCheck", Json.obj(
         "field"      -> fieldValue,
         "squareCase" -> squareCase.toString,
         "x"          -> x,
@@ -65,7 +65,7 @@ object ModelRequestHttp:
       case Left(error)  => throw new RuntimeException(s"Error decoding Vector[(Int, Int, Int)]: ${error.getMessage}")
 
   def putRow(fieldValue: String, x: Int, y: Int, value: Boolean): String =
-    Await.result(ModelClient.postRequest(s"api/field/put/row", Json.obj(
+    Await.result(ModelClient.postRequest(s"api/model/field/put/row", Json.obj(
       "field" -> fieldValue,
       "value" -> value,
       "x"     -> x,
@@ -73,7 +73,7 @@ object ModelRequestHttp:
     )), 5.seconds)
 
   def putCol(fieldValue: String, x: Int, y: Int, value: Boolean): String =
-    Await.result(ModelClient.postRequest(s"api/field/put/col", Json.obj(
+    Await.result(ModelClient.postRequest(s"api/model/field/put/col", Json.obj(
       "field" -> fieldValue,
       "value" -> value,
       "x"     -> x,
@@ -81,12 +81,12 @@ object ModelRequestHttp:
     )), 5.seconds)
 
   def rowCell(fieldValue: String, row: Int, col: Int): Boolean =
-    Await.result(ModelClient.postRequest(s"api/field/get/rowCell/$row/$col", Json.obj(
+    Await.result(ModelClient.postRequest(s"api/model/field/get/rowCell/$row/$col", Json.obj(
       "field" -> fieldValue
     )), 5.seconds).toBoolean
 
   def colCell(fieldValue: String, row: Int, col: Int): Boolean =
-    Await.result(ModelClient.postRequest(s"api/field/get/colCell/$row/$col", Json.obj(
+    Await.result(ModelClient.postRequest(s"api/model/field/get/colCell/$row/$col", Json.obj(
       "field" -> fieldValue
     )), 5.seconds).toBoolean
 

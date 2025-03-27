@@ -23,16 +23,18 @@ object ModelHttpServer:
     val server = Http()
       .newServerAt(MODEL_HOST, MODEL_PORT)
       .bind(routes(new FieldRoutes))
-    logger.info(s"Model Service -- Http Server is running at http://$MODEL_HOST:$MODEL_PORT/api/field\n\nPress RETURN to terminate...\n")
+    logger.info(s"Model Service -- Http Server is running at http://$MODEL_HOST:$MODEL_PORT/api/model\n\nPress RETURN to terminate...\n")
     StdIn.readLine()
     shutdown(server)
 
   private def routes(fieldRoutes: FieldRoutes): Route =
     pathPrefix("api") {
       concat(
-        pathPrefix("field") {
+        pathPrefix("model") {
           concat(
-            fieldRoutes.fieldRoutes
+            pathPrefix("field") {
+              fieldRoutes.fieldRoutes
+            }
           )
         }
       )
