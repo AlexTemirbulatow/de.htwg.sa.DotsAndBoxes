@@ -9,9 +9,9 @@ import scala.xml.{Elem, NodeSeq, XML}
 object FieldParser:
   def fromJson(jsonField: String): FieldInterface =
     val json: JsValue = Json.parse(jsonField)
-    val boardSize: BoardSize   = Try(BoardSize.valueOf((json \ "field" \ "boardSize").as[String])).getOrElse(BoardSize.Medium)
-    val playerSize: PlayerSize = Try(PlayerSize.valueOf((json \ "field" \ "playerSize").as[String])).getOrElse(PlayerSize.Two)
-    val playerType: PlayerType = Try(PlayerType.valueOf((json \ "field" \ "playerType").as[String])).getOrElse(PlayerType.Human)
+    val boardSize: BoardSize   = Try(BoardSize.valueOf((json \ "field" \ "boardSize").as[String])).getOrElse(throw new RuntimeException("Invalid Board Size."))
+    val playerSize: PlayerSize = Try(PlayerSize.valueOf((json \ "field" \ "playerSize").as[String])).getOrElse(throw new RuntimeException("Invalid Player Size."))
+    val playerType: PlayerType = Try(PlayerType.valueOf((json \ "field" \ "playerType").as[String])).getOrElse(throw new RuntimeException("Invalid Player Type."))
     val initialField: FieldInterface = new Field(boardSize, Status.Empty, playerSize, playerType)
 
     val rowSize: Int = boardSize.dimensions._1
@@ -60,9 +60,9 @@ object FieldParser:
 
   def fromXml(xmlField: String): FieldInterface =
     val elem: Elem = XML.loadString(xmlField)
-    val boardSize: BoardSize   = Try(BoardSize.valueOf((elem \\ "field" \ "playerList" \ "@boardSize").text)).getOrElse(BoardSize.Medium)
-    val playerSize: PlayerSize = Try(PlayerSize.valueOf((elem \\ "field" \ "playerList" \ "@playerSize").text)).getOrElse(PlayerSize.Two)
-    val playerType: PlayerType = Try(PlayerType.valueOf((elem \\ "field" \ "playerList" \ "@playerType").text)).getOrElse(PlayerType.Human)
+    val boardSize: BoardSize   = Try(BoardSize.valueOf((elem \\ "field" \ "playerList" \ "@boardSize").text)).getOrElse(throw new RuntimeException("Invalid Board Size."))
+    val playerSize: PlayerSize = Try(PlayerSize.valueOf((elem \\ "field" \ "playerList" \ "@playerSize").text)).getOrElse(throw new RuntimeException("Invalid Player Size."))
+    val playerType: PlayerType = Try(PlayerType.valueOf((elem \\ "field" \ "playerList" \ "@playerType").text)).getOrElse(throw new RuntimeException("Invalid Player Type."))
     val initialField: FieldInterface = new Field(boardSize, Status.Empty, playerSize, playerType)
 
     val rowSize: Int = boardSize.dimensions._1
