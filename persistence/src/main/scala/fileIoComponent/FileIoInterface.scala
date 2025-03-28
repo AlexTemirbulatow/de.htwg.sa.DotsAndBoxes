@@ -1,7 +1,5 @@
 package fileIoComponent
 
-import common.model.fieldService.FieldInterface
-
 trait FileIOInterface:
-  def save(field: FieldInterface): Either[String, String]
-  def load: FieldInterface
+  def save(field: String): Either[(String, String), String]
+  def load: Either[(String, String), (String, String)]

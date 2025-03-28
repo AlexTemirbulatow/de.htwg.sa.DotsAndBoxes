@@ -5,15 +5,14 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import api.module.FileIOModule.given_FileIOInterface
 import api.routes.FileIORoutes
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.StdIn
 
-object FileIOHttpServer:
-  private val FILEIO_HOST = "localhost"
-  private val FILEIO_PORT = 8081
+object PersistenceServer:
+  private val PERSISTENCE_HOST = "localhost"
+  private val PERSISTENCE_PORT = 8081
 
   implicit val system: ActorSystem = ActorSystem()
   implicit val executionContext: ExecutionContext = system.dispatcher
@@ -22,26 +21,26 @@ object FileIOHttpServer:
 
   def run: Unit =
     val server = Http()
-      .newServerAt(FILEIO_HOST, FILEIO_PORT)
-      .bind(routes(FileIORoutes(given_FileIOInterface)))
-    logger.info(s"FileIO Service -- is running at http://$FILEIO_HOST:$FILEIO_PORT/api/fileIO\n\nPress RETURN to terminate...\n")
+      .newServerAt(PERSISTENCE_HOST, PERSISTENCE_PORT)
+      .bind(routes(FileIORoutes(logger)))
+    logger.info(s"Persistence Service -- Http Server is running at http://$PERSISTENCE_HOST:$PERSISTENCE_PORT/api/persistence\n\nPress RETURN to terminate...\n")
     StdIn.readLine()
     shutdown(server)
 
   private def routes(fileIORoutes: FileIORoutes): Route =
     pathPrefix("api") {
-      concat(
-        pathPrefix("fileIO") {
-          concat(
+      pathPrefix("persistence") {
+        concat(
+          pathPrefix("fileIO") {
             fileIORoutes.fileIORoutes
-          )
-        }
-      )
+          }
+        )
+      }
     }
 
   private def shutdown(server: Future[ServerBinding]): Unit = server
     .flatMap(_.unbind())
     .onComplete { _ =>
-      logger.info("FileIO Service -- Shutting Down Http Server...")
+      logger.info("Persistence Service -- Shutting Down Http Server...")
       system.terminate()
     }

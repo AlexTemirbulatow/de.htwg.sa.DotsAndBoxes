@@ -1,29 +1,30 @@
 package controllerComponent
 package controllerImpl
 
-import api.service.{ComputerRequestHttp, ModelRequestHttp}
+import api.service.{ComputerRequestHttp, ModelRequestHttp, PersistenceRequestHttp}
 import common.model.fieldService.FieldInterface
 import common.model.fieldService.converter.FieldConverter
+import common.persistence.fileIOService.serializer.FileIOSerializer
 import controllerImpl.command.{PutCommand, UndoManager}
 import controllerImpl.moveHandler.MoveValidator
 import controllerImpl.moveStrategy.{EdgeState, MidState, MoveStrategy}
 import controllerImpl.playerStrategy.PlayerStrategy
-import de.github.dotsandboxes.lib.{BoardSize, CellData, ComputerDifficulty, Event, Move, Player, PlayerSize, PlayerType, Status}
+import de.github.dotsandboxes.lib.{BoardSize, CellData, ComputerDifficulty, Event, FileFormat, Move, Player, PlayerSize, PlayerType, Status}
 import fieldComponent.fieldImpl.FieldParser
-import fileIoComponent.FileIOInterface
 import org.slf4j.LoggerFactory
+import play.api.libs.json.JsObject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
-class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, var computerDifficulty: ComputerDifficulty) extends ControllerInterface:
+class Controller(using var field: FieldInterface, var fileFormat: FileFormat, var computerDifficulty: ComputerDifficulty) extends ControllerInterface:
   val undoManager = new UndoManager
 
   val logger = LoggerFactory.getLogger(getClass)
 
   override def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, difficulty: ComputerDifficulty): FieldInterface =
     if playerType == PlayerType.Computer then ComputerRequestHttp.connect
-    field = fieldFromJson(ModelRequestHttp.newGame(boardSize, Status.Empty, playerSize, playerType, field))
+    field = FieldParser.fromJson(ModelRequestHttp.newGame(boardSize, Status.Empty, playerSize, playerType, field))
     this.computerDifficulty = difficulty
     notifyObservers(Event.Move)
     field
@@ -39,11 +40,17 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, v
   override def undo: FieldInterface = undoManager.undoStep(field)
   override def redo: FieldInterface = undoManager.redoStep(field)
   override def save: FieldInterface =
-    fileIO.save(field)
+    PersistenceRequestHttp.saveFileIO(
+      FileIOSerializer.serialize(field, fileFormat),
+      fileFormat
+    )
     if !gameEnded then notifyObservers(Event.Move)
     field
   override def load: FieldInterface =
-    field = fileIO.load
+    val fieldValue: String = PersistenceRequestHttp.loadFileIO(fileFormat)
+    field = fileFormat match
+      case FileFormat.JSON => FieldParser.fromJson(fieldValue)
+      case FileFormat.XML  => FieldParser.fromXml(fieldValue)
     notifyObservers(Event.Move)
     if gameEnded then notifyObservers(Event.End)
     field
@@ -71,12 +78,12 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, v
         logger.error(exception.getMessage.dropRight(28))
         Failure(exception)
       case Success(_) =>
-        field = fieldFromJson(doThis(move))
+        field = FieldParser.fromJson(doThis(move))
         val preStatus = ModelRequestHttp.currentStatus(field)
         val movePosition = if ModelRequestHttp.isEdge(move, field) then EdgeState else MidState
-        field = fieldFromJson(MoveStrategy.executeStrategy(movePosition, move, field))
+        field = FieldParser.fromJson(MoveStrategy.executeStrategy(movePosition, move, field))
         val postStatus = ModelRequestHttp.currentStatus(field)
-        field = fieldFromJson(PlayerStrategy.updatePlayer(field, preStatus, postStatus))
+        field = FieldParser.fromJson(PlayerStrategy.updatePlayer(field, preStatus, postStatus))
         notifyObservers(Event.Move)
         if gameEnded then notifyObservers(Event.End); Success(field)
         if !gameEnded && currentPlayerType == PlayerType.Computer then computerMove(field)
@@ -87,7 +94,10 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, v
       calculateComputerMove(field)
     }
   override def calculateComputerMove(field: FieldInterface): FieldInterface =
-    val move: Move = ComputerRequestHttp.calculateMove(FieldConverter.toJson(field).toString, getComputerDifficulty)
+    val move: Move = ComputerRequestHttp.calculateMove(
+      FieldConverter.toJson(field).toString,
+      getComputerDifficulty
+    )
     publish(put, move) match
       case Success(updatedField) => updatedField
       case Failure(_)            => field
@@ -95,6 +105,3 @@ class Controller(using var field: FieldInterface, val fileIO: FileIOInterface, v
   override def toString: String =
     val moveString = if !gameEnded then "Your Move <Line><X><Y>: " else ""
     s"\n${ModelRequestHttp.gameData("asString", field)}\n${currentPlayer}s turn\n[points: ${currentPoints}]\n\n${moveString}"
-
-  private def fieldFromJson(fieldValue: String): FieldInterface =
-    FieldParser.fromJson(fieldValue)
