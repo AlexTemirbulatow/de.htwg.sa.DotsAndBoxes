@@ -58,10 +58,10 @@ class FieldRoutes:
     path("newField") {
       entity(as[String]) { json =>
         val jsonValue: JsValue = Json.parse(json)
-        val boardSize: BoardSize   = Try(BoardSize.valueOf((jsonValue \ "boardSize").as[String])).get
-        val status: Status         = Status.values.find(_.toString == (jsonValue \ "status").as[String]).get
-        val playerSize: PlayerSize = Try(PlayerSize.valueOf((jsonValue \ "playerSize").as[String])).get
-        val playerType: PlayerType = Try(PlayerType.valueOf((jsonValue \ "playerType").as[String])).get
+        val boardSize: BoardSize   = Try(BoardSize.valueOf((jsonValue \ "boardSize").as[String])).getOrElse(throw new RuntimeException("Invalid Board Size."))
+        val status: Status         = Status.values.find(_.toString == (jsonValue \ "status").as[String]).getOrElse(throw new RuntimeException("Invalid Status."))
+        val playerSize: PlayerSize = Try(PlayerSize.valueOf((jsonValue \ "playerSize").as[String])).getOrElse(throw new RuntimeException("Invalid Player Size."))
+        val playerType: PlayerType = Try(PlayerType.valueOf((jsonValue \ "playerType").as[String])).getOrElse(throw new RuntimeException("Invalid Player Type."))
         val fieldResult: JsLookupResult = (jsonValue \ "field")
         complete(fieldToJsonString(parsedField(fieldResult).newField(boardSize, status, playerSize, playerType)))
       }

@@ -14,7 +14,7 @@ object ModelHttpServer:
   private val MODEL_HOST = "localhost"
   private val MODEL_PORT = 8080
 
-  private implicit val system: ActorSystem = ActorSystem()
+  private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val executionContext: ExecutionContext = system.dispatcher
 
   private val logger = LoggerFactory.getLogger(getClass)

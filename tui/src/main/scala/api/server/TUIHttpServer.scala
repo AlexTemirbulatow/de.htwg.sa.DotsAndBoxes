@@ -15,7 +15,7 @@ object TUIHttpServer:
   private val TUI_PORT = 8084
   private val TUI_OBSERVER_URL = s"http://$TUI_HOST:$TUI_PORT/api/tui/update"
 
-  private implicit val system: ActorSystem = ActorSystem()
+  private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val executionContext: ExecutionContext = system.dispatcher
 
   private val logger = LoggerFactory.getLogger(getClass)

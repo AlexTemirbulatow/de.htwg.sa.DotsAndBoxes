@@ -34,8 +34,8 @@ class ComputerRoutes:
         entity(as[String]) { json =>
           val jsonValue: JsValue = Json.parse(json)
           val fieldValue: String = (jsonValue \ "field").as[String]
-          val difficulty: ComputerDifficulty =
-            Try(ComputerDifficulty.valueOf((jsonValue \ "difficulty").as[String])).getOrElse(ComputerDifficulty.Medium)
+          val difficulty: ComputerDifficulty = Try(ComputerDifficulty.valueOf((jsonValue \ "difficulty").as[String]))
+            .getOrElse(throw new RuntimeException("Invalid Computer Difficulty."))
           val computer: ComputerInterface = computerFactory(difficulty)
           complete(computer.calculateMove(fieldValue).get.asJson.toString)
         }

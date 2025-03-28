@@ -15,7 +15,7 @@ object GUIHttpServer:
   private val GUI_PORT = 8085
   private val GUI_OBSERVER_URL = s"http://$GUI_HOST:$GUI_PORT/api/gui/update"
 
-  private implicit val system: ActorSystem = ActorSystem()
+  private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val executionContext: ExecutionContext = system.dispatcher
 
   private val logger = LoggerFactory.getLogger(getClass)

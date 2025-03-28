@@ -13,7 +13,7 @@ object PersistenceClient:
   private val PERSISTENCE_PORT = 8081
   private val PERSISTENCE_BASE_URL = s"http://$PERSISTENCE_HOST:$PERSISTENCE_PORT/"
 
-  private implicit val system: ActorSystem = ActorSystem()
+  private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val ec: ExecutionContext = system.dispatcher
 
   private val logger = LoggerFactory.getLogger(getClass)

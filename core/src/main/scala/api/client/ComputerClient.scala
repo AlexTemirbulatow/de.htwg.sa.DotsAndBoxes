@@ -13,7 +13,7 @@ object ComputerClient:
   private val COMPUTER_PORT = 8082
   private val COMPUTER_BASE_URL = s"http://$COMPUTER_HOST:$COMPUTER_PORT/"
 
-  private implicit val system: ActorSystem = ActorSystem()
+  private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val ec: ExecutionContext = system.dispatcher
 
   private val logger = LoggerFactory.getLogger(getClass)

@@ -13,7 +13,7 @@ object ModelClient:
   private val MODEL_PORT = 8080
   private val MODEL_BASE_URL = s"http://$MODEL_HOST:$MODEL_PORT/"
 
-  private implicit val system: ActorSystem = ActorSystem()
+  private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val ec: ExecutionContext = system.dispatcher
 
   private val logger = LoggerFactory.getLogger(getClass)

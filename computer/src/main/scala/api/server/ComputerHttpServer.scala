@@ -15,7 +15,7 @@ object ComputerHttpServer:
   private val COMPUTER_HOST = "localhost"
   private val COMPUTER_PORT = 8082
 
-  private implicit val system: ActorSystem = ActorSystem()
+  private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val executionContext: ExecutionContext = system.dispatcher
 
   private val logger = LoggerFactory.getLogger(getClass)

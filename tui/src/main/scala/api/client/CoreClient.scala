@@ -13,7 +13,7 @@ object CoreClient:
   private val CORE_PORT = 8083
   private val CORE_BASE_URL = s"http://$CORE_HOST:$CORE_PORT/"
 
-  private implicit val system: ActorSystem = ActorSystem()
+  private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val ec: ExecutionContext = system.dispatcher
 
   private val logger = LoggerFactory.getLogger(getClass)
