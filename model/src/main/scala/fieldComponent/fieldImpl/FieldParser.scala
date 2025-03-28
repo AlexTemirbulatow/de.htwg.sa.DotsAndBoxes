@@ -4,6 +4,7 @@ import common.model.fieldService.FieldInterface
 import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, Status}
 import play.api.libs.json.{JsLookupResult, JsValue, Json}
 import scala.util.Try
+import scala.xml.{Elem, NodeSeq, XML}
 
 object FieldParser:
   def fromJson(jsonField: String): FieldInterface =
@@ -54,5 +55,56 @@ object FieldParser:
     }
 
     val curPlayerIndex = (json \ "field" \ "currentPlayer").as[Int]
+    val finalField = fieldAfterScores.updatePlayer(curPlayerIndex)
+    finalField
+
+  def fromXml(xmlField: String): FieldInterface =
+    val elem: Elem = XML.loadString(xmlField)
+    val boardSize: BoardSize   = Try(BoardSize.valueOf((elem \\ "field" \ "playerList" \ "@boardSize").text)).getOrElse(BoardSize.Medium)
+    val playerSize: PlayerSize = Try(PlayerSize.valueOf((elem \\ "field" \ "playerList" \ "@playerSize").text)).getOrElse(PlayerSize.Two)
+    val playerType: PlayerType = Try(PlayerType.valueOf((elem \\ "field" \ "playerList" \ "@playerType").text)).getOrElse(PlayerType.Human)
+    val initialField: FieldInterface = new Field(boardSize, Status.Empty, playerSize, playerType)
+
+    val rowSize: Int = boardSize.dimensions._1
+    val colSize: Int = boardSize.dimensions._2
+
+    val statusSeq: NodeSeq = (elem \\ "field" \ "status" \ "value")
+    val fieldAfterStatus = statusSeq.foldLeft(initialField) { (field, rowNode) =>
+      val x = (rowNode \ "@x").text.toInt
+      val y = (rowNode \ "@y").text.toInt
+      val value = rowNode.text.trim
+      val status = value match
+        case "B" => Status.Blue
+        case "R" => Status.Red
+        case "G" => Status.Green
+        case "Y" => Status.Yellow
+        case _   => Status.Empty
+      field.putStatus(x, y, status)
+    }
+
+    val rowSeq: NodeSeq = (elem \\ "field" \ "rows" \ "value")
+    val fieldAfterRows = rowSeq.foldLeft(fieldAfterStatus) { (field, rowNode) =>
+      val x = (rowNode \ "@x").text.toInt
+      val y = (rowNode \ "@y").text.toInt
+      val value = rowNode.text.trim.toBoolean
+      field.putRow(x, y, value)
+    }
+
+    val colSeq: NodeSeq = (elem \\ "field" \ "cols" \ "value")
+    val fieldAfterCols = colSeq.foldLeft(fieldAfterRows) { (field, rowNode) =>
+      val x = (rowNode \ "@x").text.toInt
+      val y = (rowNode \ "@y").text.toInt
+      val value = rowNode.text.trim.toBoolean
+      field.putCol(x, y, value)
+    }
+
+    val scoreSeq: NodeSeq = (elem \\ "field" \ "playerList" \ "value")
+    val fieldAfterScores = scoreSeq.foldLeft(fieldAfterCols) { (field, player) =>
+      val index = (player \ "@index").text.toInt
+      val score = player.text.trim.toInt
+      field.addPoints(index, score)
+    }
+
+    val curPlayerIndex: Int = (elem \\ "field" \ "playerList" \ "@currentPlayer").text.toInt
     val finalField = fieldAfterScores.updatePlayer(curPlayerIndex)
     finalField
