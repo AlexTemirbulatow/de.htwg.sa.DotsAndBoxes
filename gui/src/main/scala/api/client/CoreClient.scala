@@ -4,6 +4,8 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshal
+import akka.stream.StreamTcpException
+import java.net.ConnectException
 import org.slf4j.LoggerFactory
 import play.api.libs.json.JsObject
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,17 +39,33 @@ object CoreClient:
     )
 
   private def sendRequest(request: HttpRequest): Future[String] =
-    http.singleRequest(request).flatMap { response =>
-      response.status match
-        case StatusCodes.OK =>
-          Unmarshal(response.entity).to[String]
-        case _ =>
-          Unmarshal(response.entity).to[String].flatMap { body =>
-            val errorMsg = s"HTTP ERROR: ${response.status} - ${request.uri} - $body"
-            logger.error(errorMsg)
-            Future.failed(new RuntimeException(errorMsg))
-          }
-    }
+    http
+      .singleRequest(request)
+      .flatMap { response =>
+        response.status match
+          case StatusCodes.OK =>
+            Unmarshal(response.entity).to[String]
+          case _ =>
+            Unmarshal(response.entity).to[String].flatMap { body =>
+              val errorMsg = s"HTTP ERROR: ${response.status} - ${request.uri} - $body"
+              logger.error(errorMsg)
+              Future.failed(new RuntimeException(errorMsg))
+            }
+      }
+      .recoverWith {
+        case exception: StreamTcpException if exception.getCause.isInstanceOf[ConnectException] =>
+          val msg = s"Connection error: Unable to reach ${request.uri}"
+          if (request.uri.toString.endsWith("/deregisterObserver")) then
+            val warnMsg = msg.concat(" (ignored for deregisterObserver) Probably the Core Server was shut down before.")
+            logger.warn(warnMsg)
+            Future.successful(warnMsg)
+          else
+            logger.error(msg)
+            Future.failed(new RuntimeException(msg))
+        case exception =>
+          logger.error(s"Unexpected error: ${exception.getMessage}", exception)
+          Future.failed(exception)
+      }
 
   def shutdown: Future[Unit] =
     logger.info("GUI Service -- Shutting Down Core Client...")
