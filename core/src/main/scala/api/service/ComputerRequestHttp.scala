@@ -16,7 +16,7 @@ object ComputerRequestHttp:
       Await.result(ComputerClient.postRequest("api/computer/get/move", Json.obj(
         "field"      -> fieldValue,
         "difficulty" -> difficulty.toString
-      )), 5.seconds)
+      )), 10.seconds)
     ) match
       case Right(move) => move
       case Left(error) => throw new RuntimeException(s"Error decoding Move: ${error.getMessage}")

@@ -10,7 +10,7 @@ import controllerImpl.moveHandler.MoveValidator
 import controllerImpl.moveStrategy.{EdgeState, MidState, MoveStrategy}
 import controllerImpl.playerStrategy.PlayerStrategy
 import de.github.dotsandboxes.lib.{BoardSize, CellData, ComputerDifficulty, Event, FileFormat, Move, Player, PlayerSize, PlayerType, Status}
-import fieldComponent.fieldImpl.FieldParser
+import fieldComponent.parser.FieldParser
 import org.slf4j.LoggerFactory
 import play.api.libs.json.JsObject
 import scala.concurrent.ExecutionContext.Implicits.global

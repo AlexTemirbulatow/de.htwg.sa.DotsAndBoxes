@@ -11,7 +11,7 @@ class ComputerEasy extends ComputerInterface:
     if allAvailableCoords.isEmpty then return None
 
     val winningMoves: Vector[Move] = allAvailableCoords.collect {
-      case (vec, x, y) if isClosingMove(field, vec, x, y) => Move(vec, x, y, true)
+      case (vec, x, y) if ModelRequestHttp.isClosingMove(field, vec, x, y) => Move(vec, x, y, true)
     }
 
     winningMoves.headOption.orElse {

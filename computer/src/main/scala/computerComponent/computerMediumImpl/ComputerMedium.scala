@@ -14,17 +14,17 @@ class ComputerMedium extends ComputerInterface:
       case (vec, x, y) => Some(Move(vec, x, y, true))
 
     val winningMoves: Vector[Move] = allAvailableCoords.collect {
-      case (vec, x, y) if isClosingMove(field, vec, x, y) => Move(vec, x, y, true)
+      case (vec, x, y) if ModelRequestHttp.isClosingMove(field, vec, x, y) => Move(vec, x, y, true)
     }
     if winningMoves.nonEmpty then return Some(winningMoves.head)
 
     val saveMoves: Vector[Move] = allAvailableCoords.collect {
-      case (vec, x, y) if !isRiskyMove(field, vec, x, y) => Move(vec, x, y, true)
+      case (vec, x, y) if !ModelRequestHttp.isRiskyMove(field, vec, x, y) => Move(vec, x, y, true)
     }
     if saveMoves.nonEmpty then return Some(shuffle(saveMoves).head)
 
     return allAvailableCoords
-      .map(evaluateChainWithPointsOutcome(_, field))
+      .map(ModelRequestHttp.evaluateChainWithPointsOutcome(field, _))
       .filterNot(_._1 == 0)
       .minByOption(_._1)
       .map(chain => chain._2.head)

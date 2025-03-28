@@ -1,12 +1,12 @@
 package fieldComponent.fieldImpl
 
 import common.model.fieldService.FieldInterface
+import de.github.dotsandboxes.lib.ComputerDifficulty
+import de.github.dotsandboxes.lib.{BoardSize, CellData, Move, Player, PlayerSize, PlayerType, SquareCase, Status}
 import matrixComponent.MatrixInterface
 import matrixComponent.matrixImpl.Matrix
-import de.github.dotsandboxes.lib.{PlayerType, BoardSize, PlayerSize, SquareCase, Player, Status, Move, CellData}
-import play.api.libs.json.{Json, JsValue, JsLookupResult}
+import play.api.libs.json.{JsLookupResult, JsValue, Json}
 import scala.util.Try
-import de.github.dotsandboxes.lib.ComputerDifficulty
 
 case class Field(matrix: MatrixInterface) extends FieldInterface:
   def this(boardSize: BoardSize, status: Status, playerSize: PlayerSize, playerType: PlayerType) =
@@ -84,6 +84,77 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
   override def rowSize(): Int = matrix.rowSize()
   override def colSize(): Int = matrix.colSize()
   override def space(length: Int): String = " " * ((length - 1) / 2)
+
+  override def squareCases(vec: Int, row: Int, col: Int, field: FieldInterface): Vector[SquareCase] = vec match
+    case 1 =>
+      Vector(
+        Option.when(row >= 0 && row < field.maxPosX)(SquareCase.DownCase),
+        Option.when(row > 0 && row <= field.maxPosX)(SquareCase.UpCase)
+      ).flatten
+    case 2 =>
+      Vector(
+        Option.when(col >= 0 && col < field.maxPosY)(SquareCase.RightCase),
+        Option.when(col > 0 && col <= field.maxPosY)(SquareCase.LeftCase)
+      ).flatten
+
+  override def isClosingMove(vec: Int, row: Int, col: Int, field: FieldInterface): Boolean =
+    field.squareCases(vec, row, col, field).exists(state => field.checkAllCells(state, row, col).forall(identity))
+  override def isRiskyMove(vec: Int, row: Int, col: Int, field: FieldInterface): Boolean =
+    field.squareCases(vec, row, col, field).exists(state => field.checkAllCells(state, row, col).count(identity) == 2)
+  override def isCircularSequence(moveSeq1: (Int, Vector[(Int, Int, Int)]), moveSeq2: (Int, Vector[(Int, Int, Int)])): Boolean =
+    moveSeq1._1 == moveSeq2._1 && moveSeq1._2.toSet == moveSeq2._2.toSet
+
+  override def getMissingMoves(vec: Int, row: Int, col: Int, field: FieldInterface): Vector[(Int, Int, Int)] =
+    val casesWithCellsToCheck: Vector[Vector[(Int, Int, Int)]] =
+      field.squareCases(vec, row, col, field).map(state => field.cellsToCheck(state, row, col))
+    casesWithCellsToCheck.collect {
+      case squareMoves if squareMoves.count {
+        case (vec, x, y) =>
+          if vec == 1 then field.getRowCell(x, y)
+          else field.getColCell(x, y)
+      } == 2 =>
+        squareMoves.find { case (vec, x, y) =>
+          if vec == 1 then !field.getRowCell(x, y)
+          else !field.getColCell(x, y)
+        }.get
+    }
+
+  override def evaluatePointsOutcome(vec: Int, row: Int, col: Int, field: FieldInterface): Int =
+    val casesWithCellsToCheck: Vector[Vector[(Int, Int, Int)]] =
+      field.squareCases(vec, row, col, field).map(squareCase => field.cellsToCheck(squareCase, row, col))
+    val cellStates: Vector[Vector[Boolean]] = casesWithCellsToCheck.map(
+      _.map { case (vec, x, y) => if vec == 1 then field.getRowCell(x, y) else field.getColCell(x, y) }
+    )
+    return cellStates.count(_.forall(identity))
+
+  override def evaluateChainWithPointsOutcome(moveCoord: (Int, Int, Int), field: FieldInterface): (Int, Vector[(Int, Int, Int)]) =
+    def exploreStackDFS(stack: Vector[(Int, Int, Int)], visited: Vector[(Int, Int, Int)], tempField: FieldInterface, count: Int): (Int, Vector[(Int, Int, Int)]) =
+      return (stack: @unchecked) match
+        case Vector() => (count, visited)
+        case rest :+ thisMove =>
+          val (vec, x, y) = thisMove
+          val updatedField = if vec == 1
+            then tempField.putRow(x, y, true)
+            else tempField.putCol(x, y, true)
+
+          val points: Int = evaluatePointsOutcome(vec, x, y, updatedField)
+          val nextMissingMoves: Vector[(Int, Int, Int)] =
+            getMissingMoves(thisMove._1, x, y, updatedField)
+              .filterNot(visited.contains)
+              .filterNot(stack.contains)
+
+          exploreStackDFS(
+            if nextMissingMoves.isEmpty then rest else rest ++ nextMissingMoves,
+            visited :+ thisMove,
+            updatedField,
+            count + points
+          )
+
+    val (vec, x, y) = moveCoord
+    val initialField = if vec == 1 then field.putRow(x, y, true) else field.putCol(x, y, true)
+    val initialMissingMoves: Vector[(Int, Int, Int)] = getMissingMoves(vec, x, y, initialField)
+    return exploreStackDFS(initialMissingMoves, Vector(moveCoord), initialField, evaluatePointsOutcome(vec, x, y, initialField))
+
   override def toCellData: CellData =
     val (row, col) = boardSize.dimensions
     CellData(

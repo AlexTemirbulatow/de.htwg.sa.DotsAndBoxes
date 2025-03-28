@@ -13,6 +13,8 @@ trait FieldInterface:
   def mesh(length: Int, height: Int): String
   def rows(rowIndex: Int, colIndex: Int, length: Int): String
   def columns(rowIndex: Int, colIndex: Int, length: Int): String
+  def rowSize(): Int
+  def colSize(): Int
   def status(rowIndex: Int, colIndex: Int, length: Int): String
   def boardSize: BoardSize
   def playerSize: PlayerSize
@@ -43,8 +45,13 @@ trait FieldInterface:
   def playerList: Vector[Player]
   def playerType: PlayerType
   def getPoints(index: Int): Int
-  def rowSize(): Int
-  def colSize(): Int
   def space(length: Int): String
   def toCellData: CellData
+  def squareCases(vec: Int, row: Int, col: Int, field: FieldInterface): Vector[SquareCase]
+  def isClosingMove(vec: Int, row: Int, col: Int, field: FieldInterface): Boolean
+  def isRiskyMove(vec: Int, row: Int, col: Int, field: FieldInterface): Boolean
+  def isCircularSequence(moveSeq1: (Int, Vector[(Int, Int, Int)]), moveSeq2: (Int, Vector[(Int, Int, Int)])): Boolean
+  def getMissingMoves(vec: Int, row: Int, col: Int, field: FieldInterface): Vector[(Int, Int, Int)]
+  def evaluateChainWithPointsOutcome(moveCoord: (Int, Int, Int), field: FieldInterface): (Int, Vector[(Int, Int, Int)])
+  def evaluatePointsOutcome(vec: Int, row: Int, col: Int, field: FieldInterface): Int
   override def toString: String
