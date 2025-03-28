@@ -1,6 +1,6 @@
 package common.model.fieldService
 
-import de.github.dotsandboxes.lib.{PlayerType, BoardSize, PlayerSize, SquareCase, Player, Status, Move, CellData}
+import de.github.dotsandboxes.lib.{BoardSize, CellData, Move, Player, PlayerSize, PlayerType, SquareCase, Status}
 
 trait FieldInterface:
   val maxPosX: Int

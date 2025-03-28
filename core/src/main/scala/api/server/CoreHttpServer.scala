@@ -17,8 +17,8 @@ object CoreHttpServer:
   private val CORE_HOST = "localhost"
   private val CORE_PORT = 8083
 
-  implicit val system: ActorSystem = ActorSystem()
-  implicit val executionContext: ExecutionContext = system.dispatcher
+  private implicit val system: ActorSystem = ActorSystem()
+  private implicit val executionContext: ExecutionContext = system.dispatcher
 
   private val logger = LoggerFactory.getLogger(getClass)
 

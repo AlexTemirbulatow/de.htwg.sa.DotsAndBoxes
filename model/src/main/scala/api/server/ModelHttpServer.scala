@@ -14,8 +14,8 @@ object ModelHttpServer:
   private val MODEL_HOST = "localhost"
   private val MODEL_PORT = 8080
 
-  implicit val system: ActorSystem = ActorSystem()
-  implicit val executionContext: ExecutionContext = system.dispatcher
+  private implicit val system: ActorSystem = ActorSystem()
+  private implicit val executionContext: ExecutionContext = system.dispatcher
 
   private val logger = LoggerFactory.getLogger(getClass)
 
@@ -33,7 +33,9 @@ object ModelHttpServer:
         pathPrefix("model") {
           concat(
             pathPrefix("field") {
-              fieldRoutes.fieldRoutes
+              concat(
+                fieldRoutes.fieldRoutes
+              )
             }
           )
         }

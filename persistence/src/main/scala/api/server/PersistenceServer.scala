@@ -14,8 +14,8 @@ object PersistenceServer:
   private val PERSISTENCE_HOST = "localhost"
   private val PERSISTENCE_PORT = 8081
 
-  implicit val system: ActorSystem = ActorSystem()
-  implicit val executionContext: ExecutionContext = system.dispatcher
+  private implicit val system: ActorSystem = ActorSystem()
+  private implicit val executionContext: ExecutionContext = system.dispatcher
 
   private val logger = LoggerFactory.getLogger(getClass)
 
@@ -32,7 +32,9 @@ object PersistenceServer:
       pathPrefix("persistence") {
         concat(
           pathPrefix("fileIO") {
-            fileIORoutes.fileIORoutes
+            concat(
+              fileIORoutes.fileIORoutes
+            )
           }
         )
       }
