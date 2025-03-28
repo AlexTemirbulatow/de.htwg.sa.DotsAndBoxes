@@ -25,7 +25,7 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
   override def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, difficulty: ComputerDifficulty): FieldInterface =
     if playerType == PlayerType.Computer then ComputerRequestHttp.connect
     field = FieldParser.fromJson(ModelRequestHttp.newGame(boardSize, Status.Empty, playerSize, playerType, field))
-    this.computerDifficulty = difficulty
+    this.computerDifficulty = if playerSize != PlayerSize.Two && difficulty == ComputerDifficulty.Hard then ComputerDifficulty.Medium else difficulty
     notifyObservers(Event.Move)
     field
   override def getCellData: CellData = ModelRequestHttp.cellData(field)
