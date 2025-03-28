@@ -53,7 +53,7 @@ lazy val core = project
     name := "core"
   )
   .settings(commonSettings)
-  .dependsOn(model, persistence, common)
+  .dependsOn(model, common)
 
 lazy val model = project
   .in(file("model"))
@@ -76,7 +76,6 @@ lazy val persistence = project
     name := "persistence"
   )
   .settings(commonSettings)
-  .dependsOn(model, common)
 
 lazy val gui = project
   .in(file("gui"))

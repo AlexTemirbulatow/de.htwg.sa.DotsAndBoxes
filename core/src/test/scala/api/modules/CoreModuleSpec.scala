@@ -6,13 +6,9 @@ import CoreModule.given
 import common.model.fieldService.FieldInterface
 import fieldComponent.fieldImpl.Field
 import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, Status}
-import fileIoComponent.FileIOInterface
-import fileIoComponent.{jsonImpl, xmlImpl}
 import controllerComponent.ControllerInterface
 import controllerComponent.controllerImpl.Controller
 import api.module.CoreModule
-import fileIoComponent.jsonImpl.FileIO
-import fileIoComponent.xmlImpl.FileIO
 
 class CoreModuleSpec extends AnyWordSpec {
   "CoreModule" should {

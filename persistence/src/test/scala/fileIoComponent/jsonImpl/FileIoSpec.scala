@@ -3,8 +3,6 @@ package fileIoComponent.jsonImpl
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 
-import common.model.fieldService.FieldInterface
-import fieldComponent.fieldImpl.Field
 import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, Status}
 import fileIoComponent.jsonImpl.FileIO
 
