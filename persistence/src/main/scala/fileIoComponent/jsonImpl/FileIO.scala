@@ -1,6 +1,6 @@
-package fileIoComponent.jsonImpl
+package fileIOComponent.jsonImpl
 
-import fileIoComponent.FileIOInterface
+import fileIOComponent.FileIOInterface
 import java.io.{File, PrintWriter}
 import play.api.libs.json.Json
 import scala.io.Source

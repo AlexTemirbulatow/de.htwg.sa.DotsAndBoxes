@@ -1,10 +1,10 @@
-package fileIoComponent.xmlImpl
+package fileIOComponent.xmlImpl
 
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 
 import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, Status}
-import fileIoComponent.xmlImpl.FileIO
+import fileIOComponent.xmlImpl.FileIO
 
 class FileIoSpec extends AnyWordSpec {
   "A game state" when {/*

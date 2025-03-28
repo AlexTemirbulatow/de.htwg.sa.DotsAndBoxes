@@ -1,6 +1,6 @@
-package fileIoComponent.xmlImpl
+package fileIOComponent.xmlImpl
 
-import fileIoComponent.FileIOInterface
+import fileIOComponent.FileIOInterface
 import java.io.{File, PrintWriter}
 import scala.util.{Failure, Success, Try}
 import scala.xml.{PrettyPrinter, XML}
