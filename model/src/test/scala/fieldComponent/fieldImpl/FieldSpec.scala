@@ -337,12 +337,12 @@ class FieldSpec extends AnyWordSpec {
         )
       }
       "give access to player" in {
-        val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Four, PlayerType.Human)
+        val field: FieldInterface = new Field(BoardSize.Small, Status.Empty, PlayerSize.Four, PlayerType.Human)
         field.currentPlayer shouldBe Player("Blue", 0, Status.Blue, PlayerType.Human)
         field.nextPlayer.currentPlayer shouldBe Player("Red", 0, Status.Red, PlayerType.Human)
       }
       "return information about current game state" in {
-        var field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
+        var field: FieldInterface = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
 
         val matrixVector1 =
           Matrix(
