@@ -17,9 +17,9 @@ import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
 class Controller(using var field: FieldInterface, var fileFormat: FileFormat, var computerDifficulty: ComputerDifficulty) extends ControllerInterface:
-  val undoManager = new UndoManager
+  private val undoManager = new UndoManager
 
-  val logger = LoggerFactory.getLogger(getClass)
+  private val logger = LoggerFactory.getLogger(getClass)
 
   override def fieldData: FieldData = ModelRequestHttp.fieldData(computerDifficulty, field)
   override def gameBoardData: GameBoardData = ModelRequestHttp.gameBoardData(field)

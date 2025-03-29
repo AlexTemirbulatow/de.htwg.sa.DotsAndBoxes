@@ -1,7 +1,6 @@
 package api.server
 
 import akka.actor.ActorSystem
-import akka.event.slf4j.Logger
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Directives._

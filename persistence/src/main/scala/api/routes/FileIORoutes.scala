@@ -11,7 +11,7 @@ import play.api.libs.json.{JsValue, Json}
 import scala.util.Try
 
 class FileIORoutes:
-  val logger = LoggerFactory.getLogger(getClass)
+  private val logger = LoggerFactory.getLogger(getClass)
 
   def fileIORoutes: Route = handleExceptions(exceptionHandler) {
     concat(
