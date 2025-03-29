@@ -1,83 +1,51 @@
 package api.service
 
 import api.client.CoreClient
-import de.github.dotsandboxes.lib.{BoardSize, CellData, ComputerDifficulty, Move, Player, PlayerSize, PlayerType}
+import de.github.dotsandboxes.lib._
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import play.api.libs.json.Json
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
-import scala.util.Try
 
 object CoreRequestHttp:
-  def playerList: Vector[Player] =
-    decode[Vector[Player]](
-      Await.result(CoreClient.getRequest("api/core/get/playerList"), 5.seconds)
+  def fieldData: FieldData =
+    decode[FieldData](
+      Await.result(CoreClient.getRequest("api/core/get/fieldData"), 5.seconds)
     ) match
-      case Right(players) => players
-      case Left(error)    => throw new RuntimeException(s"Error decoding Vector[Player]: ${error.getMessage}")
-
-  def cellData: CellData =
-    decode[CellData](
-      Await.result(CoreClient.getRequest("api/core/get/cellData"), 5.seconds)
+      case Right(data) => data
+      case Left(error) => throw new RuntimeException(s"Error decoding FieldData: ${error.getMessage}")
+    
+  def gameBoardData: GameBoardData =
+    decode[GameBoardData](
+      Await.result(CoreClient.getRequest("api/core/get/gameBoardData"), 5.seconds)
     ) match
-      case Right(cellData) => cellData
-      case Left(error)     => throw new RuntimeException(s"Error decoding CellData: ${error.getMessage}")
+      case Right(data) => data
+      case Left(error) => throw new RuntimeException(s"Error decoding GameBoardData: ${error.getMessage}")
 
-  def boardSize: BoardSize =
-    Try(BoardSize.valueOf(
-      Await.result(CoreClient.getRequest("api/core/get/boardSize"), 5.seconds)
-    )).getOrElse(throw new RuntimeException("Invalid Board Size."))
+  def playerTurnData: PlayerTurnData =
+    decode[PlayerTurnData](
+      Await.result(CoreClient.getRequest("api/core/get/playerTurnData"), 5.seconds)
+    ) match
+      case Right(data) => data
+      case Left(error) => throw new RuntimeException(s"Error decoding PlayerTurnData: ${error.getMessage}")
 
-  def playerSize: PlayerSize =
-    Try(PlayerSize.valueOf(
-      Await.result(CoreClient.getRequest("api/core/get/playerSize"), 5.seconds)
-    )).getOrElse(throw new RuntimeException("Invalid Player Size."))
+  def playerResultData: PlayerResultData =
+    decode[PlayerResultData](
+      Await.result(CoreClient.getRequest("api/core/get/playerResultData"), 5.seconds)
+    ) match
+      case Right(data) => data
+      case Left(error) => throw new RuntimeException(s"Error decoding PlayerResultData: ${error.getMessage}")
 
-  def playerType: PlayerType =
-    Try(PlayerType.valueOf(
-      Await.result(CoreClient.getRequest("api/core/get/playerType"), 5.seconds)
-    )).getOrElse(throw new RuntimeException("Invalid Player Type."))
-
-  def currentPlayerType: PlayerType =
-    Try(PlayerType.valueOf(
-      Await.result(CoreClient.getRequest("api/core/get/currentPlayerType"), 5.seconds)
-    )).getOrElse(throw new RuntimeException("Invalid Player Type."))
-
-  def computerDifficulty: ComputerDifficulty =
-    Try(ComputerDifficulty.valueOf(
-      Await.result(CoreClient.getRequest("api/core/get/computerDifficulty"), 5.seconds)
-    )).getOrElse(throw new RuntimeException("Invalid Computer Difficulty"))
-
-  def statusCell(row: Int, col: Int): String =
-    Await.result(CoreClient.getRequest(s"api/core/get/statusCell/$row/$col"), 5.seconds)
-
-  def rowCell(row: Int, col: Int): Boolean =
-    Await.result(CoreClient.getRequest(s"api/core/get/rowCell/$row/$col"), 5.seconds).toBoolean
-
-  def colCell(row: Int, col: Int): Boolean =
-    Await.result(CoreClient.getRequest(s"api/core/get/colCell/$row/$col"), 5.seconds).toBoolean
-
-  def rowSize: Int =
-    Await.result(CoreClient.getRequest(s"api/core/get/rowSize"), 5.seconds).toInt
-
-  def colSize: Int =
-    Await.result(CoreClient.getRequest(s"api/core/get/colSize"), 5.seconds).toInt
+  def fieldSizeData: FieldSizeData =
+    decode[FieldSizeData](
+      Await.result(CoreClient.getRequest("api/core/get/fieldSizeData"), 5.seconds)
+    ) match
+      case Right(data) => data
+      case Left(error) => throw new RuntimeException(s"Error decoding FieldSizeData: ${error.getMessage}")
 
   def gameEnded: Boolean =
     Await.result(CoreClient.getRequest(s"api/core/get/gameEnded"), 5.seconds).toBoolean
-
-  def currentPlayer: String =
-    Await.result(CoreClient.getRequest(s"api/core/get/currentPlayer"), 5.seconds)
-
-  def currentPoints: String =
-    Await.result(CoreClient.getRequest(s"api/core/get/currentPoints"), 5.seconds)
-
-  def winner: String =
-    Await.result(CoreClient.getRequest(s"api/core/get/winner"), 5.seconds)
-
-  def restart: Future[String] =
-    CoreClient.getRequest("api/core/restart")
 
   def publish(move: Move): Future[String] =
     CoreClient.postRequest("api/core/publish", Json.obj(
@@ -92,6 +60,9 @@ object CoreRequestHttp:
     CoreClient.postRequest("api/core/publish", Json.obj(
       "method" -> method
     ))
+
+  def restart: Future[String] =
+    CoreClient.getRequest("api/core/restart")
 
   def initGame(
       boardSize: BoardSize,

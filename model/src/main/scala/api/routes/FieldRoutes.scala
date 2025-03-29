@@ -12,6 +12,7 @@ import io.circe.syntax._
 import io.circe.parser.decode
 import play.api.libs.json.{JsLookupResult, JsValue, Json}
 import scala.util.Try
+import de.github.dotsandboxes.lib.ComputerDifficulty
 
 class FieldRoutes:
   def fieldRoutes: Route = handleExceptions(exceptionHandler) {
@@ -91,6 +92,33 @@ class FieldRoutes:
     path("cellData") {
       entity(as[String]) { json =>
         complete(parsedField(json).toCellData.asJson.toString)
+      }
+    } ~
+    path("fieldData") {
+      entity(as[String]) { json =>
+        val jsonValue: JsValue = Json.parse(json)
+        val computerDifficulty: ComputerDifficulty = Try(ComputerDifficulty.valueOf((jsonValue \ "computerDifficulty").as[String])).getOrElse(throw new RuntimeException("Invalid Computer Difficulty"))
+        complete(parsedField(json).fieldData(computerDifficulty).asJson.toString)
+      }
+    } ~
+    path("gameBoardData") {
+      entity(as[String]) { json =>
+        complete(parsedField(json).gameBoardData.asJson.toString)
+      }
+    } ~
+    path("playerTurnData") {
+      entity(as[String]) { json =>
+        complete(parsedField(json).playerTurnData.asJson.toString)
+      }
+    } ~
+    path("playerResultData") {
+      entity(as[String]) { json =>
+        complete(parsedField(json).playerResultData.asJson.toString)
+      }
+    } ~
+    path("fieldSizeData") {
+      entity(as[String]) { json =>
+        complete(parsedField(json).fieldSizeData.asJson.toString)
       }
     } ~
     path("statusCell" / IntNumber / IntNumber) { (row, col) =>

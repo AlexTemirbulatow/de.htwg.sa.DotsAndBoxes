@@ -2,7 +2,7 @@ package controllerComponent
 
 import common.model.fieldService.FieldInterface
 import controllerImpl.observer.Observable
-import de.github.dotsandboxes.lib.{BoardSize, CellData, ComputerDifficulty, Move, Player, PlayerSize, PlayerType, Status}
+import de.github.dotsandboxes.lib._
 import scala.concurrent.Future
 import scala.util.Try
 
@@ -10,6 +10,11 @@ trait ControllerInterface extends Observable:
   def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, computerDifficulty: ComputerDifficulty): FieldInterface
   def put(move: Move): String
   def getCellData: CellData
+  def fieldData: FieldData
+  def gameBoardData: GameBoardData
+  def playerTurnData: PlayerTurnData
+  def playerResultData: PlayerResultData
+  def fieldSizeData: FieldSizeData
   def getStatusCell(row: Int, col: Int): Status
   def getRowCell(row: Int, col: Int): Boolean
   def getColCell(row: Int, col: Int): Boolean

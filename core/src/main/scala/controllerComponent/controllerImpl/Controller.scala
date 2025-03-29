@@ -9,7 +9,7 @@ import controllerImpl.command.{PutCommand, UndoManager}
 import controllerImpl.moveHandler.MoveValidator
 import controllerImpl.moveStrategy.{EdgeState, MidState, MoveStrategy}
 import controllerImpl.playerStrategy.PlayerStrategy
-import de.github.dotsandboxes.lib.{BoardSize, CellData, ComputerDifficulty, Event, FileFormat, Move, Player, PlayerSize, PlayerType, Status}
+import de.github.dotsandboxes.lib._
 import fieldComponent.parser.FieldParser
 import org.slf4j.LoggerFactory
 import play.api.libs.json.JsObject
@@ -29,6 +29,11 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
     notifyObservers(Event.Move)
     field
   override def getCellData: CellData = ModelRequestHttp.cellData(field)
+  override def fieldData: FieldData = ModelRequestHttp.fieldData(getComputerDifficulty, field)
+  override def gameBoardData: GameBoardData = ModelRequestHttp.gameBoardData(field)
+  override def playerTurnData: PlayerTurnData = ModelRequestHttp.playerTurnData(field)
+  override def playerResultData: PlayerResultData = ModelRequestHttp.playerResultData(field)
+  override def fieldSizeData: FieldSizeData = ModelRequestHttp.fieldSizeData(field)
   override def getStatusCell(row: Int, col: Int): Status = ModelRequestHttp.statusCell(row, col, field)
   override def getRowCell(row: Int, col: Int): Boolean = ModelRequestHttp.rowCell(row, col, field)
   override def getColCell(row: Int, col: Int): Boolean = ModelRequestHttp.colCell(row, col, field)

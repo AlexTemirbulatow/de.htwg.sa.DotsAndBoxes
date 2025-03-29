@@ -1,7 +1,7 @@
 package guiComponent
 
 import api.service.CoreRequestHttp
-import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, Event, Move, PlayerSize, PlayerType, CellData}
+import de.github.dotsandboxes.lib._
 import java.awt.{Color, Cursor, Font, GradientPaint, RenderingHints}
 import java.io.File
 import javax.imageio.ImageIO
@@ -330,10 +330,11 @@ class GUI extends Frame:
       border = Swing.EmptyBorder(0, 0, 0, 0)
     }
 
-    var selectedBoardSize: BoardSize = CoreRequestHttp.boardSize
-    var selectedPlayerSize: PlayerSize = CoreRequestHttp.playerSize
-    var selectedPlayerType: PlayerType = CoreRequestHttp.playerType
-    var selectedDifficulty: ComputerDifficulty = CoreRequestHttp.computerDifficulty
+    val fieldData: FieldData = CoreRequestHttp.fieldData
+    var selectedBoardSize: BoardSize = fieldData.boardSize
+    var selectedPlayerSize: PlayerSize = fieldData.playerSize
+    var selectedPlayerType: PlayerType = fieldData.playerType
+    var selectedDifficulty: ComputerDifficulty = fieldData.computerDifficulty
 
     val boardSelection = createSelectionPanel(
       "Board Size",
@@ -442,8 +443,13 @@ class GUI extends Frame:
 
   def update(event: Event): Unit = event match
     case Event.Abort => sys.exit
-    case Event.End   => switchContent(revise(playerResult)); inMainMenu = false
-    case Event.Move  => switchContent(revise(if CoreRequestHttp.gameEnded then playerResult else playerTurn)); inMainMenu = false
+    case Event.End   => switchContent(revise(playerResult(CoreRequestHttp.playerResultData))); inMainMenu = false
+    case Event.Move  =>
+      switchContent(revise(if CoreRequestHttp.gameEnded
+        then playerResult(CoreRequestHttp.playerResultData)
+        else playerTurn(CoreRequestHttp.playerTurnData)
+      ))
+      inMainMenu = false
 
   override def closeOperation: Unit = update(Event.Abort)
 
@@ -470,7 +476,8 @@ class GUI extends Frame:
     if inMainMenu then switchContent(setupMainMenu) else update(Event.Move)
 
   def fieldSize(): (Int, Int) =
-    (CoreRequestHttp.colSize - 1, CoreRequestHttp.rowSize - 1)
+    val fieldSizeData: FieldSizeData = CoreRequestHttp.fieldSizeData
+    (fieldSizeData.colSize - 1, fieldSizeData.rowSize - 1)
 
   def gridSize(fieldSize: (Int, Int)): (Int, Int) =
     ((fieldSize._1 + fieldSize._1 + 1), (fieldSize._2 + fieldSize._2 + 1))
@@ -478,21 +485,22 @@ class GUI extends Frame:
   def revise(playerState: FlowPanel): BorderPanel = new BorderPanel {
     preferredSize = panelSize
     background = currentTheme._1
+    val fieldSizeData: (Int, Int) = fieldSize()
     add(playerState, BorderPanel.Position.North)
-    add(CellPanel(fieldSize()._1, fieldSize()._2), BorderPanel.Position.Center)
-    add(playerScoreboard, BorderPanel.Position.South)
+    add(CellPanel(fieldSizeData._1, fieldSizeData._2), BorderPanel.Position.Center)
+    add(playerScoreboard(CoreRequestHttp.playerTurnData.playerList), BorderPanel.Position.South)
   }
 
-  def playerTurn: FlowPanel = new FlowPanel {
+  def playerTurn(playerTurnData: PlayerTurnData): FlowPanel = new FlowPanel {
     background = currentTheme._1
     contents += new Label {
-      icon = CoreRequestHttp.currentPlayer match
-        case "Blue"   => if CoreRequestHttp.playerList(0).playerType == PlayerType.Human then playerBlue else playerBlueComputer
-        case "Red"    => if CoreRequestHttp.playerList(1).playerType == PlayerType.Human then playerRed else playerRedComputer
-        case "Green"  => if CoreRequestHttp.playerList(2).playerType == PlayerType.Human then playerGreen else playerGreenComputer
-        case "Yellow" => if CoreRequestHttp.playerList(3).playerType == PlayerType.Human then playerYellow else playerYellowComputer
+      icon = playerTurnData.currentPlayer match
+        case "Blue"   => if playerTurnData.playerList(0).playerType == PlayerType.Human then playerBlue else playerBlueComputer
+        case "Red"    => if playerTurnData.playerList(1).playerType == PlayerType.Human then playerRed else playerRedComputer
+        case "Green"  => if playerTurnData.playerList(2).playerType == PlayerType.Human then playerGreen else playerGreenComputer
+        case "Yellow" => if playerTurnData.playerList(3).playerType == PlayerType.Human then playerYellow else playerYellowComputer
     }
-    val label = Label(s" Turn [points: ${CoreRequestHttp.currentPoints}]")
+    val label = Label(s" Turn [points: ${playerTurnData.currentPoints}]")
     label.foreground = currentTheme._3
     label.font = Font("Comic Sans MS", 0, 35)
     contents += label
@@ -502,13 +510,13 @@ class GUI extends Frame:
       super.paintComponent(g)
   }
 
-  def playerResult: FlowPanel = new FlowPanel {
+  def playerResult(playerResultData: PlayerResultData): FlowPanel = new FlowPanel {
     background = currentTheme._1
     val fontType = Font("Comic Sans MS", 0, 35)
-    CoreRequestHttp.winner match
+    playerResultData.winner match
       case "It's a draw!" =>
         contents += new Label {
-          val label = Label(CoreRequestHttp.winner)
+          val label = Label(playerResultData.winner)
           label.font = fontType
           label.foreground = currentTheme._3
           label.border = LineBorder(currentTheme._1, 10)
@@ -516,11 +524,11 @@ class GUI extends Frame:
         }
       case _ =>
         contents += new Label {
-          icon = CoreRequestHttp.winner.substring(7) match
-            case "Blue wins!"   => if CoreRequestHttp.playerList(0).playerType == PlayerType.Human then playerBlue else playerBlueComputer
-            case "Red wins!"    => if CoreRequestHttp.playerList(1).playerType == PlayerType.Human then playerRed else playerRedComputer
-            case "Green wins!"  => if CoreRequestHttp.playerList(2).playerType == PlayerType.Human then playerGreen else playerGreenComputer
-            case "Yellow wins!" => if CoreRequestHttp.playerList(3).playerType == PlayerType.Human then playerYellow else playerYellowComputer
+          icon = playerResultData.winner.substring(7) match
+            case "Blue wins!"   => if playerResultData.playerList(0).playerType == PlayerType.Human then playerBlue else playerBlueComputer
+            case "Red wins!"    => if playerResultData.playerList(1).playerType == PlayerType.Human then playerRed else playerRedComputer
+            case "Green wins!"  => if playerResultData.playerList(2).playerType == PlayerType.Human then playerGreen else playerGreenComputer
+            case "Yellow wins!" => if playerResultData.playerList(3).playerType == PlayerType.Human then playerYellow else playerYellowComputer
         }
         val label = Label(" wins!")
         label.font = fontType
@@ -532,9 +540,9 @@ class GUI extends Frame:
       super.paintComponent(g)
   }
 
-  def playerScoreboard: FlowPanel = new FlowPanel {
+  def playerScoreboard(playerList: Vector[Player]): FlowPanel = new FlowPanel {
     background = currentTheme._2
-    contents ++= CoreRequestHttp.playerList.map { player =>
+    contents ++= playerList.map { player =>
       val label = new Label {
         icon = player.playerId match
           case "Blue"   => if player.playerType == PlayerType.Human then statsBlue else statsBlueComputer
@@ -560,9 +568,8 @@ class GUI extends Frame:
   }
 
   class CellPanel(x: Int, y: Int) extends GridPanel(gridSize(fieldSize())._2, gridSize(fieldSize())._1):
+    val gameBoardData: GameBoardData = CoreRequestHttp.gameBoardData
     opaque = false
-    private val cellData: CellData = CoreRequestHttp.cellData
-    private val currentPlayerType: PlayerType = CoreRequestHttp.currentPlayerType
     fieldBuilder
 
     private def fieldBuilder =
@@ -576,13 +583,13 @@ class GUI extends Frame:
 
     private def bar(row: Int, col: Int) =
       contents += dotImg
-      contents += CellButton(1, row, col, cellData.rowCells(row)(col), currentPlayerType)
+      contents += CellButton(1, row, col, gameBoardData.rowCells(row)(col), gameBoardData.playerType)
 
     private def cell(row: Int, col: Int) =
-      contents += CellButton(2, row, col, cellData.colCells(row)(col), currentPlayerType)
+      contents += CellButton(2, row, col, gameBoardData.colCells(row)(col), gameBoardData.playerType)
       if col != x then
         contents += new Label {
-          icon = cellData.statusCells(row)(col) match
+          icon = gameBoardData.statusCells(row)(col) match
             case "-" => takenNone
             case "B" => takenBlue
             case "R" => takenRed

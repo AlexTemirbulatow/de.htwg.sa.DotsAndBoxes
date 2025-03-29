@@ -1,6 +1,6 @@
 package common.model.fieldService
 
-import de.github.dotsandboxes.lib.{BoardSize, CellData, Move, Player, PlayerSize, PlayerType, SquareCase, Status}
+import de.github.dotsandboxes.lib._
 
 trait FieldInterface:
   val maxPosX: Int
@@ -46,6 +46,11 @@ trait FieldInterface:
   def playerType: PlayerType
   def getPoints(index: Int): Int
   def space(length: Int): String
+  def fieldData(computerDifficulty: ComputerDifficulty): FieldData
+  def gameBoardData: GameBoardData
+  def playerTurnData: PlayerTurnData
+  def playerResultData: PlayerResultData
+  def fieldSizeData: FieldSizeData
   def toCellData: CellData
   def squareCases(vec: Int, row: Int, col: Int, field: FieldInterface): Vector[SquareCase]
   def isClosingMove(vec: Int, row: Int, col: Int, field: FieldInterface): Boolean

@@ -1,8 +1,7 @@
 package fieldComponent.fieldImpl
 
 import common.model.fieldService.FieldInterface
-import de.github.dotsandboxes.lib.ComputerDifficulty
-import de.github.dotsandboxes.lib.{BoardSize, CellData, Move, Player, PlayerSize, PlayerType, SquareCase, Status}
+import de.github.dotsandboxes.lib._
 import matrixComponent.MatrixInterface
 import matrixComponent.matrixImpl.Matrix
 import play.api.libs.json.{JsLookupResult, JsValue, Json}
@@ -84,6 +83,18 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
   override def rowSize(): Int = matrix.rowSize()
   override def colSize(): Int = matrix.colSize()
   override def space(length: Int): String = " " * ((length - 1) / 2)
+  override def fieldData(computerDifficulty: ComputerDifficulty): FieldData = FieldData(boardSize, playerSize, playerType, computerDifficulty)
+  override def gameBoardData: GameBoardData =
+    val (row, col) = boardSize.dimensions
+    GameBoardData(
+      currentPlayer.playerType,
+      Vector.tabulate(col+1, row)((row, col) => getRowCell(row, col)),
+      Vector.tabulate(col, row+1)((row, col) => getColCell(row, col)),
+      Vector.tabulate(col, row)((row, col) => getStatusCell(row, col).toString)
+    )
+  override def playerTurnData: PlayerTurnData = PlayerTurnData(currentPlayerId, currentPoints, playerList)
+  override def playerResultData: PlayerResultData = PlayerResultData(winner, playerList)
+  override def fieldSizeData: FieldSizeData = FieldSizeData(rowSize(), colSize())
 
   override def squareCases(vec: Int, row: Int, col: Int, field: FieldInterface): Vector[SquareCase] = vec match
     case 1 =>

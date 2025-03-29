@@ -3,7 +3,7 @@ package api.service
 import api.client.ModelClient
 import common.model.fieldService.FieldInterface
 import common.model.fieldService.converter.FieldConverter
-import de.github.dotsandboxes.lib.{BoardSize, CellData, Move, Player, PlayerSize, PlayerType, Status}
+import de.github.dotsandboxes.lib._
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import play.api.libs.json.Json
@@ -50,6 +50,52 @@ object ModelRequestHttp:
     ) match
       case Right(cellData) => cellData
       case Left(error)     => throw new RuntimeException(s"Error decoding CellData: ${error.getMessage}")
+
+  def fieldData(computerDifficulty: ComputerDifficulty, field: FieldInterface): FieldData =
+    decode[FieldData](
+      Await.result(ModelClient.postRequest(s"api/model/field/get/fieldData", Json.obj(
+        "field" -> fieldJsonString(field),
+        "computerDifficulty" -> computerDifficulty.toString
+      )), 5.seconds)
+    ) match
+      case Right(data) => data
+      case Left(error) => throw new RuntimeException(s"Error decoding FieldData: ${error.getMessage}")
+
+  def gameBoardData(field: FieldInterface): GameBoardData =
+    decode[GameBoardData](
+      Await.result(ModelClient.postRequest(s"api/model/field/get/gameBoardData", Json.obj(
+        "field" -> fieldJsonString(field),
+      )), 5.seconds)
+    ) match
+      case Right(data) => data
+      case Left(error) => throw new RuntimeException(s"Error decoding GameBoardData: ${error.getMessage}")
+
+  def playerTurnData(field: FieldInterface): PlayerTurnData =
+    decode[PlayerTurnData](
+      Await.result(ModelClient.postRequest(s"api/model/field/get/playerTurnData", Json.obj(
+        "field" -> fieldJsonString(field),
+      )), 5.seconds)
+    ) match
+      case Right(data) => data
+      case Left(error) => throw new RuntimeException(s"Error decoding PlayerTurnData: ${error.getMessage}")
+
+  def playerResultData(field: FieldInterface): PlayerResultData =
+    decode[PlayerResultData](
+      Await.result(ModelClient.postRequest(s"api/model/field/get/playerResultData", Json.obj(
+        "field" -> fieldJsonString(field),
+      )), 5.seconds)
+    ) match
+      case Right(data) => data
+      case Left(error) => throw new RuntimeException(s"Error decoding PlayerResultData: ${error.getMessage}")
+
+  def fieldSizeData(field: FieldInterface): FieldSizeData =
+    decode[FieldSizeData](
+      Await.result(ModelClient.postRequest(s"api/model/field/get/fieldSizeData", Json.obj(
+        "field" -> fieldJsonString(field),
+      )), 5.seconds)
+    ) match
+      case Right(data) => data
+      case Left(error) => throw new RuntimeException(s"Error decoding FieldSizeData: ${error.getMessage}")
 
   def playerList(field: FieldInterface): Vector[Player] =
     decode[Vector[Player]](

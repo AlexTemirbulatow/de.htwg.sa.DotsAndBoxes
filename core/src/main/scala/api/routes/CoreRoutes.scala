@@ -38,6 +38,21 @@ class CoreRoutes(val controller: ControllerInterface):
     path("cellData") {
       complete(controller.getCellData.asJson.toString)
     } ~
+    path("fieldData") {
+      complete(controller.fieldData.asJson.toString)
+    } ~
+    path("gameBoardData") {
+      complete(controller.gameBoardData.asJson.toString)
+    } ~
+    path("playerTurnData") {
+      complete(controller.playerTurnData.asJson.toString)
+    } ~
+    path("playerResultData") {
+      complete(controller.playerResultData.asJson.toString)
+    } ~
+    path("fieldSizeData") {
+      complete(controller.fieldSizeData.asJson.toString)
+    } ~
     path("boardSize") {
       complete(controller.boardSize.toString)
     } ~
