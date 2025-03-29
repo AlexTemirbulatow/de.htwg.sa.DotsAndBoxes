@@ -6,11 +6,13 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import de.github.dotsandboxes.lib.FileFormat
 import fileIOComponent.{FileIOInterface, jsonImpl, xmlImpl}
-import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import play.api.libs.json.{JsValue, Json}
 import scala.util.Try
 
-class FileIORoutes(val logger: Logger):
+class FileIORoutes:
+  val logger = LoggerFactory.getLogger(getClass)
+
   def fileIORoutes: Route = handleExceptions(exceptionHandler) {
     concat(
       handleSaveRequest,
@@ -48,7 +50,7 @@ class FileIORoutes(val logger: Logger):
             logger.info(s"Persistence Service [FileIO] -- Field successfully loaded as $fileFormat from $filename")
             complete(fieldValue)
           case Left((errMsg, filename)) =>
-            logger.info(s"Persistence Service [FileIO] -- Failed to load field as $fileFormat from $filename: $errMsg")
+            logger.error(s"Persistence Service [FileIO] -- Failed to load field as $fileFormat from $filename: $errMsg")
             complete(StatusCodes.InternalServerError)
       }
     }

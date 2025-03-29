@@ -22,8 +22,8 @@ object PersistenceServer:
   def run: Unit =
     val server = Http()
       .newServerAt(PERSISTENCE_HOST, PERSISTENCE_PORT)
-      .bind(routes(FileIORoutes(logger)))
-    logger.info(s"Persistence Service -- Http Server is running at http://$PERSISTENCE_HOST:$PERSISTENCE_PORT/api/persistence\n\nPress RETURN to terminate...\n")
+      .bind(routes(new FileIORoutes))
+    logger.info(s"Persistence Service -- Http Server is running at http://$PERSISTENCE_HOST:$PERSISTENCE_PORT/\n\nPress RETURN to terminate...\n")
     StdIn.readLine()
     shutdown(server)
 

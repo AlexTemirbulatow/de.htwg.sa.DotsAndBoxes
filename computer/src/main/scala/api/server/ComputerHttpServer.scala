@@ -24,7 +24,7 @@ object ComputerHttpServer:
     val server = Http()
       .newServerAt(COMPUTER_HOST, COMPUTER_PORT)
       .bind(routes(new ComputerRoutes))
-    logger.info(s"Computer Service -- Http Server is running at http://$COMPUTER_HOST:$COMPUTER_PORT/api/computer\n\nPress RETURN to terminate...\n")
+    logger.info(s"Computer Service -- Http Server is running at http://$COMPUTER_HOST:$COMPUTER_PORT/\n\nPress RETURN to terminate...\n")
     StdIn.readLine()
     shutdown(server)
 
