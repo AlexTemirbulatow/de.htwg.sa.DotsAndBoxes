@@ -61,23 +61,23 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
   override def getColCell(row: Int, col: Int): Boolean = matrix.colCell(row, col)
   override def checkAllCells(squareCase: SquareCase, x: Int, y: Int): Vector[Boolean] = matrix.checkAllCells(squareCase, x, y)
   override def cellsToCheck(squareCase: SquareCase, x: Int, y: Int): Vector[(Int, Int, Int)] = matrix.cellsToCheck(squareCase, x, y)
-  override def putStatus(row: Int, col: Int, status: Status): Field = copy(matrix.replaceStatusCell(row, col, status))
-  override def putRow(row: Int, col: Int, value: Boolean): Field = copy(matrix.replaceRowCell(row, col, value))
-  override def putCol(row: Int, col: Int, value: Boolean): Field = copy(matrix.replaceColCell(row, col, value))
+  override def putStatus(row: Int, col: Int, status: Status): FieldInterface = copy(matrix.replaceStatusCell(row, col, status))
+  override def putRow(row: Int, col: Int, value: Boolean): FieldInterface = copy(matrix.replaceRowCell(row, col, value))
+  override def putCol(row: Int, col: Int, value: Boolean): FieldInterface = copy(matrix.replaceColCell(row, col, value))
   override def getUnoccupiedRowCoord(): Vector[(Int, Int, Int)] = matrix.getUnoccupiedRowCoord()
   override def getUnoccupiedColCoord(): Vector[(Int, Int, Int)] = matrix.getUnoccupiedColCoord()
   override def isFinished: Boolean = (matrix.vectorRow ++ matrix.vectorCol).forall(_.forall(_.equals(true)))
   override def isEdge(move: Move): Boolean = matrix.isEdge(move)
-  override def checkSquare(squareCase: SquareCase, x: Int, y: Int): Field = copy(matrix.checkSquare(squareCase, x, y))
+  override def checkSquare(squareCase: SquareCase, x: Int, y: Int): FieldInterface = copy(matrix.checkSquare(squareCase, x, y))
   override def currentPlayer: Player = matrix.getCurrentPlayer
   override def currentPlayerId: String = matrix.currentPlayerInfo._1
   override def currentPlayerIndex: Int = matrix.currentPlayerInfo._2
   override def currentStatus: Vector[Vector[Status]] = matrix.vectorStatus
   override def currentPoints: Int = matrix.currentPoints
-  override def nextPlayer: Field = copy(matrix.changePlayer)
-  override def updatePlayer(curPlayerIndex: Int): Field = copy(matrix.updatePlayer(curPlayerIndex))
+  override def nextPlayer: FieldInterface = copy(matrix.changePlayer)
+  override def updatePlayer(curPlayerIndex: Int): FieldInterface = copy(matrix.updatePlayer(curPlayerIndex))
   override def playerIndex: Int = matrix.playerIndex
-  override def addPoints(curPlayerIndex: Int, points: Int): Field = copy(matrix.addPoints(curPlayerIndex, points))
+  override def addPoints(curPlayerIndex: Int, points: Int): FieldInterface = copy(matrix.addPoints(curPlayerIndex, points))
   override def playerList: Vector[Player] = matrix.playerList
   override def playerType: PlayerType = matrix.playerList.last.playerType
   override def getPoints(index: Int): Int = matrix.getPoints(index)
@@ -154,6 +154,19 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
     val initialField = if vec == 1 then field.putRow(x, y, true) else field.putCol(x, y, true)
     val initialMissingMoves: Vector[(Int, Int, Int)] = getMissingMoves(vec, x, y, initialField)
     return exploreStackDFS(initialMissingMoves, Vector(moveCoord), initialField, evaluatePointsOutcome(vec, x, y, initialField))
+  
+  override def getWinningMoves(coords: Vector[(Int, Int, Int)], field: FieldInterface): Vector[Move] =
+    coords.collect {
+      case (vec, x, y) if field.isClosingMove(vec, x, y, field) => Move(vec, x, y, true)
+    }
+
+  override def getSaveMoves(coords: Vector[(Int, Int, Int)], field: FieldInterface): Vector[Move] =
+    coords.collect {
+      case (vec, x, y) if !field.isRiskyMove(vec, x, y, field) => Move(vec, x, y, true)
+    }
+
+  override def chainsWithPointsOutcome(coords: Vector[(Int, Int, Int)], field: FieldInterface): Vector[(Int, Vector[(Int, Int, Int)])] =
+    coords.map(field.evaluateChainWithPointsOutcome(_, field))
 
   override def toCellData: CellData =
     val (row, col) = boardSize.dimensions

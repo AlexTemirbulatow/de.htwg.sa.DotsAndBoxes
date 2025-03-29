@@ -54,4 +54,7 @@ trait FieldInterface:
   def getMissingMoves(vec: Int, row: Int, col: Int, field: FieldInterface): Vector[(Int, Int, Int)]
   def evaluateChainWithPointsOutcome(moveCoord: (Int, Int, Int), field: FieldInterface): (Int, Vector[(Int, Int, Int)])
   def evaluatePointsOutcome(vec: Int, row: Int, col: Int, field: FieldInterface): Int
+  def getWinningMoves(coords: Vector[(Int, Int, Int)], field: FieldInterface): Vector[Move]
+  def getSaveMoves(coords: Vector[(Int, Int, Int)], field: FieldInterface): Vector[Move]
+  def chainsWithPointsOutcome(coords: Vector[(Int, Int, Int)], field: FieldInterface): Vector[(Int, Vector[(Int, Int, Int)])]
   override def toString: String

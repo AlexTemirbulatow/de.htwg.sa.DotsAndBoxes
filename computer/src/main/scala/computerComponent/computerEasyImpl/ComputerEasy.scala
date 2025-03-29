@@ -10,9 +10,7 @@ class ComputerEasy extends ComputerInterface:
     val allAvailableCoords: Vector[(Int, Int, Int)] = ModelRequestHttp.allAvailableCoords(field)
     if allAvailableCoords.isEmpty then return None
 
-    val winningMoves: Vector[Move] = allAvailableCoords.collect {
-      case (vec, x, y) if ModelRequestHttp.isClosingMove(field, vec, x, y) => Move(vec, x, y, true)
-    }
+    val winningMoves: Vector[Move] = ModelRequestHttp.winningMoves(field, allAvailableCoords)
 
     winningMoves.headOption.orElse {
       shuffle(allAvailableCoords).head match

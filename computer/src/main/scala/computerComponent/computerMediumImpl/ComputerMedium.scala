@@ -13,18 +13,14 @@ class ComputerMedium extends ComputerInterface:
     val fallbackMove: Option[Move] = shuffle(allAvailableCoords).head match
       case (vec, x, y) => Some(Move(vec, x, y, true))
 
-    val winningMoves: Vector[Move] = allAvailableCoords.collect {
-      case (vec, x, y) if ModelRequestHttp.isClosingMove(field, vec, x, y) => Move(vec, x, y, true)
-    }
+    val winningMoves: Vector[Move] = ModelRequestHttp.winningMoves(field, allAvailableCoords)
     if winningMoves.nonEmpty then return Some(winningMoves.head)
 
-    val saveMoves: Vector[Move] = allAvailableCoords.collect {
-      case (vec, x, y) if !ModelRequestHttp.isRiskyMove(field, vec, x, y) => Move(vec, x, y, true)
-    }
+    val saveMoves: Vector[Move] = ModelRequestHttp.saveMoves(field, allAvailableCoords)
     if saveMoves.nonEmpty then return Some(shuffle(saveMoves).head)
 
-    return allAvailableCoords
-      .map(ModelRequestHttp.evaluateChainWithPointsOutcome(field, _))
+    return ModelRequestHttp
+      .chainsWithPointsOutcome(field, allAvailableCoords)
       .filterNot(_._1 == 0)
       .minByOption(_._1)
       .map(chain => chain._2.head)

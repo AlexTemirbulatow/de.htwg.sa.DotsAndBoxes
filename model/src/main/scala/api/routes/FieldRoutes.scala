@@ -22,14 +22,14 @@ class FieldRoutes:
       handleCheckAllCells,
       handleCellsToCheck,
       handleIsEdgeRequest,
-      handleIsClosingMoveRequest,
-      handleIsRiskyMoveRequest,
-      handleIsCircularSequenceRequest,
+      handleGetWinningMovesRequest,
+      handleGetSaveMovesRequest,
       handleGetMissingMovesRequest,
+      handleIsCircularSequenceRequest,
+      handleChainsWithPointsOutcomeRequest,
       handleCheckSquareRequests,
       handlePlayerPointsRequests,
       handlePlayerNextRequests,
-      handleEvaluateChainWithPointsOutcomeRequest
     )
   }
 
@@ -232,25 +232,43 @@ class FieldRoutes:
     }
   }
 
-  private def handleIsClosingMoveRequest: Route = post {
+  private def handleGetWinningMovesRequest: Route = post {
     pathPrefix("get") {
-      path("isClosingMove") {
+      path("winningMoves") {
         entity(as[String]) { json =>
           val jsonValue: JsValue = Json.parse(json)
-          val vec: Int = (jsonValue \ "vec").as[Int]
-          val x: Int = (jsonValue \ "x").as[Int]
-          val y: Int = (jsonValue \ "y").as[Int]
+          val coords: Vector[(Int, Int, Int)] =
+            decode[Vector[(Int, Int, Int)]]((jsonValue \ "coords").as[String]) match
+              case Right(coords) => coords
+              case Left(error)   => throw new RuntimeException(s"Error decoding Vector[(Int, Int, Int)]: ${error.getMessage}")
           val fieldResult: JsLookupResult = (jsonValue \ "field")
           val field: FieldInterface = parsedField(fieldResult)
-          complete(field.isClosingMove(vec, x, y, field).toString)
+          complete(field.getWinningMoves(coords, field).asJson.toString)
         }
       }
     }
   }
 
-  private def handleIsRiskyMoveRequest: Route = post {
+  private def handleGetSaveMovesRequest: Route = post {
     pathPrefix("get") {
-      path("isRiskyMove") {
+      path("saveMoves") {
+        entity(as[String]) { json =>
+          val jsonValue: JsValue = Json.parse(json)
+          val coords: Vector[(Int, Int, Int)] =
+            decode[Vector[(Int, Int, Int)]]((jsonValue \ "coords").as[String]) match
+              case Right(coords) => coords
+              case Left(error)   => throw new RuntimeException(s"Error decoding Vector[(Int, Int, Int)]: ${error.getMessage}")
+          val fieldResult: JsLookupResult = (jsonValue \ "field")
+          val field: FieldInterface = parsedField(fieldResult)
+          complete(field.getSaveMoves(coords, field).asJson.toString)
+        }
+      }
+    }
+  }
+
+  private def handleGetMissingMovesRequest: Route = post {
+    pathPrefix("get") {
+      path("missingMoves") {
         entity(as[String]) { json =>
           val jsonValue: JsValue = Json.parse(json)
           val vec: Int = (jsonValue \ "vec").as[Int]
@@ -258,7 +276,7 @@ class FieldRoutes:
           val y: Int = (jsonValue \ "y").as[Int]
           val fieldResult: JsLookupResult = (jsonValue \ "field")
           val field: FieldInterface = parsedField(fieldResult)
-          complete(field.isRiskyMove(vec, x, y, field).toString)
+          complete(field.getMissingMoves(vec, x, y, field).asJson.toString)
         }
       }
     }
@@ -284,33 +302,18 @@ class FieldRoutes:
     }
   }
 
-  private def handleGetMissingMovesRequest: Route = post {
+  private def handleChainsWithPointsOutcomeRequest: Route = post {
     pathPrefix("get") {
-      path("missingMoves") {
+      path("chainsWithPointsOutcome") {
         entity(as[String]) { json =>
           val jsonValue: JsValue = Json.parse(json)
-          val vec: Int = (jsonValue \ "vec").as[Int]
-          val x: Int = (jsonValue \ "x").as[Int]
-          val y: Int = (jsonValue \ "y").as[Int]
+          val coords: Vector[(Int, Int, Int)] =
+            decode[Vector[(Int, Int, Int)]]((jsonValue \ "coords").as[String]) match
+              case Right(coords) => coords
+              case Left(error)   => throw new RuntimeException(s"Error decoding Vector[(Int, Int, Int)]: ${error.getMessage}")
           val fieldResult: JsLookupResult = (jsonValue \ "field")
           val field: FieldInterface = parsedField(fieldResult)
-          complete(field.getMissingMoves(vec, x, y, field).asJson.toString)
-        }
-      }
-    }
-  }
-
-  private def handleEvaluateChainWithPointsOutcomeRequest: Route = post {
-    pathPrefix("get") {
-      path("evaluateChainWithPointsOutcome") {
-        entity(as[String]) { json =>
-          val jsonValue: JsValue = Json.parse(json)
-          val vec: Int = (jsonValue \ "vec").as[Int]
-          val x: Int = (jsonValue \ "x").as[Int]
-          val y: Int = (jsonValue \ "y").as[Int]
-          val fieldResult: JsLookupResult = (jsonValue \ "field")
-          val field: FieldInterface = parsedField(fieldResult)
-          complete(field.evaluateChainWithPointsOutcome((vec, x, y), field).asJson.toString)
+          complete(field.chainsWithPointsOutcome(coords, field).asJson.toString)
         }
       }
     }
