@@ -3,7 +3,7 @@ package api.module
 import common.model.fieldService.FieldInterface
 import controllerComponent.ControllerInterface
 import controllerComponent.controllerImpl.Controller
-import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, FileFormat, PlayerSize, PlayerType, Status}
+import de.github.dotsandboxes.lib._
 import fieldComponent.fieldImpl.Field
 
 object CoreModule:

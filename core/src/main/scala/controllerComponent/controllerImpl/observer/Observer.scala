@@ -18,6 +18,6 @@ class ObserverHttp(observerUrl: String) extends Observer:
 
 trait Observable:
   var subscribers: Map[String, Observer] = Map()
-  def add(newSub: Observer) = subscribers += (newSub.id -> newSub) 
+  def add(newSub: Observer) = subscribers += (newSub.id -> newSub)
   def remove(observerUrl: String) = subscribers -= observerUrl
   def notifyObservers(event: Event) = subscribers.values.foreach(_.update(event))

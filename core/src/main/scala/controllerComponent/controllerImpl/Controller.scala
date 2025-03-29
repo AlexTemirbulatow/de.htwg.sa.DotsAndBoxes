@@ -12,7 +12,6 @@ import controllerImpl.playerStrategy.PlayerStrategy
 import de.github.dotsandboxes.lib._
 import fieldComponent.parser.FieldParser
 import org.slf4j.LoggerFactory
-import play.api.libs.json.JsObject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
@@ -22,33 +21,23 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
 
   val logger = LoggerFactory.getLogger(getClass)
 
-  override def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, difficulty: ComputerDifficulty): FieldInterface =
-    if playerType == PlayerType.Computer then ComputerRequestHttp.connect
-    field = FieldParser.fromJson(ModelRequestHttp.newGame(boardSize, Status.Empty, playerSize, playerType, field))
-    this.computerDifficulty = if playerSize != PlayerSize.Two && difficulty == ComputerDifficulty.Hard then ComputerDifficulty.Medium else difficulty
-    notifyObservers(Event.Move)
-    field
-  override def getCellData: CellData = ModelRequestHttp.cellData(field)
-  override def fieldData: FieldData = ModelRequestHttp.fieldData(getComputerDifficulty, field)
+  override def fieldData: FieldData = ModelRequestHttp.fieldData(computerDifficulty, field)
   override def gameBoardData: GameBoardData = ModelRequestHttp.gameBoardData(field)
   override def playerTurnData: PlayerTurnData = ModelRequestHttp.playerTurnData(field)
   override def playerResultData: PlayerResultData = ModelRequestHttp.playerResultData(field)
   override def fieldSizeData: FieldSizeData = ModelRequestHttp.fieldSizeData(field)
-  override def getStatusCell(row: Int, col: Int): Status = ModelRequestHttp.statusCell(row, col, field)
-  override def getRowCell(row: Int, col: Int): Boolean = ModelRequestHttp.rowCell(row, col, field)
-  override def getColCell(row: Int, col: Int): Boolean = ModelRequestHttp.colCell(row, col, field)
-  override def colSize(): Int = ModelRequestHttp.colSize(field)
-  override def rowSize(): Int = ModelRequestHttp.rowSize(field)
+  override def currentPlayerType: PlayerType = ModelRequestHttp.currentPlayerType(field)
+  override def currentPlayer: String = ModelRequestHttp.gameData("currentPlayer", field)
+  override def currentPoints: Int = ModelRequestHttp.gameData("currentPoints", field).toInt
+  override def gameEnded: Boolean = ModelRequestHttp.gameData("gameEnded", field).toBoolean
+  override def winner: String = ModelRequestHttp.gameData("winner", field)
+  override def stats: String = ModelRequestHttp.gameData("stats", field)
 
   override def put(move: Move): String = undoManager.doStep(field, PutCommand(move, field))
-  override def restart: FieldInterface = initGame(boardSize, playerSize, playerType, computerDifficulty)
   override def undo: FieldInterface = undoManager.undoStep(field)
   override def redo: FieldInterface = undoManager.redoStep(field)
   override def save: FieldInterface =
-    PersistenceRequestHttp.saveFileIO(
-      FileIOSerializer.serialize(field, fileFormat),
-      fileFormat
-    )
+    PersistenceRequestHttp.saveFileIO(FileIOSerializer.serialize(field, fileFormat), fileFormat)
     if !gameEnded then notifyObservers(Event.Move)
     field
   override def load: FieldInterface =
@@ -60,17 +49,15 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
     if gameEnded then notifyObservers(Event.End)
     field
 
-  override def getComputerDifficulty: ComputerDifficulty = computerDifficulty
-  override def boardSize: BoardSize = ModelRequestHttp.boardSize(field)
-  override def playerSize: PlayerSize = ModelRequestHttp.playerSize(field)
-  override def playerType: PlayerType = ModelRequestHttp.playerType(field)
-  override def playerList: Vector[Player] = ModelRequestHttp.playerList(field)
-  override def currentPlayerType: PlayerType = ModelRequestHttp.currentPlayerType(field)
-  override def currentPlayer: String = ModelRequestHttp.gameData("currentPlayer", field)
-  override def currentPoints: Int = ModelRequestHttp.gameData("currentPoints", field).toInt
-  override def gameEnded: Boolean = ModelRequestHttp.gameData("gameEnded", field).toBoolean
-  override def winner: String = ModelRequestHttp.gameData("winner", field)
-  override def stats: String = ModelRequestHttp.gameData("stats", field)
+  override def restart: FieldInterface =
+    val data: FieldData = fieldData
+    initGame(data.boardSize, data.playerSize, data.playerType, computerDifficulty)
+  override def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, difficulty: ComputerDifficulty): FieldInterface =
+    if playerType == PlayerType.Computer then ComputerRequestHttp.connect
+    field = FieldParser.fromJson(ModelRequestHttp.newGame(boardSize, Status.Empty, playerSize, playerType, field))
+    computerDifficulty = if playerSize != PlayerSize.Two && difficulty == ComputerDifficulty.Hard then ComputerDifficulty.Medium else difficulty
+    notifyObservers(Event.Move)
+    field
 
   override def publish(doThis: => FieldInterface): FieldInterface =
     field = doThis
@@ -93,19 +80,18 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
         if gameEnded then notifyObservers(Event.End); Success(field)
         if !gameEnded && currentPlayerType == PlayerType.Computer then computerMove(field)
         Success(field)
+
   override def computerMove(field: FieldInterface): Future[FieldInterface] =
     Future {
       Thread.sleep(1000)
-      calculateComputerMove(field)
+      val move: Move = ComputerRequestHttp.calculateMove(
+        FieldConverter.toJson(field).toString,
+        computerDifficulty
+      )
+      publish(put, move) match
+        case Success(updatedField) => updatedField
+        case Failure(_)            => field
     }
-  override def calculateComputerMove(field: FieldInterface): FieldInterface =
-    val move: Move = ComputerRequestHttp.calculateMove(
-      FieldConverter.toJson(field).toString,
-      getComputerDifficulty
-    )
-    publish(put, move) match
-      case Success(updatedField) => updatedField
-      case Failure(_)            => field
 
   override def toString: String =
     val moveString = if !gameEnded then "Your Move <Line><X><Y>: " else ""

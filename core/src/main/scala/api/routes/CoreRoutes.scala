@@ -34,30 +34,32 @@ class CoreRoutes(val controller: ControllerInterface):
     }
   }
 
-  private def handleGameDataRequests: Route = pathPrefix("get") {
-    path("fieldData") { 
-      complete(controller.fieldData.asJson.toString)
-    } ~
-    path("gameBoardData") { 
-      complete(controller.gameBoardData.asJson.toString)
-    } ~
-    path("playerTurnData") { 
-      complete(controller.playerTurnData.asJson.toString)
-    } ~
-    path("playerResultData") { 
-      complete(controller.playerResultData.asJson.toString)
-    } ~
-    path("fieldSizeData") { 
-      complete(controller.fieldSizeData.asJson.toString)
-    } ~
-    path("gameEnded") { 
-      complete(controller.gameEnded.toString)
-    } ~
-    path("winner") { 
-      complete(controller.winner)
-    } ~
-    path("stats") { 
-      complete(controller.stats)
+  private def handleGameDataRequests: Route = get {
+    pathPrefix("get") {
+      path("fieldData") { 
+        complete(controller.fieldData.asJson.toString)
+      } ~
+      path("gameBoardData") { 
+        complete(controller.gameBoardData.asJson.toString)
+      } ~
+      path("playerTurnData") { 
+        complete(controller.playerTurnData.asJson.toString)
+      } ~
+      path("playerResultData") { 
+        complete(controller.playerResultData.asJson.toString)
+      } ~
+      path("fieldSizeData") { 
+        complete(controller.fieldSizeData.asJson.toString)
+      } ~
+      path("gameEnded") { 
+        complete(controller.gameEnded.toString)
+      } ~
+      path("winner") { 
+        complete(controller.winner)
+      } ~
+      path("stats") { 
+        complete(controller.stats)
+      }
     }
   }
 

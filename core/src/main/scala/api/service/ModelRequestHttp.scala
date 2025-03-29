@@ -42,15 +42,6 @@ object ModelRequestHttp:
       "field" -> fieldJsonString(field)
     )), 5.seconds)
 
-  def cellData(field: FieldInterface): CellData =
-    decode[CellData](
-      Await.result(ModelClient.postRequest(s"api/model/field/get/cellData", Json.obj(
-        "field" -> fieldJsonString(field)
-      )), 5.seconds)
-    ) match
-      case Right(cellData) => cellData
-      case Left(error)     => throw new RuntimeException(s"Error decoding CellData: ${error.getMessage}")
-
   def fieldData(computerDifficulty: ComputerDifficulty, field: FieldInterface): FieldData =
     decode[FieldData](
       Await.result(ModelClient.postRequest(s"api/model/field/get/fieldData", Json.obj(
@@ -97,15 +88,6 @@ object ModelRequestHttp:
       case Right(data) => data
       case Left(error) => throw new RuntimeException(s"Error decoding FieldSizeData: ${error.getMessage}")
 
-  def playerList(field: FieldInterface): Vector[Player] =
-    decode[Vector[Player]](
-      Await.result(ModelClient.postRequest("api/model/field/get/playerList", Json.obj(
-        "field" -> fieldJsonString(field)
-      )), 5.seconds)
-    ) match
-      case Right(players) => players
-      case Left(error)    => throw new RuntimeException(s"Error decoding Vector[Player]: ${error.getMessage}")
-
   def currentStatus(field: FieldInterface): Vector[Vector[Status]] =
     decode[Vector[Vector[Status]]](
       Await.result(ModelClient.postRequest("api/model/field/get/currentStatus", Json.obj(
@@ -142,34 +124,6 @@ object ModelRequestHttp:
         "field" -> fieldJsonString(field)
       )), 5.seconds)
     )).getOrElse(throw new RuntimeException("Invalid Player Type."))
-
-  def statusCell(row: Int, col: Int, field: FieldInterface): Status =
-    Try(Await.result(ModelClient.postRequest(s"api/model/field/get/statusCell/$row/$col", Json.obj(
-      "field" -> fieldJsonString(field)
-    )), 5.seconds))
-      .toOption
-      .flatMap(response => Status.values.find(_.toString == response))
-      .getOrElse(throw new RuntimeException("Invalid Status."))
-
-  def rowCell(row: Int, col: Int, field: FieldInterface): Boolean =
-    Await.result(ModelClient.postRequest(s"api/model/field/get/rowCell/$row/$col", Json.obj(
-      "field" -> fieldJsonString(field)
-    )), 5.seconds).toBoolean
-
-  def colCell(row: Int, col: Int, field: FieldInterface): Boolean =
-    Await.result(ModelClient.postRequest(s"api/model/field/get/colCell/$row/$col", Json.obj(
-      "field" -> fieldJsonString(field)
-    )), 5.seconds).toBoolean
-
-  def rowSize(field: FieldInterface): Int =
-    Await.result(ModelClient.postRequest(s"api/model/field/get/rowSize", Json.obj(
-      "field" -> fieldJsonString(field)
-    )), 5.seconds).toInt
-
-  def colSize(field: FieldInterface): Int =
-    Await.result(ModelClient.postRequest(s"api/model/field/get/colSize", Json.obj(
-      "field" -> fieldJsonString(field)
-    )), 5.seconds).toInt
 
   def maxPosX(field: FieldInterface): Int =
     Await.result(ModelClient.postRequest(s"api/model/field/get/maxPosX", Json.obj(

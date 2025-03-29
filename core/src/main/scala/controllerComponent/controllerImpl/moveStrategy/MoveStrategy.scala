@@ -1,7 +1,7 @@
 package controllerComponent.controllerImpl.moveStrategy
 
-import de.github.dotsandboxes.lib.Move
 import common.model.fieldService.FieldInterface
+import de.github.dotsandboxes.lib.Move
 
 object MoveStrategy:
   def executeStrategy(position: MoveState, move: Move, field: FieldInterface): String =
