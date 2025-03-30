@@ -40,7 +40,7 @@ object CoreClient:
       .singleRequest(request)
       .flatMap { response =>
         response.status match
-          case StatusCodes.OK =>
+          case StatusCodes.OK | StatusCodes.Forbidden =>
             Unmarshal(response.entity).to[String]
           case _ =>
             Unmarshal(response.entity).to[String].flatMap { body =>

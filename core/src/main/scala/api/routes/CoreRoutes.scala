@@ -11,7 +11,7 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import org.slf4j.LoggerFactory
 import play.api.libs.json.{JsValue, Json}
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 class CoreRoutes(val controller: ControllerInterface):
   private val logger = LoggerFactory.getLogger(getClass)
@@ -65,8 +65,9 @@ class CoreRoutes(val controller: ControllerInterface):
             val x: Int = (jsonValue \ "x").as[Int]
             val y: Int = (jsonValue \ "y").as[Int]
             val value: Boolean = (jsonValue \ "value").as[Boolean]
-            controller.publish(controller.put, Move(vec, x, y, value))
-            complete(StatusCodes.OK)
+            controller.publish(controller.put, Move(vec, x, y, value)) match
+              case Failure(exception) => complete((StatusCodes.Forbidden, exception.getMessage))
+              case Success(_)         => complete(StatusCodes.OK)
           case "undo" =>
             controller.publish(controller.undo)
             complete(StatusCodes.OK)

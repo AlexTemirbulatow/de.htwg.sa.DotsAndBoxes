@@ -12,14 +12,12 @@ import controllerImpl.moveStrategy.{EdgeState, MidState, MoveStrategy}
 import controllerImpl.playerStrategy.PlayerStrategy
 import de.github.dotsandboxes.lib._
 import fieldComponent.parser.FieldParser
-import org.slf4j.LoggerFactory
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
 class Controller(using var field: FieldInterface, var fileFormat: FileFormat, var computerDifficulty: ComputerDifficulty) extends ControllerInterface:
   private val undoManager = new UndoManager
-  private val logger = LoggerFactory.getLogger(getClass)
 
   def newGame(boardSize: BoardSize, status: Status, playerSize: PlayerSize, playerType: PlayerType, field: FieldInterface): FieldInterface =
     FieldParser.fromJson(ModelRequestHttp.newGame(boardSize, Status.Empty, playerSize, playerType, field))
@@ -68,9 +66,7 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
     field
   override def publish(doThis: Move => String, move: Move): Try[FieldInterface] =
     MoveValidator.validate(move, field) match
-      case Failure(exception) =>
-        logger.error(exception.getMessage.dropRight(28))
-        Failure(exception)
+      case Failure(exception) => Failure(exception)
       case Success(_) =>
         field = FieldParser.fromJson(doThis(move))
         val preStatus = currentStatus(field)
@@ -98,4 +94,4 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
   override def toString: String =
     val currPlayer: Player = currentPlayer
     val moveString = if !gameEnded then "Your Move <Line><X><Y>: " else ""
-    s"\n$fieldString\n${currPlayer.playerId}s turn\n[points: ${currPlayer.points}]\n\n${moveString}"
+    s"\n$fieldString\n${currPlayer.playerId}s turn\n[points: ${currPlayer.points}]\n\n$moveString"

@@ -18,7 +18,7 @@ object CoreClient:
   private val logger = LoggerFactory.getLogger(getClass)
   private val http = Http(system)
 
-  def getRequest(endpoint: String): Future[String] =
+  def getRequest(endpoint: String): Future[Either[String, String]] =
     sendRequest(
       HttpRequest(
         method = HttpMethods.GET,
@@ -26,7 +26,7 @@ object CoreClient:
       )
     )
 
-  def postRequest(endpoint: String, json: JsObject): Future[String] =
+  def postRequest(endpoint: String, json: JsObject): Future[Either[String, String]] =
     sendRequest(
       HttpRequest(
         method = HttpMethods.POST,
@@ -35,19 +35,19 @@ object CoreClient:
       )
     )
 
-  private def sendRequest(request: HttpRequest): Future[String] =
+  private def sendRequest(request: HttpRequest): Future[Either[String, String]] =
     http
       .singleRequest(request)
       .flatMap { response =>
-        response.status match
-          case StatusCodes.OK =>
-            Unmarshal(response.entity).to[String]
-          case _ =>
-            Unmarshal(response.entity).to[String].flatMap { body =>
+        Unmarshal(response.entity).to[String].map { body =>
+          response.status match
+            case StatusCodes.OK        => Right(body)
+            case StatusCodes.Forbidden => Left(body)
+            case _ =>
               val errorMsg = s"HTTP ERROR: ${response.status} - ${request.uri} - $body"
               logger.error(errorMsg)
-              Future.failed(new RuntimeException(errorMsg))
-            }
+              throw new RuntimeException(errorMsg)
+        }
       }
       .recoverWith {
         case exception: StreamTcpException if exception.getCause.isInstanceOf[ConnectException] =>
@@ -55,7 +55,7 @@ object CoreClient:
           if (request.uri.toString.endsWith("/deregisterObserver")) then
             val warnMsg = msg.concat(" (ignored for deregisterObserver) Probably the Core Server was shut down before.")
             logger.warn(warnMsg)
-            Future.successful(warnMsg)
+            Future.successful(Right(warnMsg))
           else
             logger.error(msg)
             Future.failed(new RuntimeException(msg))

@@ -19,7 +19,7 @@ class TUI:
 
   def gameLoop: Unit =
     analyzeInput(readLine) match
-      case Some(move) => CoreRequestHttp.publish(move)
+      case Some(move) => checkSemantic(CoreRequestHttp.publish(move))
       case None       =>
     gameLoop
 
@@ -30,7 +30,7 @@ class TUI:
     case "s" => CoreRequestHttp.publish("save"); None
     case "l" => CoreRequestHttp.publish("load"); None
     case "r" => CoreRequestHttp.restart; None
-    case "h" => println(help); None
+    case "h" => print(help.concat("\nYour Move <Line><X><Y>: ")); None
     case newGame if newGame.startsWith("NEW: ") =>
       val numbers = newGame.split(": ")(1).split(" ")
       val (boardSizeNum, playerSizeNum, playerTypeNum, computerDifficultyNum): (String, String, String, String) =
@@ -51,6 +51,10 @@ class TUI:
 
   def checkSyntax(vec: Char, x: Char, y: Char): Try[(Int, Int, Int)] =
     Try(vec.toString.toInt, x.toString.toInt, y.toString.toInt)
+
+  def checkSemantic(result: Either[String, String]) = result match
+    case Left(falseInput) => print(falseInput.dropRight(28))
+    case Right(_)         =>
 
   def welcome: String =
     "\n" +
@@ -75,7 +79,7 @@ class TUI:
       "<Computer difficulty>: (1) for easy, (2) for medium, (3) for hard\n" +
       "e.g., NEW: 2 3 2 1\n"
 
-  def fieldString: String = CoreRequestHttp.toString
+  def fieldString: String = CoreRequestHttp.fieldString
 
   def finalStats: String =
     val playerGameData: PlayerGameData = CoreRequestHttp.playerGameData
