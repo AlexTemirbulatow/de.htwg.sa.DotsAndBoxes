@@ -21,7 +21,7 @@ class ComputerEasySpec extends AnyWordSpec {
     "there is no winning move" should {
       "return a random move available move" in {
         val randomMove = computerEasy.calculateMove(field)
-        val allCoords = field.getUnoccupiedRowCoord() ++ field.getUnoccupiedColCoord()
+        val allCoords = field.getUnoccupiedRowCoord ++ field.getUnoccupiedColCoord
         val allMoves = allCoords.map(coord => Some(Move(coord._1, coord._2, coord._3, true)))
 
         randomMove should be(defined)

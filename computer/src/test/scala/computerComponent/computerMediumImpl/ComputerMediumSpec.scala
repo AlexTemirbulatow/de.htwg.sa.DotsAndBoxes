@@ -44,7 +44,7 @@ class ComputerMediumSpec extends AnyWordSpec {
 
         randomMove should be(defined)
 
-        val allAvailableCoords = unsavedField.getUnoccupiedRowCoord() ++ unsavedField.getUnoccupiedColCoord()
+        val allAvailableCoords = unsavedField.getUnoccupiedRowCoord ++ unsavedField.getUnoccupiedColCoord
         val allAvailableMoves = allAvailableCoords.map(coord => Some(Move(coord._1, coord._2, coord._3, true)))
 
         allAvailableMoves should contain(randomMove)

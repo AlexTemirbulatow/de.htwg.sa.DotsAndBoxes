@@ -206,7 +206,7 @@ class ComputerInterfaceSpec extends AnyWordSpec {
       }
       "evaluate all chains for available moves" in {
         val allAvailableMoves: Vector[(Int, Int, Int)] =
-          chainedField.getUnoccupiedRowCoord() ++ chainedField.getUnoccupiedColCoord()
+          chainedField.getUnoccupiedRowCoord ++ chainedField.getUnoccupiedColCoord
 
         val allPossibleChains: Vector[(Int, Vector[(Int, Int, Int)])] = allAvailableMoves
           .map(computerInterface.evaluateChainWithPointsOutcome(_, chainedField))
@@ -228,7 +228,7 @@ class ComputerInterfaceSpec extends AnyWordSpec {
       }
       "evaluate nothing on empty field" in {
         val allAvailableMoves: Vector[(Int, Int, Int)] =
-          field.getUnoccupiedRowCoord() ++ field.getUnoccupiedColCoord()
+          field.getUnoccupiedRowCoord ++ field.getUnoccupiedColCoord
 
         val emptyEval = allAvailableMoves
           .map(computerInterface.evaluateChainWithPointsOutcome(_, field))

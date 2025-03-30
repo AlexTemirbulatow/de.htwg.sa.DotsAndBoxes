@@ -97,27 +97,6 @@ object ModelRequestHttp:
       case Right(status) => status
       case Left(error)   => throw new RuntimeException(s"Error decoding Vector[Vector[Status]]: ${error.getMessage}")
 
-  def boardSize(field: FieldInterface): BoardSize =
-    Try(BoardSize.valueOf(
-      Await.result(ModelClient.postRequest("api/model/field/get/boardSize", Json.obj(
-        "field" -> fieldJsonString(field)
-      )), 5.seconds)
-    )).getOrElse(throw new RuntimeException("Invalid Board Size."))
-
-  def playerSize(field: FieldInterface): PlayerSize =
-    Try(PlayerSize.valueOf(
-      Await.result(ModelClient.postRequest("api/model/field/get/playerSize", Json.obj(
-        "field" -> fieldJsonString(field)
-      )), 5.seconds)
-    )).getOrElse(throw new RuntimeException("Invalid Player Size."))
-
-  def playerType(field: FieldInterface): PlayerType =
-    Try(PlayerType.valueOf(
-      Await.result(ModelClient.postRequest("api/model/field/get/playerType", Json.obj(
-        "field" -> fieldJsonString(field)
-      )), 5.seconds)
-    )).getOrElse(throw new RuntimeException("Invalid Player Type."))
-
   def currentPlayerType(field: FieldInterface): PlayerType =
     Try(PlayerType.valueOf(
       Await.result(ModelClient.postRequest("api/model/field/get/currentPlayerType", Json.obj(

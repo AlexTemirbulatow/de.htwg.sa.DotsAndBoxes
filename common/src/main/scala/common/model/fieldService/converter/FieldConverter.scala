@@ -16,8 +16,8 @@ object FieldConverter:
         "currentPoints"  -> field.currentPoints,
         "gameEnded"      -> field.isFinished,
         "winner"         -> field.winner,
-        "colSize"        -> field.colSize(),
-        "rowSize"        -> field.rowSize(),
+        "colSize"        -> field.colSize,
+        "rowSize"        -> field.rowSize,
         "status" -> (
           for
             x <- 0 until col

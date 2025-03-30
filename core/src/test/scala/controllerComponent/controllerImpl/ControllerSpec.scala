@@ -55,8 +55,8 @@ class ControllerSpec extends AnyWordSpec with Eventually {
       testObserver.bing shouldBe true
 
       controller.playerList should be(Vector(Player("Blue", 0, Status.Blue, PlayerType.Human), Player("Red", 0, Status.Red, PlayerType.Human), Player("Green", 0, Status.Green, PlayerType.Human)))
-      controller.rowSize() should be(4)
-      controller.colSize() should be(5)
+      controller.rowSize should be(4)
+      controller.colSize should be(5)
 
       controller.toString should be(
         "\n" +

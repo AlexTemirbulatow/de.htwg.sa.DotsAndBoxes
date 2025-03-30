@@ -5,14 +5,13 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import common.model.fieldService.FieldInterface
 import common.model.fieldService.converter.FieldConverter
-import de.github.dotsandboxes.lib.{BoardSize, Move, PlayerSize, PlayerType, SquareCase, Status}
+import de.github.dotsandboxes.lib._
 import fieldComponent.parser.FieldParser
 import io.circe.generic.auto._
-import io.circe.syntax._
 import io.circe.parser.decode
+import io.circe.syntax._
 import play.api.libs.json.{JsLookupResult, JsValue, Json}
 import scala.util.Try
-import de.github.dotsandboxes.lib.ComputerDifficulty
 
 class FieldRoutes:
   def fieldRoutes: Route = handleExceptions(exceptionHandler) {
@@ -20,8 +19,6 @@ class FieldRoutes:
       handlePlaceRequests,
       handleNewFieldRequest,
       handleGameDataRequests,
-      handleCheckAllCells,
-      handleCellsToCheck,
       handleIsEdgeRequest,
       handleGetWinningMovesRequest,
       handleGetSaveMovesRequest,
@@ -81,23 +78,29 @@ class FieldRoutes:
         complete(parsedField(json).toString)
       }
     } ~
+    path("maxPosX") {
+      entity(as[String]) { json =>
+        complete(parsedField(json).maxPosX.toString)
+      }
+    } ~
+    path("maxPosY") {
+      entity(as[String]) { json =>
+        complete(parsedField(json).maxPosY.toString)
+      }
+    } ~
     path("allAvailableCoords") {
       entity(as[String]) { json =>
         val field: FieldInterface = parsedField(json)
         val allAvailableCoords: Vector[(Int, Int, Int)] =
-          field.getUnoccupiedRowCoord() ++ field.getUnoccupiedColCoord()
+          field.getUnoccupiedRowCoord ++ field.getUnoccupiedColCoord
         complete(allAvailableCoords.asJson.toString)
-      }
-    } ~
-    path("cellData") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).toCellData.asJson.toString)
       }
     } ~
     path("fieldData") {
       entity(as[String]) { json =>
         val jsonValue: JsValue = Json.parse(json)
-        val computerDifficulty: ComputerDifficulty = Try(ComputerDifficulty.valueOf((jsonValue \ "computerDifficulty").as[String])).getOrElse(throw new RuntimeException("Invalid Computer Difficulty"))
+        val computerDifficulty: ComputerDifficulty =
+          Try(ComputerDifficulty.valueOf((jsonValue \ "computerDifficulty").as[String])).getOrElse(throw new RuntimeException("Invalid Computer Difficulty"))
         complete(parsedField(json).fieldData(computerDifficulty).asJson.toString)
       }
     } ~
@@ -119,61 +122,6 @@ class FieldRoutes:
     path("fieldSizeData") {
       entity(as[String]) { json =>
         complete(parsedField(json).fieldSizeData.asJson.toString)
-      }
-    } ~
-    path("statusCell" / IntNumber / IntNumber) { (row, col) =>
-      entity(as[String]) { json =>
-        complete(parsedField(json).getStatusCell(row, col).toString)
-      }
-    } ~
-    path("rowCell" / IntNumber / IntNumber) { (row, col) =>
-      entity(as[String]) { json =>
-        complete(parsedField(json).getRowCell(row, col).toString)
-      }
-    } ~
-    path("colCell" / IntNumber / IntNumber) { (row, col) =>
-      entity(as[String]) { json =>
-        complete(parsedField(json).getColCell(row, col).toString)
-      }
-    } ~
-    path("colSize") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).colSize().toString)
-      }
-    } ~
-    path("rowSize") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).rowSize().toString)
-      }
-    } ~
-    path("maxPosX") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).maxPosX.toString)
-      }
-    } ~
-    path("maxPosY") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).maxPosY.toString)
-      }
-    } ~
-    path("boardSize") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).boardSize.toString)
-      }
-    } ~
-    path("playerSize") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).playerSize.toString)
-      }
-    } ~
-    path("playerType") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).playerType.toString)
-      }
-    } ~
-    path("playerList") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).playerList.asJson.noSpaces)
       }
     } ~
     path("playerIndex") {
@@ -214,32 +162,6 @@ class FieldRoutes:
     path("stats") {
       entity(as[String]) { json =>
         complete(parsedField(json).stats)
-      }
-    }
-  }
-
-  private def handleCheckAllCells: Route = post {
-    path("checkAllCells") {
-      entity(as[String]) { json =>
-          val jsonValue: JsValue = Json.parse(json)
-          val squareCase: SquareCase = Try(SquareCase.valueOf((jsonValue \ "squareCase").as[String])).get
-          val x: Int = (jsonValue \ "x").as[Int]
-          val y: Int = (jsonValue \ "y").as[Int]
-          val fieldResult: JsLookupResult = (jsonValue \ "field")
-          complete(parsedField(fieldResult).checkAllCells(squareCase, x, y).asJson.toString)
-      }
-    }
-  }
-
-  private def handleCellsToCheck: Route = post {
-    path("cellsToCheck") {
-      entity(as[String]) { json =>
-          val jsonValue: JsValue = Json.parse(json)
-          val squareCase: SquareCase = Try(SquareCase.valueOf((jsonValue \ "squareCase").as[String])).get
-          val x: Int = (jsonValue \ "x").as[Int]
-          val y: Int = (jsonValue \ "y").as[Int]
-          val fieldResult: JsLookupResult = (jsonValue \ "field")
-          complete(parsedField(fieldResult).cellsToCheck(squareCase, x, y).asJson.toString)
       }
     }
   }
