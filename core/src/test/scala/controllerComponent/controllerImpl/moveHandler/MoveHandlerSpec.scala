@@ -4,9 +4,9 @@ import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 import scala.util.{Failure, Success}
 
-import fieldComponent.FieldInterface
+import common.model.fieldService.FieldInterface
 import fieldComponent.fieldImpl.Field
-import lib.{BoardSize, PlayerSize, PlayerType, Status, Move}
+import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, Status, Move}
 
 class MoveValidatorSpec extends AnyWordSpec {
   "MoveHandler" should {

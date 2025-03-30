@@ -1,10 +1,10 @@
 package controllerComponent.controllerImpl.playerStrategy
 
-import fieldComponent.FieldInterface
-import lib.Status
+import common.model.fieldService.FieldInterface
+import de.github.dotsandboxes.lib.Status
 
 object PlayerStrategy:
-  def updatePlayer(field: FieldInterface, preStatus: Vector[Vector[Status]], postStatus: Vector[Vector[Status]]): FieldInterface =
+  def updatePlayer(field: FieldInterface, preStatus: Vector[Vector[Status]], postStatus: Vector[Vector[Status]]): String =
     val difference = preStatus
       .zip(postStatus)
       .flatMap { case (preRow, postRow) =>

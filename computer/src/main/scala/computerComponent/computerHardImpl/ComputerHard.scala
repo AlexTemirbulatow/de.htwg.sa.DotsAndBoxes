@@ -1,30 +1,25 @@
 package computerComponent.computerHardImpl
 
-import scala.util.Random.shuffle
+import api.service.ModelRequestHttp
 import computerComponent.ComputerInterface
-import fieldComponent.FieldInterface
-import lib.Move
+import de.github.dotsandboxes.lib.Move
+import scala.util.Random.shuffle
 
 class ComputerHard extends ComputerInterface:
-  override def calculateMove(field: FieldInterface): Option[Move] =
-    val allAvailableCoords: Vector[(Int, Int, Int)] =
-      field.getUnoccupiedRowCoord() ++ field.getUnoccupiedColCoord()
+  override def calculateMove(field: String): Option[Move] =
+    val allAvailableCoords: Vector[(Int, Int, Int)] = ModelRequestHttp.allAvailableCoords(field)
     if allAvailableCoords.isEmpty then return None
 
-    val winningMoves: Vector[Move] = allAvailableCoords.collect {
-      case (vec, x, y) if isClosingMove(field, vec, x, y) => Move(vec, x, y, true)
-    }
-    
-    val saveMoves: Vector[Move] = allAvailableCoords.collect {
-      case (vec, x, y) if !winningMoves.contains(Move(vec, x, y, true)) && !isRiskyMove(field, vec, x, y) => Move(vec, x, y, true)
-    }
+    val winningMoves: Vector[Move] = ModelRequestHttp.winningMoves(field, allAvailableCoords)
+
+    val saveMoves: Vector[Move] = ModelRequestHttp.saveMoves(field, allAvailableCoords)
 
     if winningMoves.nonEmpty && saveMoves.nonEmpty then return Some(winningMoves.head)
     if winningMoves.isEmpty && saveMoves.nonEmpty then return Some(shuffle(saveMoves).head)
 
     if winningMoves.nonEmpty && saveMoves.isEmpty then
       val winningChainSequence: Vector[(Int, Vector[(Int, Int, Int)])] =
-        winningMoves.map(move => evaluateChainWithPointsOutcome((move.vec, move.x, move.y), field))
+        ModelRequestHttp.chainsWithPointsOutcome(field, winningMoves.map(move => (move.vec, move.x, move.y)))
 
       val winningChainInitial: Vector[(Int, (Int, Int, Int))] = winningChainSequence.flatMap {
         case (points, sequence) => sequence.headOption.map(initialMove => (points, initialMove))
@@ -33,14 +28,15 @@ class ComputerHard extends ComputerInterface:
       if winningChainSequence.exists(_._1 == 1) then
         return winningChainInitial.collectFirst { case (1, (vec, x, y)) => Move(vec, x, y, true) }
 
-      val remainingChainPoints: Vector[Int] = allAvailableCoords
-        .filterNot(moves => winningChainSequence.exists { case (_, chainedMoves) => chainedMoves.contains(moves) })
-        .map(coord => evaluateChainWithPointsOutcome(coord, field)._1)
+      val remainingChainPoints: Vector[Int] = ModelRequestHttp.chainsWithPointsOutcome(
+        field,
+        allAvailableCoords.filterNot(moves => winningChainSequence.exists { case (_, chainedMoves) => chainedMoves.contains(moves) })
+      ).map(_._1)
 
       if remainingChainPoints.isEmpty then
         return Some(Move(winningChainInitial.head._2._1, winningChainInitial.head._2._2, winningChainInitial.head._2._3, true))
 
-      if winningChainSequence.size == 2 && isCircularSequence(winningChainSequence(0), winningChainSequence(1)) then
+      if winningChainSequence.size == 2 && ModelRequestHttp.isCircularSequence(field, winningChainSequence(0), winningChainSequence(1)) then
         val moves: Vector[(Int, Int, Int)] = winningChainSequence.head._2
         val chainPoints: Int = winningChainSequence.head._1
         return if chainPoints == 4 then
@@ -60,7 +56,7 @@ class ComputerHard extends ComputerInterface:
       }
     else
       val riskyChainSequence: Vector[(Int, Vector[(Int, Int, Int)])] =
-        allAvailableCoords.map(coord => evaluateChainWithPointsOutcome(coord, field))
+        ModelRequestHttp.chainsWithPointsOutcome(field, allAvailableCoords)
 
       val riskyChainInitial: Vector[(Int, (Int, Int, Int))] = riskyChainSequence.flatMap {
         case (points, sequence) => sequence.headOption.map(initialMove => (points, initialMove))
@@ -70,7 +66,7 @@ class ComputerHard extends ComputerInterface:
         .sortBy(_._1)
         .collectFirst {
           case (1, (vec, x, y)) => Move(vec, x, y, true)
-          case (2, (vec, x, y)) if getMissingMoves(field, vec, x, y).size == 2 => Move(vec, x, y, true)
+          case (2, (vec, x, y)) if ModelRequestHttp.missingMoves(field, vec, x, y).size == 2 => Move(vec, x, y, true)
         }.orElse {
           riskyChainInitial
             .minByOption(_._1)

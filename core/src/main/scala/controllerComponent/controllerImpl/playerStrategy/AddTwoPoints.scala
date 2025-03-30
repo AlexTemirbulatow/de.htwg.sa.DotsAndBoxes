@@ -1,7 +1,7 @@
 package controllerComponent.controllerImpl.playerStrategy
 
-import fieldComponent.FieldInterface
+import api.service.ModelRequestHttp
+import common.model.fieldService.FieldInterface
 
 object AddTwoPoints extends PlayerState:
-  override def handle(field: FieldInterface): FieldInterface =
-    field.addPoints(field.playerIndex, 2).updatePlayer(field.playerIndex)
+  override def handle(field: FieldInterface): String = ModelRequestHttp.addPlayerPoints(2, field)

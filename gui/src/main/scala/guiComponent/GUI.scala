@@ -1,30 +1,25 @@
 package guiComponent
 
+import api.service.CoreRequestHttp
+import de.github.dotsandboxes.lib._
+import java.awt.{Color, Cursor, Font, GradientPaint, RenderingHints}
 import java.io.File
-import java.util.concurrent.Flow
-import java.awt.{Color, Font, RenderingHints, GradientPaint, Cursor}
 import javax.imageio.ImageIO
-import javax.swing.{ImageIcon, UIManager, Timer, BorderFactory}
-import javax.swing.border.{LineBorder, EmptyBorder}
-import scala.swing.event.{ButtonClicked, MouseClicked, MouseEntered, MouseExited}
+import javax.swing.border.{EmptyBorder, LineBorder}
+import javax.swing.{BorderFactory, ImageIcon, Timer, UIManager}
 import scala.swing._
-
-import controllerComponent.ControllerInterface
-import controllerComponent.controllerImpl.observer.{Observer, Event}
-import lib.{BoardSize, PlayerType, PlayerSize, ComputerDifficulty, Move}
+import scala.swing.event.{ButtonClicked, MouseClicked, MouseEntered, MouseExited}
 
 enum ThemeType:
   case Light
   case Dark
 
-class GUI(using controller: ControllerInterface) extends Frame with Observer:
-  controller.add(this)
-
+class GUI extends Frame:
   val panelSize: Dimension = new Dimension(800, 800)
 
   val themeColors: Map[ThemeType, (Color, Color, Color)] = Map(
     ThemeType.Light -> (Color(245, 245, 245), Color(220, 220, 220), Color(60, 60, 60)),
-    ThemeType.Dark  -> (Color(70, 70, 70), Color(100, 100, 100), Color(210, 210, 210))
+    ThemeType.Dark -> (Color(70, 70, 70), Color(100, 100, 100), Color(210, 210, 210))
   )
 
   var isDarkTheme: Boolean = true
@@ -70,10 +65,20 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
   val statsYellow = ImageIcon("gui/src/main/resources/4_StatsYellow.png")
   val statsYellowComputer = ImageIcon("gui/src/main/resources/4_StatsYellowComputer.png")
 
-  title = "Welcome to Dots And Boxes GUI"
-  iconImage = logo
-  resizable = false
-  menuBar = new MenuBar {
+  def run: Unit =
+    title = "Welcome to Dots And Boxes GUI"
+    iconImage = logo
+    resizable = false
+    menuBar = menuBarHeader
+    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
+    menuBar.border = Swing.EmptyBorder(5, 10, 0, 10)
+    menuBar.background = currentTheme._1
+    update(Event.Move)
+    pack()
+    centerOnScreen()
+    open()
+
+  val menuBarHeader = new MenuBar {
     val mainMenuButton: Button = new Button(Action("") { if inMainMenu then update(Event.Move) else switchContent(setupMainMenu) }) {
       icon = mainMenu
       contentAreaFilled = false
@@ -83,21 +88,23 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       cursor = new Cursor(Cursor.HAND_CURSOR)
       margin = new Insets(0, 0, 0, 0)
       tooltip = "Main Menu"
-      reactions += {
-        case ButtonClicked(_) =>
-          opaque = true
-          background = if isDarkTheme then new Color(100, 100, 100, 150) else new Color(220, 220, 220, 150)
-          tooltip = "Main Menu"
-          new Timer(100, _ => {
+      reactions += { case ButtonClicked(_) =>
+        opaque = true
+        background = if isDarkTheme then new Color(100, 100, 100, 150) else new Color(220, 220, 220, 150)
+        tooltip = "Main Menu"
+        new Timer(
+          100,
+          _ => {
             opaque = false
             background = new Color(0, 0, 0, 0)
-          }) {
-            setRepeats(false)
-          }.start()
+          }
+        ) {
+          setRepeats(false)
+        }.start()
       }
     }
 
-    val restartGameButton: Button = new Button(Action("") { if !inMainMenu then controller.publish(controller.restart) }) {
+    val restartGameButton: Button = new Button(Action("") { if !inMainMenu then CoreRequestHttp.restart }) {
       icon = restart
       contentAreaFilled = false
       borderPainted = false
@@ -106,20 +113,22 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       cursor = new Cursor(Cursor.HAND_CURSOR)
       margin = new Insets(0, 0, 0, 0)
       tooltip = "Restart Game"
-      reactions += {
-        case ButtonClicked(_) =>
-          opaque = true
-          background = if isDarkTheme then new Color(100, 100, 100, 150) else new Color(220, 220, 220, 150)
-          new Timer(100, _ => {
+      reactions += { case ButtonClicked(_) =>
+        opaque = true
+        background = if isDarkTheme then new Color(100, 100, 100, 150) else new Color(220, 220, 220, 150)
+        new Timer(
+          100,
+          _ => {
             opaque = false
             background = new Color(0, 0, 0, 0)
-          }) {
-            setRepeats(false)
-          }.start()
+          }
+        ) {
+          setRepeats(false)
+        }.start()
       }
     }
 
-    val undoButton: Button = new Button(Action("") { if !inMainMenu then controller.publish(controller.undo) }) {
+    val undoButton: Button = new Button(Action("") { if !inMainMenu then CoreRequestHttp.publish("undo") }) {
       icon = undo
       contentAreaFilled = false
       borderPainted = false
@@ -128,20 +137,22 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       cursor = new Cursor(Cursor.HAND_CURSOR)
       margin = new Insets(0, 0, 0, 0)
       tooltip = "Undo"
-      reactions += {
-        case ButtonClicked(_) =>
-          opaque = true
-          background = if isDarkTheme then new Color(100, 100, 100, 150) else new Color(220, 220, 220, 150)
-          new Timer(100, _ => {
+      reactions += { case ButtonClicked(_) =>
+        opaque = true
+        background = if isDarkTheme then new Color(100, 100, 100, 150) else new Color(220, 220, 220, 150)
+        new Timer(
+          100,
+          _ => {
             opaque = false
             background = new Color(0, 0, 0, 0)
-          }) {
-            setRepeats(false)
-          }.start()
+          }
+        ) {
+          setRepeats(false)
+        }.start()
       }
     }
 
-    val redoButton: Button = new Button(Action("") { if !inMainMenu then controller.publish(controller.redo) }) {
+    val redoButton: Button = new Button(Action("") { if !inMainMenu then CoreRequestHttp.publish("redo") }) {
       icon = redo
       contentAreaFilled = false
       borderPainted = false
@@ -150,16 +161,18 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       cursor = new Cursor(Cursor.HAND_CURSOR)
       margin = new Insets(0, 0, 0, 0)
       tooltip = "Redo"
-      reactions += {
-        case ButtonClicked(_) =>
-          opaque = true
-          background = if isDarkTheme then new Color(100, 100, 100, 150) else new Color(220, 220, 220, 150)
-          new Timer(100, _ => {
+      reactions += { case ButtonClicked(_) =>
+        opaque = true
+        background = if isDarkTheme then new Color(100, 100, 100, 150) else new Color(220, 220, 220, 150)
+        new Timer(
+          100,
+          _ => {
             opaque = false
             background = new Color(0, 0, 0, 0)
-          }) {
-            setRepeats(false)
-          }.start()
+          }
+        ) {
+          setRepeats(false)
+        }.start()
       }
     }
 
@@ -173,10 +186,9 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       margin = new Insets(0, 0, 0, 0)
       tooltip = if isDarkTheme then "Light Mode" else "Dark Mode"
 
-      reactions += {
-        case ButtonClicked(_) =>
-          icon = if isDarkTheme then sun else night
-          tooltip = if isDarkTheme then "Light Mode" else "Dark Mode"
+      reactions += { case ButtonClicked(_) =>
+        icon = if isDarkTheme then sun else night
+        tooltip = if isDarkTheme then "Light Mode" else "Dark Mode"
       }
     }
 
@@ -188,8 +200,8 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       tooltip = "Settings"
       cursor = new Cursor(Cursor.HAND_CURSOR)
       contents += MenuItem(Action("Exit") { update(Event.Abort) })
-      contents += MenuItem(Action("Save") { if !inMainMenu then controller.save })
-      contents += MenuItem(Action("Load") { if !inMainMenu then controller.load })
+      contents += MenuItem(Action("Save") { if !inMainMenu then CoreRequestHttp.publish("save") })
+      contents += MenuItem(Action("Load") { if !inMainMenu then CoreRequestHttp.publish("load") })
     }
 
     val menuBarPanel = new GridBagPanel {
@@ -239,26 +251,17 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
     contents += menuBarPanel
   }
 
-  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
-  menuBar.border = Swing.EmptyBorder(5, 10, 0, 10)
-  menuBar.background = currentTheme._1
-  update(Event.Move)
-  pack()
-  centerOnScreen()
-  open()
-
-
   def setupMainMenu: BoxPanel = {
     background = currentTheme._1
     preferredSize = panelSize
     inMainMenu = true
 
     def createSelectionPanel[T](
-      labelText: String,
-      options: Seq[T],
-      display: T => String,
-      onSelect: T => Unit,
-      displayIndex: Int = 0
+        labelText: String,
+        options: Seq[T],
+        display: T => String,
+        onSelect: T => Unit,
+        displayIndex: Int = 0
     ): BoxPanel = {
       var currentIndex = displayIndex
       val label = new Label(display(options(currentIndex))) {
@@ -327,17 +330,18 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       border = Swing.EmptyBorder(0, 0, 0, 0)
     }
 
-    var selectedBoardSize: BoardSize = controller.boardSize
-    var selectedPlayerSize: PlayerSize = controller.playerSize
-    var selectedPlayerType: PlayerType = controller.playerType
-    var selectedDifficulty: ComputerDifficulty = controller.computerDifficulty
+    val fieldData: FieldData = CoreRequestHttp.fieldData
+    var selectedBoardSize: BoardSize = fieldData.boardSize
+    var selectedPlayerSize: PlayerSize = fieldData.playerSize
+    var selectedPlayerType: PlayerType = fieldData.playerType
+    var selectedDifficulty: ComputerDifficulty = fieldData.computerDifficulty
 
     val boardSelection = createSelectionPanel(
       "Board Size",
       BoardSize.values.toSeq,
       b => s"${b.dimensions._1} x ${b.dimensions._2}",
       selectedBoardSize = _,
-      controller.boardSize.ordinal
+      selectedBoardSize.ordinal
     )
 
     val playerSelection = createSelectionPanel(
@@ -345,7 +349,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       PlayerSize.values.toSeq,
       p => s"${p.size} Players",
       selectedPlayerSize = _,
-      controller.playerSize.ordinal
+      selectedPlayerSize.ordinal
     )
 
     val playerTypeSelection = createSelectionPanel(
@@ -353,7 +357,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       PlayerType.values.toSeq,
       h => if (h == PlayerType.Human) "Humans" else "Computers",
       selectedPlayerType = _,
-      controller.playerType.ordinal
+      selectedPlayerType.ordinal
     )
 
     val difficultySelection = createSelectionPanel(
@@ -361,7 +365,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       ComputerDifficulty.values.toSeq,
       d => d.toString,
       selectedDifficulty = _,
-      controller.computerDifficulty.ordinal
+      selectedDifficulty.ordinal
     )
 
     val returnButton = new Button("Return") {
@@ -392,10 +396,10 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       cursor = new Cursor(Cursor.HAND_CURSOR)
       listenTo(mouse.moves)
       reactions += {
-        case MouseEntered(_)  => background = new Color(63, 130, 160)
-        case MouseExited(_)   => background = new Color(63, 144, 163)
+        case MouseEntered(_) => background = new Color(63, 130, 160)
+        case MouseExited(_)  => background = new Color(63, 144, 163)
         case ButtonClicked(_) =>
-          controller.initGame(
+          CoreRequestHttp.initGame(
             selectedBoardSize,
             selectedPlayerSize,
             selectedPlayerType,
@@ -437,10 +441,20 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
     }
   }
 
-  override def update(event: Event): Unit = event match
+  def update(event: Event): Unit = event match
     case Event.Abort => sys.exit
-    case Event.End   => switchContent(revise(playerResult)); inMainMenu = false
-    case Event.Move  => switchContent(revise(if controller.gameEnded then playerResult else playerTurn)); inMainMenu = false
+    case Event.End =>
+      val playerGameData: PlayerGameData = CoreRequestHttp.playerGameData
+      switchContent(revise(playerResult(playerGameData), playerGameData.playerList)); inMainMenu = false
+    case Event.Move =>
+      val playerGameData: PlayerGameData = CoreRequestHttp.playerGameData
+      switchContent(
+        revise(
+          if CoreRequestHttp.gameEnded then playerResult(playerGameData) else playerTurn(playerGameData),
+          playerGameData.playerList
+        )
+      )
+      inMainMenu = false
 
   override def closeOperation: Unit = update(Event.Abort)
 
@@ -465,31 +479,33 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
     menuBar.background = currentTheme._1
     menuBar.repaint()
     if inMainMenu then switchContent(setupMainMenu) else update(Event.Move)
-    
+
   def fieldSize(): (Int, Int) =
-    (controller.colSize() - 1, controller.rowSize() - 1)
+    val fieldSizeData: FieldSizeData = CoreRequestHttp.fieldSizeData
+    (fieldSizeData.colSize - 1, fieldSizeData.rowSize - 1)
 
   def gridSize(fieldSize: (Int, Int)): (Int, Int) =
     ((fieldSize._1 + fieldSize._1 + 1), (fieldSize._2 + fieldSize._2 + 1))
 
-  def revise(playerState: FlowPanel): BorderPanel = new BorderPanel {
+  def revise(playerState: FlowPanel, playerList: Vector[Player]): BorderPanel = new BorderPanel {
     preferredSize = panelSize
     background = currentTheme._1
+    val fieldSizeData: (Int, Int) = fieldSize()
     add(playerState, BorderPanel.Position.North)
-    add(CellPanel(fieldSize()._1, fieldSize()._2), BorderPanel.Position.Center)
-    add(playerScoreboard, BorderPanel.Position.South)
+    add(CellPanel(fieldSizeData._1, fieldSizeData._2), BorderPanel.Position.Center)
+    add(playerScoreboard(playerList), BorderPanel.Position.South)
   }
 
-  def playerTurn: FlowPanel = new FlowPanel {
+  def playerTurn(playerTurnData: PlayerGameData): FlowPanel = new FlowPanel {
     background = currentTheme._1
     contents += new Label {
-      icon = controller.currentPlayer.toString match
-        case "Blue"   => if controller.playerList(0).playerType == PlayerType.Human then playerBlue else playerBlueComputer
-        case "Red"    => if controller.playerList(1).playerType == PlayerType.Human then playerRed else playerRedComputer
-        case "Green"  => if controller.playerList(2).playerType == PlayerType.Human then playerGreen else playerGreenComputer
-        case "Yellow" => if controller.playerList(3).playerType == PlayerType.Human then playerYellow else playerYellowComputer
+      icon = playerTurnData.currentPlayer.playerId match
+        case "Blue"   => if playerTurnData.playerList(0).playerType == PlayerType.Human then playerBlue else playerBlueComputer
+        case "Red"    => if playerTurnData.playerList(1).playerType == PlayerType.Human then playerRed else playerRedComputer
+        case "Green"  => if playerTurnData.playerList(2).playerType == PlayerType.Human then playerGreen else playerGreenComputer
+        case "Yellow" => if playerTurnData.playerList(3).playerType == PlayerType.Human then playerYellow else playerYellowComputer
     }
-    val label = Label(s" Turn [points: ${controller.currentPoints}]")
+    val label = Label(s" Turn [points: ${playerTurnData.currentPlayer.points}]")
     label.foreground = currentTheme._3
     label.font = Font("Comic Sans MS", 0, 35)
     contents += label
@@ -499,13 +515,13 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       super.paintComponent(g)
   }
 
-  def playerResult: FlowPanel = new FlowPanel {
+  def playerResult(playerResultData: PlayerGameData): FlowPanel = new FlowPanel {
     background = currentTheme._1
     val fontType = Font("Comic Sans MS", 0, 35)
-    controller.winner match
+    playerResultData.winner match
       case "It's a draw!" =>
         contents += new Label {
-          val label = Label(controller.winner)
+          val label = Label(playerResultData.winner)
           label.font = fontType
           label.foreground = currentTheme._3
           label.border = LineBorder(currentTheme._1, 10)
@@ -513,11 +529,11 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
         }
       case _ =>
         contents += new Label {
-          icon = controller.winner.substring(7) match
-            case "Blue wins!"   => if controller.playerList(0).playerType == PlayerType.Human then playerBlue else playerBlueComputer
-            case "Red wins!"    => if controller.playerList(1).playerType == PlayerType.Human then playerRed else playerRedComputer
-            case "Green wins!"  => if controller.playerList(2).playerType == PlayerType.Human then playerGreen else playerGreenComputer
-            case "Yellow wins!" => if controller.playerList(3).playerType == PlayerType.Human then playerYellow else playerYellowComputer
+          icon = playerResultData.winner.substring(7) match
+            case "Blue wins!"   => if playerResultData.playerList(0).playerType == PlayerType.Human then playerBlue else playerBlueComputer
+            case "Red wins!"    => if playerResultData.playerList(1).playerType == PlayerType.Human then playerRed else playerRedComputer
+            case "Green wins!"  => if playerResultData.playerList(2).playerType == PlayerType.Human then playerGreen else playerGreenComputer
+            case "Yellow wins!" => if playerResultData.playerList(3).playerType == PlayerType.Human then playerYellow else playerYellowComputer
         }
         val label = Label(" wins!")
         label.font = fontType
@@ -529,9 +545,9 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
       super.paintComponent(g)
   }
 
-  def playerScoreboard: FlowPanel = new FlowPanel {
+  def playerScoreboard(playerList: Vector[Player]): FlowPanel = new FlowPanel {
     background = currentTheme._2
-    contents ++= controller.playerList.map { player =>
+    contents ++= playerList.map { player =>
       val label = new Label {
         icon = player.playerId match
           case "Blue"   => if player.playerType == PlayerType.Human then statsBlue else statsBlueComputer
@@ -557,6 +573,7 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
   }
 
   class CellPanel(x: Int, y: Int) extends GridPanel(gridSize(fieldSize())._2, gridSize(fieldSize())._1):
+    val gameBoardData: GameBoardData = CoreRequestHttp.gameBoardData
     opaque = false
     fieldBuilder
 
@@ -571,13 +588,13 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
 
     private def bar(row: Int, col: Int) =
       contents += dotImg
-      contents += CellButton(1, row, col, controller.getRowCell(row, col))
+      contents += CellButton(1, row, col, gameBoardData.rowCells(row)(col), gameBoardData.currentPlayer.playerType)
 
     private def cell(row: Int, col: Int) =
-      contents += CellButton(2, row, col, controller.getColCell(row, col))
+      contents += CellButton(2, row, col, gameBoardData.colCells(row)(col), gameBoardData.currentPlayer.playerType)
       if col != x then
         contents += new Label {
-          icon = controller.getStatusCell(row, col).toString match
+          icon = gameBoardData.statusCells(row)(col) match
             case "-" => takenNone
             case "B" => takenBlue
             case "R" => takenRed
@@ -592,14 +609,15 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
         super.paintComponent(g)
     }
 
-  class CellButton(vec: Int, x: Int, y: Int, status: Boolean) extends Button:
+  class CellButton(vec: Int, x: Int, y: Int, status: Boolean, currentPlayerType: PlayerType) extends Button:
     listenTo(mouse.moves, mouse.clicks)
+    val isComputerTurn: Boolean = currentPlayerType == PlayerType.Computer
     background = currentTheme._1
     borderPainted = false
     focusPainted = false
     opaque = false
     cursor = new Cursor(Cursor.HAND_CURSOR)
-    enabled = !status
+    enabled = if isComputerTurn then false else !status
     lineBuilder
 
     private def lineBuilder =
@@ -613,10 +631,11 @@ class GUI(using controller: ControllerInterface) extends Frame with Observer:
 
     reactions += {
       case MouseClicked(source) =>
-        controller.publish(controller.put, Move(vec, x, y, true))
+        if !isComputerTurn then CoreRequestHttp.publish(Move(vec, x, y, true))
       case MouseEntered(source) =>
-        vec match
-          case 1 => if !status then icon = untakenBar
-          case 2 => if !status then icon = untakenCol
+        if !isComputerTurn then
+          vec match
+            case 1 => if !status then icon = untakenBar
+            case 2 => if !status then icon = untakenCol
       case MouseExited(source) => if !status then icon = takenNone
     }

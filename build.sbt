@@ -1,81 +1,85 @@
-val scala3Version = "3.5.0"
+val scala3Version = "3.6.4"
+val akkaVersion = "2.8.5"
+val akkaHttpVersion = "10.5.3"
 
-lazy val dependencies = Seq(
+val dotsandboxesLibVersion = "0.2.1-SNAPSHOT"
+val dotsandboxesLibUrl = "https://maven.pkg.github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes.library"
+
+lazy val commonSettings = Seq(
   version := "0.1.0-SNAPSHOT",
   scalaVersion := scala3Version,
-  libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.14",
-  libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.14" % Test,
-  libraryDependencies += ("org.scala-lang.modules" %% "scala-swing" % "3.0.0").cross(CrossVersion.for3Use2_13),
-  libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "2.1.0",
-  libraryDependencies += ("com.typesafe.play" %% "play-json" % "2.10.0-RC5"),
-  libraryDependencies += "org.scalatestplus" %% "mockito-5-12" % "3.2.19.0" % "test"
+  resolvers += "Github Packages" at dotsandboxesLibUrl,
+  credentials += Credentials(
+    "GitHub Package Registry",
+    "maven.pkg.github.com",
+    sys.env.getOrElse("GITHUB_USERNAME", ""),
+    sys.env.getOrElse("GITHUB_TOKEN", "")
+  ),
+  libraryDependencies ++= Seq(
+    "org.scalactic" %% "scalactic" % "3.2.14",
+    "org.scalatest" %% "scalatest" % "3.2.14" % Test,
+    "org.scala-lang.modules" %% "scala-swing" % "3.0.0" cross CrossVersion.for3Use2_13,
+    "org.scala-lang.modules" %% "scala-xml" % "2.1.0",
+    "com.typesafe.play" %% "play-json" % "2.10.0-RC5",
+    "io.circe" %% "circe-core" % "0.14.1",
+    "io.circe" %% "circe-generic" % "0.14.1",
+    "io.circe" %% "circe-parser" % "0.14.1",
+    "org.scalatestplus" %% "mockito-5-12" % "3.2.19.0" % Test,
+    "ch.qos.logback" % "logback-classic" % "1.5.2",
+    "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
+    "com.typesafe.akka" %% "akka-stream" % akkaVersion,
+    "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
+    "com.github.AlexTemirbulatow" %% "dotsandboxes" % dotsandboxesLibVersion
+  )
 )
 
 lazy val root = project
   .in(file("."))
-  .settings(
-    name := "dotsandboxes",
-    dependencies
-  )
-  .dependsOn(util, core, model, computer, persistence, gui, tui)
-  .aggregate(util, core, model, computer, persistence, gui, tui)
+  .settings(name := "dotsandboxes")
+  .aggregate(common, core, model, computer, persistence, gui, tui)
 
-lazy val util = project
-  .in(file("util"))
-  .settings(
-    name := "util",
-    dependencies
-  )
+lazy val common = project
+  .in(file("common"))
+  .settings(name := "common")
+  .settings(commonSettings)
 
 lazy val core = project
   .in(file("core"))
-  .settings(
-    name := "core",
-    dependencies
-  )
-  .dependsOn(util, model, computer, persistence)
+  .settings(name := "core")
+  .settings(commonSettings)
+  .dependsOn(common, model)
 
 lazy val model = project
   .in(file("model"))
-  .settings(
-    name := "model",
-    dependencies
-  )
-  .dependsOn(util)
-
-lazy val computer = project
-  .in(file("computer"))
-  .settings(
-    name := "computer",
-    dependencies
-  )
-  .dependsOn(util, model)
+  .settings(name := "model")
+  .settings(commonSettings)
+  .dependsOn(common)
 
 lazy val persistence = project
   .in(file("persistence"))
-  .settings(
-    name := "persistence",
-    dependencies
-  )
-  .dependsOn(util, model)
+  .settings(name := "persistence")
+  .settings(commonSettings)
+  .dependsOn(common)
+
+lazy val computer = project
+  .in(file("computer"))
+  .settings(name := "computer")
+  .settings(commonSettings)
+  .dependsOn(common)
 
 lazy val gui = project
   .in(file("gui"))
-  .settings(
-    name := "gui",
-    dependencies
-  )
-  .dependsOn(util, core)
+  .settings(name := "gui")
+  .settings(commonSettings)
+  .dependsOn(common)
 
 lazy val tui = project
   .in(file("tui"))
-  .settings(
-    name := "tui",
-    dependencies
-  )
-  .dependsOn(util, core)
+  .settings(name := "tui")
+  .settings(commonSettings)
+  .dependsOn(common)
 
-import org.scoverage.coveralls.Imports.CoverallsKeys.*
+import org.scoverage.coveralls.Imports.CoverallsKeys._
 
 coverallsTokenFile := sys.env.get("COVERALLS_REPO_TOKEN")
 coverallsService := Some(org.scoverage.coveralls.GitHubActions)

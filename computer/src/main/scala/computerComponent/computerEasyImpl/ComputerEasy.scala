@@ -1,19 +1,16 @@
 package computerComponent.computerEasyImpl
 
-import scala.util.Random.shuffle
+import api.service.ModelRequestHttp
 import computerComponent.ComputerInterface
-import fieldComponent.FieldInterface
-import lib.Move
+import de.github.dotsandboxes.lib.Move
+import scala.util.Random.shuffle
 
 class ComputerEasy extends ComputerInterface:
-  override def calculateMove(field: FieldInterface): Option[Move] =
-    val allAvailableCoords: Vector[(Int, Int, Int)] =
-      field.getUnoccupiedRowCoord() ++ field.getUnoccupiedColCoord()
+  override def calculateMove(field: String): Option[Move] =
+    val allAvailableCoords: Vector[(Int, Int, Int)] = ModelRequestHttp.allAvailableCoords(field)
     if allAvailableCoords.isEmpty then return None
 
-    val winningMoves: Vector[Move] = allAvailableCoords.collect {
-      case (vec, x, y) if isClosingMove(field, vec, x, y) => Move(vec, x, y, true)
-    }
+    val winningMoves: Vector[Move] = ModelRequestHttp.winningMoves(field, allAvailableCoords)
 
     winningMoves.headOption.orElse {
       shuffle(allAvailableCoords).head match

@@ -1,12 +1,13 @@
 package controllerComponent.controllerImpl.moveStrategy
 
-import fieldComponent.FieldInterface
-import lib.{SquareCases, Move}
+import api.service.ModelRequestHttp
+import common.model.fieldService.FieldInterface
+import de.github.dotsandboxes.lib.Move
 
 object MidState extends MoveState:
-  override def handle(move: Move, field: FieldInterface): FieldInterface =
-    def horizontalState(move: Move): FieldInterface = field.checkSquare(SquareCases.DownCase, move.x, move.y).checkSquare(SquareCases.UpCase, move.x, move.y)
-    def verticalState(move: Move): FieldInterface = field.checkSquare(SquareCases.RightCase, move.x, move.y).checkSquare(SquareCases.LeftCase, move.x, move.y)
+  override def handle(move: Move, field: FieldInterface): String =
+    def horizontalState(move: Move): String = ModelRequestHttp.squareState("horizontal", move.x, move.y, field)
+    def verticalState(move: Move): String = ModelRequestHttp.squareState("vertical", move.x, move.y, field)
 
     move.vec match
       case 1 => horizontalState(move)

@@ -1,4 +1,2 @@
-import CoreModule.given
-
 object TUIService:
-  @main def startTUI: Unit = tuiComponent.TUI().run
+  @main def startTuiServer: Unit = api.server.TUIHttpServer.run

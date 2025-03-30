@@ -1,4 +1,2 @@
-import CoreModule.given
-
 object GUIService:
-  @main def startGUI: Unit = guiComponent.GUI()
+  @main def startGuiServer: Unit = api.server.GUIHttpServer.run
