@@ -13,17 +13,19 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import play.api.libs.json.{JsValue, Json}
 import scala.util.Try
+import api.service.ModelRequestHttp
 
 class ComputerRoutes:
   def computerRoutes: Route = handleExceptions(exceptionHandler) {
     concat(
-      handleConnectRequest,
+      handlePreConnectRequest,
       handleComputerMoveRequest
     )
   }
 
-  private def handleConnectRequest: Route = get {
-    path("connect") {
+  private def handlePreConnectRequest: Route = get {
+    path("preConnect") {
+      ModelRequestHttp.preConnect
       complete(StatusCodes.OK)
     }
   }

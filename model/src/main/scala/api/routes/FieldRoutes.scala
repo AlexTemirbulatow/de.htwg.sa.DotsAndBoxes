@@ -1,5 +1,6 @@
 package api.routes
 
+import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.StatusCodes.{BadRequest, Conflict, InternalServerError, NotFound}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
@@ -16,6 +17,7 @@ import scala.util.Try
 class FieldRoutes:
   def fieldRoutes: Route = handleExceptions(exceptionHandler) {
     concat(
+      handlePreConnectRequest,
       handlePlaceRequests,
       handleNewFieldRequest,
       handleGameDataRequests,
@@ -29,6 +31,12 @@ class FieldRoutes:
       handlePlayerPointsRequests,
       handlePlayerNextRequests,
     )
+  }
+
+  private def handlePreConnectRequest: Route = get {
+    path("preConnect") {
+      complete(StatusCodes.OK)
+    }
   }
 
   private def handlePlaceRequests: Route = post {

@@ -53,7 +53,7 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
     val data: FieldData = fieldData
     initGame(data.boardSize, data.playerSize, data.playerType, computerDifficulty)
   override def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, difficulty: ComputerDifficulty): FieldInterface =
-    if playerType == PlayerType.Computer then ComputerRequestHttp.connect
+    if playerType == PlayerType.Computer then ComputerRequestHttp.preConnect
     field = FieldParser.fromJson(ModelRequestHttp.newGame(boardSize, Status.Empty, playerSize, playerType, field))
     computerDifficulty = if playerSize != PlayerSize.Two && difficulty == ComputerDifficulty.Hard then ComputerDifficulty.Medium else difficulty
     notifyObservers(Event.Move)

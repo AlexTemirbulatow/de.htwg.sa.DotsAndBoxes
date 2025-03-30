@@ -10,6 +10,8 @@ import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
 
 object ModelRequestHttp:
+  def preConnect = ModelClient.getRequest("api/model/field/preConnect")
+
   def allAvailableCoords(fieldValue: String): Vector[(Int, Int, Int)] =
     decode[Vector[(Int, Int, Int)]](
       Await.result(ModelClient.postRequest("api/model/field/get/allAvailableCoords", Json.obj(
