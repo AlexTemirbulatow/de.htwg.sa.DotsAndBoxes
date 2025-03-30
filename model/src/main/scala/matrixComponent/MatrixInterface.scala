@@ -13,8 +13,8 @@ trait MatrixInterface:
   def getBoardSize: BoardSize
   def getPlayerSize: PlayerSize
   def getPlayerType: PlayerType
-  def getUnoccupiedRowCoord: Vector[(Int, Int, Int)]
-  def getUnoccupiedColCoord: Vector[(Int, Int, Int)]
+  def getUnoccupiedRowCoords: Vector[(Int, Int, Int)]
+  def getUnoccupiedColCoords: Vector[(Int, Int, Int)]
   def statusCell(row: Int, col: Int): Status
   def rowCell(row: Int, col: Int): Boolean
   def colCell(row: Int, col: Int): Boolean
@@ -32,7 +32,5 @@ trait MatrixInterface:
   def isEdge(move: Move): Boolean
   def playerList: Vector[Player]
   def getCurrentPlayer: Player
-  def currentPlayerInfo: (String, Int)
-  def currentPoints: Int
-  def playerIndex: Int
-  def getPoints(index: Int): Int
+  def currentPlayerIndex: Int
+  def getPlayerPoints(playerIndex: Int): Int

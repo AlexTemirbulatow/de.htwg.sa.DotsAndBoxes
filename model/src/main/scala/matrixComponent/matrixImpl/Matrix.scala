@@ -38,13 +38,13 @@ case class Matrix(
   override def getPlayerSize: PlayerSize = playerSize
   override def getPlayerType: PlayerType = playerType
 
-  override def getUnoccupiedRowCoord: Vector[(Int, Int, Int)] =
+  override def getUnoccupiedRowCoords: Vector[(Int, Int, Int)] =
     for
       (row, x) <- vecRow.zipWithIndex
       (cell, y) <- row.zipWithIndex
       if !cell
     yield (1, x, y)
-  override def getUnoccupiedColCoord: Vector[(Int, Int, Int)] =
+  override def getUnoccupiedColCoords: Vector[(Int, Int, Int)] =
     for
       (col, x) <- vecCol.zipWithIndex
       (cell, y) <- col.zipWithIndex
@@ -63,7 +63,7 @@ case class Matrix(
     copy(vecCol = vecCol.updated(row, vecCol(row).updated(col, value)))
 
   override def addPoints(curPlayerIndex: Int, points: Int): Matrix = copy(list = list.updated(curPlayerIndex, list(curPlayerIndex).copy(points = list(curPlayerIndex).points + points)))
-  override def changePlayer: Matrix = if (playerIndex == list.size - 1) copy(currentPlayer = list.head) else copy(currentPlayer = list(playerIndex + 1))
+  override def changePlayer: Matrix = if (currentPlayerIndex == list.size - 1) copy(currentPlayer = list.head) else copy(currentPlayer = list(currentPlayerIndex + 1))
   override def updatePlayer(curPlayerIndex: Int): Matrix = copy(currentPlayer = list(curPlayerIndex))
 
   override def checkSquare(squareCase: SquareCase, x: Int, y: Int): Matrix =
@@ -94,7 +94,5 @@ case class Matrix(
 
   override def playerList: Vector[Player] = list
   override def getCurrentPlayer: Player = currentPlayer
-  override def currentPlayerInfo: (String, Int) = (currentPlayer.playerId, list.indexOf(currentPlayer))
-  override def currentPoints: Int = currentPlayer.points
-  override def playerIndex: Int = list.indices.map(x => list(x).playerId).indexOf(currentPlayer.playerId)
-  override def getPoints(index: Int): Int = list(index).points
+  override def currentPlayerIndex: Int = list.indexOf(currentPlayer)
+  override def getPlayerPoints(playerIndex: Int): Int = list(playerIndex).points

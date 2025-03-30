@@ -123,15 +123,9 @@ object ModelRequestHttp:
       "y"     -> move.y
     )), 5.seconds).toBoolean
 
-  def playerIndex(field: FieldInterface): Int =
-    Await.result(ModelClient.postRequest("api/model/field/get/playerIndex", Json.obj(
-      "field" -> fieldJsonString(field)
-    )), 5.seconds).toInt
-
   def addPlayerPoints(points: Int, field: FieldInterface): String =
     Await.result(ModelClient.postRequest("api/model/field/player/add", Json.obj(
       "field"       -> fieldJsonString(field),
-      "playerIndex" -> playerIndex(field),
       "points"      -> points
     )), 5.seconds)
 

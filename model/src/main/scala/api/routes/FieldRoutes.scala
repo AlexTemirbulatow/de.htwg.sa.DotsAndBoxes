@@ -18,8 +18,10 @@ class FieldRoutes:
   def fieldRoutes: Route = handleExceptions(exceptionHandler) {
     concat(
       handlePreConnectRequest,
-      handlePlaceRequests,
       handleNewFieldRequest,
+      handlePlaceRequests,
+      handlePlayerPointsRequests,
+      handlePlayerNextRequests,
       handleGameDataRequests,
       handleIsEdgeRequest,
       handleGetWinningMovesRequest,
@@ -27,15 +29,27 @@ class FieldRoutes:
       handleGetMissingMovesRequest,
       handleIsCircularSequenceRequest,
       handleChainsWithPointsOutcomeRequest,
-      handleCheckSquareRequests,
-      handlePlayerPointsRequests,
-      handlePlayerNextRequests,
+      handleCheckSquareRequests
     )
   }
 
   private def handlePreConnectRequest: Route = get {
     path("preConnect") {
       complete(StatusCodes.OK)
+    }
+  }
+
+  private def handleNewFieldRequest: Route = post {
+    path("newField") {
+      entity(as[String]) { json =>
+        val jsonValue: JsValue = Json.parse(json)
+        val boardSize: BoardSize   = Try(BoardSize.valueOf((jsonValue \ "boardSize").as[String])).getOrElse(throw new RuntimeException("Invalid Board Size."))
+        val status: Status         = Status.values.find(_.toString == (jsonValue \ "status").as[String]).getOrElse(throw new RuntimeException("Invalid Status."))
+        val playerSize: PlayerSize = Try(PlayerSize.valueOf((jsonValue \ "playerSize").as[String])).getOrElse(throw new RuntimeException("Invalid Player Size."))
+        val playerType: PlayerType = Try(PlayerType.valueOf((jsonValue \ "playerType").as[String])).getOrElse(throw new RuntimeException("Invalid Player Type."))
+        val fieldResult: JsLookupResult = (jsonValue \ "field")
+        complete(fieldToJsonString(parsedField(fieldResult).newField(boardSize, status, playerSize, playerType)))
+      }
     }
   }
 
@@ -66,16 +80,33 @@ class FieldRoutes:
     }
   }
 
-  private def handleNewFieldRequest: Route = post {
-    path("newField") {
-      entity(as[String]) { json =>
-        val jsonValue: JsValue = Json.parse(json)
-        val boardSize: BoardSize   = Try(BoardSize.valueOf((jsonValue \ "boardSize").as[String])).getOrElse(throw new RuntimeException("Invalid Board Size."))
-        val status: Status         = Status.values.find(_.toString == (jsonValue \ "status").as[String]).getOrElse(throw new RuntimeException("Invalid Status."))
-        val playerSize: PlayerSize = Try(PlayerSize.valueOf((jsonValue \ "playerSize").as[String])).getOrElse(throw new RuntimeException("Invalid Player Size."))
-        val playerType: PlayerType = Try(PlayerType.valueOf((jsonValue \ "playerType").as[String])).getOrElse(throw new RuntimeException("Invalid Player Type."))
-        val fieldResult: JsLookupResult = (jsonValue \ "field")
-        complete(fieldToJsonString(parsedField(fieldResult).newField(boardSize, status, playerSize, playerType)))
+  private def handlePlayerPointsRequests: Route = post {
+    pathPrefix("player") {
+      path("add") {
+        entity(as[String]) { json =>
+          val jsonValue: JsValue = Json.parse(json)
+          val points: Int = (jsonValue \ "points").as[Int]
+          val fieldResult: JsLookupResult = (jsonValue \ "field")
+          val field: FieldInterface = parsedField(fieldResult)
+          val playerIndex: Int = field.currentPlayerIndex
+          val updatedField: FieldInterface = field
+            .addPoints(playerIndex, points)
+            .updatePlayer(playerIndex)
+          complete(fieldToJsonString(updatedField))
+        }
+      }
+    }
+  }
+
+  private def handlePlayerNextRequests: Route = post {
+    pathPrefix("player") {
+      path("next") {
+        entity(as[String]) { json =>
+          val jsonValue: JsValue = Json.parse(json)
+          val fieldResult: JsLookupResult = (jsonValue \ "field")
+          val updatedField: FieldInterface = parsedField(fieldResult).nextPlayer
+          complete(fieldToJsonString(updatedField))
+        }
       }
     }
   }
@@ -100,7 +131,7 @@ class FieldRoutes:
       entity(as[String]) { json =>
         val field: FieldInterface = parsedField(json)
         val allAvailableCoords: Vector[(Int, Int, Int)] =
-          field.getUnoccupiedRowCoord ++ field.getUnoccupiedColCoord
+          field.getUnoccupiedRowCoords ++ field.getUnoccupiedColCoords
         complete(allAvailableCoords.asJson.toString)
       }
     } ~
@@ -132,24 +163,9 @@ class FieldRoutes:
         complete(parsedField(json).fieldSizeData.asJson.toString)
       }
     } ~
-    path("playerIndex") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).playerIndex.toString)
-      }
-    } ~
-    path("currentPlayer") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).currentPlayerId)
-      }
-    } ~
     path("currentPlayerType") {
       entity(as[String]) { json =>
         complete(parsedField(json).currentPlayer.playerType.toString)
-      }
-    } ~
-    path("currentPoints") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).currentPoints.toString)
       }
     } ~
     path("currentStatus") {
@@ -345,36 +361,6 @@ class FieldRoutes:
             val updatedField: FieldInterface = parsedField(fieldResult).checkSquare(SquareCase.LeftCase, x, y)
             complete(fieldToJsonString(updatedField))
           }
-        }
-      }
-    }
-  }
-
-  private def handlePlayerPointsRequests: Route = post {
-    pathPrefix("player") {
-      path("add") {
-        entity(as[String]) { json =>
-          val jsonValue: JsValue = Json.parse(json)
-          val playerIndex: Int = (jsonValue \ "playerIndex").as[Int]
-          val points: Int = (jsonValue \ "points").as[Int]
-          val fieldResult: JsLookupResult = (jsonValue \ "field")
-          val updatedField: FieldInterface = parsedField(fieldResult)
-            .addPoints(playerIndex, points)
-            .updatePlayer(playerIndex)
-          complete(fieldToJsonString(updatedField))
-        }
-      }
-    }
-  }
-
-  private def handlePlayerNextRequests: Route = post {
-    pathPrefix("player") {
-      path("next") {
-        entity(as[String]) { json =>
-          val jsonValue: JsValue = Json.parse(json)
-          val fieldResult: JsLookupResult = (jsonValue \ "field")
-          val updatedField: FieldInterface = parsedField(fieldResult).nextPlayer
-          complete(fieldToJsonString(updatedField))
         }
       }
     }

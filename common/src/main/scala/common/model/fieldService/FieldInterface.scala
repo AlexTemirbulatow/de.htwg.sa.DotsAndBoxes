@@ -13,8 +13,8 @@ trait FieldInterface:
   def boardSize: BoardSize
   def playerSize: PlayerSize
   def playerType: PlayerType
-  def getUnoccupiedRowCoord: Vector[(Int, Int, Int)]
-  def getUnoccupiedColCoord: Vector[(Int, Int, Int)]
+  def getUnoccupiedRowCoords: Vector[(Int, Int, Int)]
+  def getUnoccupiedColCoords: Vector[(Int, Int, Int)]
   def getStatusCell(row: Int, col: Int): Status
   def getRowCell(row: Int, col: Int): Boolean
   def getColCell(row: Int, col: Int): Boolean
@@ -32,11 +32,8 @@ trait FieldInterface:
   def stats: String
   def playerList: Vector[Player]
   def currentPlayer: Player
-  def currentPlayerId: String
   def currentPlayerIndex: Int
-  def currentPoints: Int
-  def playerIndex: Int
-  def getPoints(index: Int): Int
+  def getPlayerPoints(playerIndex: Int): Int
   def currentStatus: Vector[Vector[Status]]
   def fieldData(computerDifficulty: ComputerDifficulty): FieldData
   def gameBoardData: GameBoardData

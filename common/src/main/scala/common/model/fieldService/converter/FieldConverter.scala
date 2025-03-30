@@ -13,7 +13,7 @@ object FieldConverter:
         "playerSize"     -> field.playerSize.toString,
         "playerType"     -> field.playerType.toString,
         "currentPlayer"  -> field.currentPlayerIndex,
-        "currentPoints"  -> field.currentPoints,
+        "currentPoints"  -> field.currentPlayer.points,
         "gameEnded"      -> field.isFinished,
         "winner"         -> field.winner,
         "colSize"        -> field.colSize,
@@ -37,7 +37,7 @@ object FieldConverter:
           yield Json.obj("x" -> x, "y" -> y, "value" -> field.getColCell(x, y))
         ),
         "playerList" -> field.playerList.zipWithIndex.map { case (player, index) =>
-          Json.obj("index" -> index, "points" -> field.getPoints(index))
+          Json.obj("index" -> index, "points" -> field.getPlayerPoints(index))
         }
       )
     )
@@ -94,5 +94,5 @@ object FieldConverter:
 
   private def playerToXml(field: FieldInterface, index: Int): Elem =
     <value index={index.toString}>
-      {field.getPoints(index)}
+      {field.getPlayerPoints(index)}
     </value>

@@ -49,8 +49,8 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
   override def playerSize: PlayerSize = matrix.getPlayerSize
   override def playerType: PlayerType = matrix.getPlayerType
 
-  override def getUnoccupiedRowCoord: Vector[(Int, Int, Int)] = matrix.getUnoccupiedRowCoord
-  override def getUnoccupiedColCoord: Vector[(Int, Int, Int)] = matrix.getUnoccupiedColCoord
+  override def getUnoccupiedRowCoords: Vector[(Int, Int, Int)] = matrix.getUnoccupiedRowCoords
+  override def getUnoccupiedColCoords: Vector[(Int, Int, Int)] = matrix.getUnoccupiedColCoords
 
   override def getStatusCell(row: Int, col: Int): Status = matrix.statusCell(row, col)
   override def getRowCell(row: Int, col: Int): Boolean = matrix.rowCell(row, col)
@@ -76,11 +76,8 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
   
   override def playerList: Vector[Player] = matrix.playerList
   override def currentPlayer: Player = matrix.getCurrentPlayer
-  override def currentPlayerId: String = matrix.currentPlayerInfo._1
-  override def currentPlayerIndex: Int = matrix.currentPlayerInfo._2
-  override def currentPoints: Int = matrix.currentPoints
-  override def playerIndex: Int = matrix.playerIndex
-  override def getPoints(index: Int): Int = matrix.getPoints(index)
+  override def currentPlayerIndex: Int = matrix.currentPlayerIndex
+  override def getPlayerPoints(playerIndex: Int): Int = matrix.getPlayerPoints(playerIndex)
   override def currentStatus: Vector[Vector[Status]] = matrix.vectorStatus
 
   override def fieldData(computerDifficulty: ComputerDifficulty): FieldData = FieldData(boardSize, playerSize, playerType, computerDifficulty)
@@ -92,7 +89,7 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
       Vector.tabulate(col, row+1)((row, col) => getColCell(row, col)),
       Vector.tabulate(col, row)((row, col) => getStatusCell(row, col).toString)
     )
-  override def playerTurnData: PlayerTurnData = PlayerTurnData(currentPlayerId, currentPoints, playerList)
+  override def playerTurnData: PlayerTurnData = PlayerTurnData(currentPlayer.playerId, currentPlayer.points, playerList)
   override def playerResultData: PlayerResultData = PlayerResultData(winner, playerList)
   override def fieldSizeData: FieldSizeData = FieldSizeData(rowSize, colSize)
 
