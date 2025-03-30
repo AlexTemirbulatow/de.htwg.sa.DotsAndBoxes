@@ -1,8 +1,6 @@
 package common.config
 
 object ServiceConfig:
-  private def getEnvVar(envVar: String): String = sys.env.get(envVar).filterNot(_.isEmpty).getOrElse(throw IllegalStateException(s"Environment variable $envVar not set."))
-
   val MODEL_HOST = "localhost"
   val MODEL_PORT = 8080
   val MODEL_BASE_URL = s"http://$MODEL_HOST:$MODEL_PORT/"
