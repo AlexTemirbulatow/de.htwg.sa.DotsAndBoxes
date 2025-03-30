@@ -5,16 +5,13 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.StreamTcpException
+import common.config.ServiceConfig.CORE_BASE_URL
 import java.net.ConnectException
 import org.slf4j.LoggerFactory
 import play.api.libs.json.JsObject
 import scala.concurrent.{ExecutionContext, Future}
 
 object CoreClient:
-  private val CORE_HOST = "localhost"
-  private val CORE_PORT = 8083
-  private val CORE_BASE_URL = s"http://$CORE_HOST:$CORE_PORT/"
-
   private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val ec: ExecutionContext = system.dispatcher
 

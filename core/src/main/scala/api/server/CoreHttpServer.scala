@@ -8,14 +8,12 @@ import akka.http.scaladsl.server.Route
 import api.module.CoreModule.given_ControllerInterface
 import api.routes.CoreRoutes
 import api.service.{ComputerRequestHttp, ModelRequestHttp, PersistenceRequestHttp}
+import common.config.ServiceConfig.{COMPUTER_BASE_URL, CORE_HOST, CORE_PORT}
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.StdIn
 
 object CoreHttpServer:
-  private val CORE_HOST = "localhost"
-  private val CORE_PORT = 8083
-
   private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val executionContext: ExecutionContext = system.dispatcher
 
@@ -25,7 +23,7 @@ object CoreHttpServer:
     val server = Http()
       .newServerAt(CORE_HOST, CORE_PORT)
       .bind(routes(CoreRoutes(given_ControllerInterface)))
-    logger.info(s"Core Service -- Http Server is running at http://$CORE_HOST:$CORE_PORT/\n\nPress RETURN to terminate...\n")
+    logger.info(s"Core Service -- Http Server is running at $COMPUTER_BASE_URL\n\nPress RETURN to terminate...\n")
     StdIn.readLine()
     shutdown(server)
 

@@ -35,63 +35,51 @@ lazy val commonSettings = Seq(
 
 lazy val root = project
   .in(file("."))
-  .settings(
-    name := "dotsandboxes"
-  )
+  .settings(name := "dotsandboxes")
   .aggregate(common, core, model, computer, persistence, gui, tui)
 
 lazy val common = project
   .in(file("common"))
-  .settings(
-    name := "common"
-  )
+  .settings(name := "common")
   .settings(commonSettings)
 
 lazy val core = project
   .in(file("core"))
-  .settings(
-    name := "core"
-  )
+  .settings(name := "core")
   .settings(commonSettings)
-  .dependsOn(model, common)
+  .dependsOn(common, model)
 
 lazy val model = project
   .in(file("model"))
-  .settings(
-    name := "model"
-  )
+  .settings(name := "model")
+  .settings(commonSettings)
+  .dependsOn(common)
+
+lazy val persistence = project
+  .in(file("persistence"))
+  .settings(name := "persistence")
   .settings(commonSettings)
   .dependsOn(common)
 
 lazy val computer = project
   .in(file("computer"))
-  .settings(
-    name := "computer"
-  )
+  .settings(name := "computer")
   .settings(commonSettings)
-
-lazy val persistence = project
-  .in(file("persistence"))
-  .settings(
-    name := "persistence"
-  )
-  .settings(commonSettings)
+  .dependsOn(common)
 
 lazy val gui = project
   .in(file("gui"))
-  .settings(
-    name := "gui"
-  )
+  .settings(name := "gui")
   .settings(commonSettings)
+  .dependsOn(common)
 
 lazy val tui = project
   .in(file("tui"))
-  .settings(
-    name := "tui"
-  )
+  .settings(name := "tui")
   .settings(commonSettings)
+  .dependsOn(common)
 
-import org.scoverage.coveralls.Imports.CoverallsKeys.*
+import org.scoverage.coveralls.Imports.CoverallsKeys._
 
 coverallsTokenFile := sys.env.get("COVERALLS_REPO_TOKEN")
 coverallsService := Some(org.scoverage.coveralls.GitHubActions)

@@ -6,14 +6,12 @@ import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import api.routes.FieldRoutes
+import common.config.ServiceConfig.{MODEL_BASE_URL, MODEL_HOST, MODEL_PORT}
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.StdIn
 
 object ModelHttpServer:
-  private val MODEL_HOST = "localhost"
-  private val MODEL_PORT = 8080
-
   private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val executionContext: ExecutionContext = system.dispatcher
 
@@ -23,7 +21,7 @@ object ModelHttpServer:
     val server = Http()
       .newServerAt(MODEL_HOST, MODEL_PORT)
       .bind(routes(new FieldRoutes))
-    logger.info(s"Model Service -- Http Server is running at http://$MODEL_HOST:$MODEL_PORT/\n\nPress RETURN to terminate...\n")
+    logger.info(s"Model Service -- Http Server is running at $MODEL_BASE_URL\n\nPress RETURN to terminate...\n")
     StdIn.readLine()
     shutdown(server)
 

@@ -6,15 +6,12 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import api.routes.GUIRoutes
 import api.service.CoreRequestHttp
+import common.config.ServiceConfig.{GUI_HOST, GUI_OBSERVER_URL, GUI_PORT}
 import guiComponent.GUI
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}
 
 object GUIHttpServer:
-  private val GUI_HOST = "localhost"
-  private val GUI_PORT = 8085
-  private val GUI_OBSERVER_URL = s"http://$GUI_HOST:$GUI_PORT/api/gui/update"
-
   private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val executionContext: ExecutionContext = system.dispatcher
 
@@ -22,7 +19,7 @@ object GUIHttpServer:
 
   def run: Unit =
     CoreRequestHttp.registerGUIObserver(GUI_OBSERVER_URL)
-    val gui = GUI()
+    val gui = new GUI
     val server = Http()
       .newServerAt(GUI_HOST, GUI_PORT)
       .bind(routes(GUIRoutes(gui)))

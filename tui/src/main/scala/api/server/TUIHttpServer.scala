@@ -6,15 +6,12 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import api.routes.TUIRoutes
 import api.service.CoreRequestHttp
+import common.config.ServiceConfig.{TUI_HOST, TUI_OBSERVER_URL, TUI_PORT}
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}
 import tuiComponent.TUI
 
 object TUIHttpServer:
-  private val TUI_HOST = "localhost"
-  private val TUI_PORT = 8084
-  private val TUI_OBSERVER_URL = s"http://$TUI_HOST:$TUI_PORT/api/tui/update"
-
   private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val executionContext: ExecutionContext = system.dispatcher
 

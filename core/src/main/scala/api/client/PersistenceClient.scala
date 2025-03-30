@@ -4,15 +4,12 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshal
+import common.config.ServiceConfig.PERSISTENCE_BASE_URL
 import org.slf4j.LoggerFactory
 import play.api.libs.json.JsObject
 import scala.concurrent.{ExecutionContext, Future}
 
 object PersistenceClient:
-  private val PERSISTENCE_HOST = "localhost"
-  private val PERSISTENCE_PORT = 8081
-  private val PERSISTENCE_BASE_URL = s"http://$PERSISTENCE_HOST:$PERSISTENCE_PORT/"
-
   private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val ec: ExecutionContext = system.dispatcher
 

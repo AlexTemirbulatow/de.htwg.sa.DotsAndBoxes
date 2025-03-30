@@ -4,15 +4,12 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshal
+import common.config.ServiceConfig.COMPUTER_BASE_URL
 import org.slf4j.LoggerFactory
 import play.api.libs.json.JsObject
 import scala.concurrent.{ExecutionContext, Future}
 
 object ComputerClient:
-  private val COMPUTER_HOST = "localhost"
-  private val COMPUTER_PORT = 8082
-  private val COMPUTER_BASE_URL = s"http://$COMPUTER_HOST:$COMPUTER_PORT/"
-
   private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val ec: ExecutionContext = system.dispatcher
 
