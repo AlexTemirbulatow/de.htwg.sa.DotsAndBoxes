@@ -5,8 +5,6 @@ import de.github.dotsandboxes.lib._
 trait FieldInterface:
   val maxPosX: Int
   val maxPosY: Int
-  val vectorRow: Vector[Vector[Boolean]]
-  val vectorCol: Vector[Vector[Boolean]]
   val rowSize: Int
   val colSize: Int
   def newField(boardSize: BoardSize, status: Status, playerSize: PlayerSize, playerType: PlayerType): FieldInterface

@@ -348,13 +348,10 @@ class FieldRoutes:
   }
 
   private def parsedField(json: String): FieldInterface =
-    val jsonValue: JsValue = Json.parse(json)
-    val fieldValue: String = (jsonValue \ "field").as[String]
-    FieldParser.fromJson(fieldValue)
+    FieldParser.fromJson((Json.parse(json) \ "field").as[String])
 
   private def parsedField(fieldResult: JsLookupResult): FieldInterface =
-    val fieldValue: String = fieldResult.as[String]
-    FieldParser.fromJson(fieldValue)
+    FieldParser.fromJson(fieldResult.as[String])
 
   private def fieldToJsonString(field: FieldInterface): String =
     FieldConverter.toJson(field).toString

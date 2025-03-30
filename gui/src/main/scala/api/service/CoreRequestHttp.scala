@@ -15,14 +15,14 @@ object CoreRequestHttp:
     ) match
       case Right(data) => data
       case Left(error) => throw new RuntimeException(s"Error decoding FieldData: ${error.getMessage}")
-    
+
   def gameBoardData: GameBoardData =
     decode[GameBoardData](
       Await.result(CoreClient.getRequest("api/core/get/gameBoardData"), 5.seconds)
     ) match
       case Right(data) => data
       case Left(error) => throw new RuntimeException(s"Error decoding GameBoardData: ${error.getMessage}")
-    
+
   def playerGameData: PlayerGameData =
     decode[PlayerGameData](
       Await.result(CoreClient.getRequest("api/core/get/playerGameData"), 5.seconds)

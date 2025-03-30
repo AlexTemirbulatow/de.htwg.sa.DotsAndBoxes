@@ -9,8 +9,7 @@ import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
 
 object CoreRequestHttp:
-  override def toString: String =
-    Await.result(CoreClient.getRequest("api/core/"), 5.seconds)
+  override def toString: String = Await.result(CoreClient.getRequest("api/core/"), 5.seconds)
 
   def publish(move: Move): Future[String] =
     CoreClient.postRequest("api/core/publish", Json.obj(

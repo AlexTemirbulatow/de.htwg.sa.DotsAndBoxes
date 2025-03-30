@@ -42,8 +42,6 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
 
   override val maxPosX: Int = matrix.maxPosX
   override val maxPosY: Int = matrix.maxPosY
-  override val vectorRow: Vector[Vector[Boolean]] = matrix.vectorRow
-  override val vectorCol: Vector[Vector[Boolean]] = matrix.vectorCol
   override val rowSize: Int = matrix.rowSize
   override val colSize: Int = matrix.colSize
 

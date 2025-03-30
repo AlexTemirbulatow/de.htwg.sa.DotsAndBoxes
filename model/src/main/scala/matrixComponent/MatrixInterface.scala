@@ -4,8 +4,6 @@ import de.github.dotsandboxes.lib._
 
 trait MatrixInterface:
   val vectorStatus: Vector[Vector[Status]]
-  val vectorRow: Vector[Vector[Boolean]]
-  val vectorCol: Vector[Vector[Boolean]]
   val maxPosX: Int
   val maxPosY: Int
   def rowSize: Int

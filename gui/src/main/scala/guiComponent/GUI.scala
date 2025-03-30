@@ -443,16 +443,17 @@ class GUI extends Frame:
 
   def update(event: Event): Unit = event match
     case Event.Abort => sys.exit
-    case Event.End   =>
+    case Event.End =>
       val playerGameData: PlayerGameData = CoreRequestHttp.playerGameData
       switchContent(revise(playerResult(playerGameData), playerGameData.playerList)); inMainMenu = false
-    case Event.Move  =>
+    case Event.Move =>
       val playerGameData: PlayerGameData = CoreRequestHttp.playerGameData
-      switchContent(revise(if CoreRequestHttp.gameEnded
-        then playerResult(playerGameData)
-        else playerTurn(playerGameData),
-        playerGameData.playerList
-      ))
+      switchContent(
+        revise(
+          if CoreRequestHttp.gameEnded then playerResult(playerGameData) else playerTurn(playerGameData),
+          playerGameData.playerList
+        )
+      )
       inMainMenu = false
 
   override def closeOperation: Unit = update(Event.Abort)
@@ -632,8 +633,9 @@ class GUI extends Frame:
       case MouseClicked(source) =>
         if !isComputerTurn then CoreRequestHttp.publish(Move(vec, x, y, true))
       case MouseEntered(source) =>
-        if !isComputerTurn then vec match
-          case 1 => if !status then icon = untakenBar
-          case 2 => if !status then icon = untakenCol
+        if !isComputerTurn then
+          vec match
+            case 1 => if !status then icon = untakenBar
+            case 2 => if !status then icon = untakenCol
       case MouseExited(source) => if !status then icon = takenNone
     }

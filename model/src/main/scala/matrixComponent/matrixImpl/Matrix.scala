@@ -27,8 +27,6 @@ case class Matrix(
     )
 
   override val vectorStatus: Vector[Vector[Status]] = vecStatus
-  override val vectorRow: Vector[Vector[Boolean]] = vecRow
-  override val vectorCol: Vector[Vector[Boolean]] = vecCol
   override val maxPosX: Int = rowSize - 1
   override val maxPosY: Int = colSize - 1
   override def rowSize: Int = vecRow.size
