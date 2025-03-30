@@ -9,15 +9,15 @@ object FieldConverter:
     val (row, col) = field.boardSize.dimensions
     Json.obj(
       "field" -> Json.obj(
-        "boardSize"      -> field.boardSize.toString,
-        "playerSize"     -> field.playerSize.toString,
-        "playerType"     -> field.playerType.toString,
-        "currentPlayer"  -> field.currentPlayerIndex,
-        "currentPoints"  -> field.currentPlayer.points,
-        "gameEnded"      -> field.isFinished,
-        "winner"         -> field.winner,
-        "colSize"        -> field.colSize,
-        "rowSize"        -> field.rowSize,
+        "boardSize"        -> field.boardSize.toString,
+        "playerSize"       -> field.playerSize.toString,
+        "playerType"       -> field.playerType.toString,
+        "currPlayerIndex"  -> field.currentPlayerIndex,
+        "currPoints"       -> field.currentPlayer.points,
+        "gameEnded"        -> field.isFinished,
+        "winner"           -> field.winner,
+        "colSize"          -> field.colSize,
+        "rowSize"          -> field.rowSize,
         "status" -> (
           for
             x <- 0 until col
@@ -45,7 +45,7 @@ object FieldConverter:
   def toXml(field: FieldInterface): Elem =
     val (row, col) = field.boardSize.dimensions
     <field rowSize={field.maxPosY.toString} colSize={field.maxPosX.toString}>
-      <playerList boardSize={field.boardSize.toString} playerSize={field.playerSize.toString} playerType={field.playerType.toString} currentPlayer={field.currentPlayerIndex.toString}>
+      <playerList boardSize={field.boardSize.toString} playerSize={field.playerSize.toString} playerType={field.playerType.toString} currPlayerIndex={field.currentPlayerIndex.toString}>
         {field.playerList.indices.map(playerToXml(field, _))}
       </playerList>
 

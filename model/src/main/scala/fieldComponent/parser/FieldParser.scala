@@ -55,8 +55,8 @@ object FieldParser:
       field.addPoints(index, score)
     }
 
-    val curPlayerIndex = (json \ "field" \ "currentPlayer").as[Int]
-    val finalField = fieldAfterScores.updatePlayer(curPlayerIndex)
+    val currPlayerIndex = (json \ "field" \ "currPlayerIndex").as[Int]
+    val finalField = fieldAfterScores.updatePlayer(currPlayerIndex)
     finalField
 
   def fromXml(xmlField: String): FieldInterface =
@@ -106,6 +106,6 @@ object FieldParser:
       field.addPoints(index, score)
     }
 
-    val curPlayerIndex: Int = (elem \\ "field" \ "playerList" \ "@currentPlayer").text.toInt
-    val finalField = fieldAfterScores.updatePlayer(curPlayerIndex)
+    val currPlayerIndex: Int = (elem \\ "field" \ "playerList" \ "@currPlayerIndex").text.toInt
+    val finalField = fieldAfterScores.updatePlayer(currPlayerIndex)
     finalField
