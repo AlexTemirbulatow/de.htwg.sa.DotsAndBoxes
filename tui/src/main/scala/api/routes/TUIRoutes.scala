@@ -14,8 +14,8 @@ class TUIRoutes(val tui: TUI):
     )
   }
 
-  private def handleEventRequests: Route = path("update") {
-    get {
+  private def handleEventRequests: Route = get {
+    pathPrefix("update") {
       parameter("event") {
         case "abort" =>
           tui.update(Event.Abort)

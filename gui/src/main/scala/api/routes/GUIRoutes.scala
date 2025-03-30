@@ -14,8 +14,8 @@ class GUIRoutes(val gui: GUI):
     )
   }
 
-  private def handleEventRequests: Route = path("update") {
-    get {
+  private def handleEventRequests: Route = get {
+    pathPrefix("update") {
       parameter("event") {
         case "abort" =>
           gui.update(Event.Abort)
