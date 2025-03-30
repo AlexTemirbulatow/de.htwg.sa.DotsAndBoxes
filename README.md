@@ -2,7 +2,7 @@
 
 
 [![Scala CI](https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/actions/workflows/scala.yml/badge.svg?branch=developer)](https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/actions/workflows/scala.yml)
-[![Coverage Status](https://coveralls.io/repos/github/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/badge.svg)](https://coveralls.io/github/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes)
+<!-- [![Coverage Status](https://coveralls.io/repos/github/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/badge.svg)](https://coveralls.io/github/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes) -->
 <br>
 
 ## Usage
