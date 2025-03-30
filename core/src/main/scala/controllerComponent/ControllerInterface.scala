@@ -7,24 +7,20 @@ import scala.concurrent.Future
 import scala.util.Try
 
 trait ControllerInterface extends Observable:
-  def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, computerDifficulty: ComputerDifficulty): FieldInterface
-  def put(move: Move): String
   def fieldData: FieldData
   def gameBoardData: GameBoardData
-  def playerTurnData: PlayerTurnData
-  def playerResultData: PlayerResultData
+  def playerGameData: PlayerGameData
   def fieldSizeData: FieldSizeData
-  def restart: FieldInterface
+  def gameEnded: Boolean
+  def winner: String
+  def stats: String
+  def put(move: Move): String
   def undo: FieldInterface
   def redo: FieldInterface
   def save: FieldInterface
   def load: FieldInterface
-  def currentPlayer: String
-  def currentPlayerType: PlayerType
-  def currentPoints: Int
-  def gameEnded: Boolean
-  def winner: String
-  def stats: String
+  def restart: FieldInterface
+  def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, computerDifficulty: ComputerDifficulty): FieldInterface
   def publish(doThis: => FieldInterface): FieldInterface
   def publish(doThis: Move => String, move: Move): Try[FieldInterface]
   def computerMove(field: FieldInterface): Future[FieldInterface]

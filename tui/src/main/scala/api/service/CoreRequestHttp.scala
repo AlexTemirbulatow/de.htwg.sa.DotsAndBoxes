@@ -1,7 +1,9 @@
 package api.service
 
 import api.client.CoreClient
-import de.github.dotsandboxes.lib.{BoardSize, ComputerDifficulty, Move, PlayerSize, PlayerType}
+import de.github.dotsandboxes.lib._
+import io.circe.generic.auto._
+import io.circe.parser.decode
 import play.api.libs.json.Json
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
@@ -40,14 +42,12 @@ object CoreRequestHttp:
       "computerDifficulty" -> computerDifficulty.toString
     ))
 
-  def finalStats: String =
-    val winner = Await.result(CoreClient.getRequest("api/core/get/winner"), 5.seconds)
-    val stats  = Await.result(CoreClient.getRequest("api/core/get/stats"), 5.seconds)
-    "\n" +
-      winner + "\n" +
-      "_________________________" + "\n\n" +
-      stats +
-      "\n"
+  def playerGameData: PlayerGameData =
+    decode[PlayerGameData](
+      Await.result(CoreClient.getRequest("api/core/get/playerGameData"), 5.seconds)
+    ) match
+      case Right(data) => data
+      case Left(error) => throw new RuntimeException(s"Error decoding PlayerGameData: ${error.getMessage}")
 
   def registerTUIObserver(tuiObserverUrl: String): Future[String] =
     CoreClient.postRequest("api/core/registerObserver", Json.obj(

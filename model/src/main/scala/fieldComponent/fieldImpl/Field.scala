@@ -84,15 +84,13 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
   override def gameBoardData: GameBoardData =
     val (row, col) = boardSize.dimensions
     GameBoardData(
-      currentPlayer.playerType,
+      currentPlayer,
       Vector.tabulate(col+1, row)((row, col) => getRowCell(row, col)),
       Vector.tabulate(col, row+1)((row, col) => getColCell(row, col)),
       Vector.tabulate(col, row)((row, col) => getStatusCell(row, col).toString)
     )
-  override def playerTurnData: PlayerTurnData = PlayerTurnData(currentPlayer.playerId, currentPlayer.points, playerList)
-  override def playerResultData: PlayerResultData = PlayerResultData(winner, playerList)
+  override def playerGameData: PlayerGameData = PlayerGameData(currentPlayer, winner, stats, playerList)
   override def fieldSizeData: FieldSizeData = FieldSizeData(rowSize, colSize)
-
   override def getWinningMoves(coords: Vector[(Int, Int, Int)], field: FieldInterface): Vector[Move] =
     coords.collect {
       case (vec, x, y) if isClosingMove(vec, x, y, field) => Move(vec, x, y, true)

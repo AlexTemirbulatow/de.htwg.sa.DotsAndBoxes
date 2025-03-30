@@ -22,20 +22,13 @@ object CoreRequestHttp:
     ) match
       case Right(data) => data
       case Left(error) => throw new RuntimeException(s"Error decoding GameBoardData: ${error.getMessage}")
-
-  def playerTurnData: PlayerTurnData =
-    decode[PlayerTurnData](
-      Await.result(CoreClient.getRequest("api/core/get/playerTurnData"), 5.seconds)
+    
+  def playerGameData: PlayerGameData =
+    decode[PlayerGameData](
+      Await.result(CoreClient.getRequest("api/core/get/playerGameData"), 5.seconds)
     ) match
       case Right(data) => data
-      case Left(error) => throw new RuntimeException(s"Error decoding PlayerTurnData: ${error.getMessage}")
-
-  def playerResultData: PlayerResultData =
-    decode[PlayerResultData](
-      Await.result(CoreClient.getRequest("api/core/get/playerResultData"), 5.seconds)
-    ) match
-      case Right(data) => data
-      case Left(error) => throw new RuntimeException(s"Error decoding PlayerResultData: ${error.getMessage}")
+      case Left(error) => throw new RuntimeException(s"Error decoding PlayerGameData: ${error.getMessage}")
 
   def fieldSizeData: FieldSizeData =
     decode[FieldSizeData](

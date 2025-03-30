@@ -37,8 +37,7 @@ trait FieldInterface:
   def currentStatus: Vector[Vector[Status]]
   def fieldData(computerDifficulty: ComputerDifficulty): FieldData
   def gameBoardData: GameBoardData
-  def playerTurnData: PlayerTurnData
-  def playerResultData: PlayerResultData
+  def playerGameData: PlayerGameData
   def fieldSizeData: FieldSizeData
   def getWinningMoves(coords: Vector[(Int, Int, Int)], field: FieldInterface): Vector[Move]
   def getSaveMoves(coords: Vector[(Int, Int, Int)], field: FieldInterface): Vector[Move]

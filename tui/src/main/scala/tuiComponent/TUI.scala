@@ -1,7 +1,7 @@
 package tuiComponent
 
 import api.service.CoreRequestHttp
-import de.github.dotsandboxes.lib.{Event, GameConfig, Move}
+import de.github.dotsandboxes.lib._
 import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}
 
@@ -14,8 +14,8 @@ class TUI:
 
   def update(event: Event): Unit = event match
     case Event.Abort => sys.exit
-    case Event.End   => print(CoreRequestHttp.finalStats)
-    case Event.Move  => print(CoreRequestHttp.toString)
+    case Event.End   => print(finalStats)
+    case Event.Move  => print(fieldString)
 
   def gameLoop: Unit =
     analyzeInput(readLine) match
@@ -74,6 +74,16 @@ class TUI:
       "<Player type>:         (1) for humans, (2) for computers\n" +
       "<Computer difficulty>: (1) for easy, (2) for medium, (3) for hard\n" +
       "e.g., NEW: 2 3 2 1\n"
+
+  def fieldString: String = CoreRequestHttp.toString
+
+  def finalStats: String =
+    val playerGameData: PlayerGameData = CoreRequestHttp.playerGameData
+    "\n" +
+      playerGameData.winner + "\n" +
+      "_________________________" + "\n\n" +
+      playerGameData.stats +
+      "\n"
 
   def syntaxErr: String =
     "\nIncorrect syntax. Try again: "

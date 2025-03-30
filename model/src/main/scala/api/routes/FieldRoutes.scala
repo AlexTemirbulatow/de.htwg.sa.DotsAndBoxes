@@ -148,14 +148,9 @@ class FieldRoutes:
         complete(parsedField(json).gameBoardData.asJson.toString)
       }
     } ~
-    path("playerTurnData") {
+    path("playerGameData") {
       entity(as[String]) { json =>
-        complete(parsedField(json).playerTurnData.asJson.toString)
-      }
-    } ~
-    path("playerResultData") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).playerResultData.asJson.toString)
+        complete(parsedField(json).playerGameData.asJson.toString)
       }
     } ~
     path("fieldSizeData") {
@@ -163,9 +158,9 @@ class FieldRoutes:
         complete(parsedField(json).fieldSizeData.asJson.toString)
       }
     } ~
-    path("currentPlayerType") {
+    path("currentPlayer") {
       entity(as[String]) { json =>
-        complete(parsedField(json).currentPlayer.playerType.toString)
+        complete(parsedField(json).currentPlayer.asJson.toString)
       }
     } ~
     path("currentStatus") {

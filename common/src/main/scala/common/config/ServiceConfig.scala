@@ -12,6 +12,7 @@ object ServiceConfig:
   val COMPUTER_HOST = "localhost"
   val COMPUTER_PORT = 8082
   val COMPUTER_BASE_URL = s"http://$COMPUTER_HOST:$COMPUTER_PORT/"
+  val COMPUTER_SLEEP_TIME = 1000
 
   val CORE_HOST = "localhost"
   val CORE_PORT = 8083

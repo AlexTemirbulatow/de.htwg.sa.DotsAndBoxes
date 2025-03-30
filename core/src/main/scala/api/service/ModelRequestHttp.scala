@@ -61,23 +61,14 @@ object ModelRequestHttp:
       case Right(data) => data
       case Left(error) => throw new RuntimeException(s"Error decoding GameBoardData: ${error.getMessage}")
 
-  def playerTurnData(field: FieldInterface): PlayerTurnData =
-    decode[PlayerTurnData](
-      Await.result(ModelClient.postRequest(s"api/model/field/get/playerTurnData", Json.obj(
+  def playerGameData(field: FieldInterface): PlayerGameData =
+    decode[PlayerGameData](
+      Await.result(ModelClient.postRequest(s"api/model/field/get/playerGameData", Json.obj(
         "field" -> fieldJsonString(field),
       )), 5.seconds)
     ) match
       case Right(data) => data
-      case Left(error) => throw new RuntimeException(s"Error decoding PlayerTurnData: ${error.getMessage}")
-
-  def playerResultData(field: FieldInterface): PlayerResultData =
-    decode[PlayerResultData](
-      Await.result(ModelClient.postRequest(s"api/model/field/get/playerResultData", Json.obj(
-        "field" -> fieldJsonString(field),
-      )), 5.seconds)
-    ) match
-      case Right(data) => data
-      case Left(error) => throw new RuntimeException(s"Error decoding PlayerResultData: ${error.getMessage}")
+      case Left(error) => throw new RuntimeException(s"Error decoding PlayerGameData: ${error.getMessage}")
 
   def fieldSizeData(field: FieldInterface): FieldSizeData =
     decode[FieldSizeData](
@@ -97,13 +88,6 @@ object ModelRequestHttp:
       case Right(status) => status
       case Left(error)   => throw new RuntimeException(s"Error decoding Vector[Vector[Status]]: ${error.getMessage}")
 
-  def currentPlayerType(field: FieldInterface): PlayerType =
-    Try(PlayerType.valueOf(
-      Await.result(ModelClient.postRequest("api/model/field/get/currentPlayerType", Json.obj(
-        "field" -> fieldJsonString(field)
-      )), 5.seconds)
-    )).getOrElse(throw new RuntimeException("Invalid Player Type."))
-
   def maxPosX(field: FieldInterface): Int =
     Await.result(ModelClient.postRequest(s"api/model/field/get/maxPosX", Json.obj(
       "field" -> fieldJsonString(field)
@@ -122,6 +106,15 @@ object ModelRequestHttp:
       "x"     -> move.x,
       "y"     -> move.y
     )), 5.seconds).toBoolean
+
+  def currentPlayer(field: FieldInterface): Player =
+    decode[Player](
+      Await.result(ModelClient.postRequest("api/model/field/get/currentPlayer", Json.obj(
+        "field" -> fieldJsonString(field),
+      )), 5.seconds)
+    ) match
+      case Right(player) => player
+      case Left(error)   => throw new RuntimeException(s"Error decoding Player: ${error.getMessage}")
 
   def addPlayerPoints(points: Int, field: FieldInterface): String =
     Await.result(ModelClient.postRequest("api/model/field/player/add", Json.obj(
