@@ -1,9 +1,10 @@
 package api.routes
 
 import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.model.StatusCodes.{Conflict, InternalServerError, NotFound}
+import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
+import api.service.ModelRequestHttp
 import computerComponent.ComputerInterface
 import computerComponent.computerEasyImpl.ComputerEasy
 import computerComponent.computerHardImpl.ComputerHard
@@ -13,7 +14,6 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import play.api.libs.json.{JsValue, Json}
 import scala.util.Try
-import api.service.ModelRequestHttp
 
 class ComputerRoutes:
   def computerRoutes: Route = handleExceptions(exceptionHandler) {

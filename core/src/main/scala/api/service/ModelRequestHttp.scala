@@ -45,7 +45,7 @@ object ModelRequestHttp:
   def fieldData(computerDifficulty: ComputerDifficulty, field: FieldInterface): FieldData =
     decode[FieldData](
       Await.result(ModelClient.postRequest(s"api/model/field/get/fieldData", Json.obj(
-        "field" -> fieldJsonString(field),
+        "field"              -> fieldJsonString(field),
         "computerDifficulty" -> computerDifficulty.toString
       )), 5.seconds)
     ) match

@@ -35,6 +35,11 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
     .tabulate(maxPosX)(x => bar(length, maxPosY, x) + cells(x, length, height))
     .mkString + bar(length, maxPosY, maxPosX)
 
+  def winner: String = if (playerList.indices.map(playerList(_).points).count(_ == playerList.maxBy(_._2).points) > 1)
+    "It's a draw!" else s"Player ${playerList.maxBy(_._2).playerId} wins!"
+  
+  def stats: String = playerList.indices.map(x => s"Player ${playerList(x).playerId} [points: ${playerList(x).points}]").mkString("\n")
+
   override val maxPosX: Int = matrix.maxPosX
   override val maxPosY: Int = matrix.maxPosY
   override val vectorRow: Vector[Vector[Boolean]] = matrix.vectorRow
@@ -69,10 +74,6 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
   override def isCircularSequence(moveSeq1: (Int, Vector[(Int, Int, Int)]), moveSeq2: (Int, Vector[(Int, Int, Int)])): Boolean = matrix.isCircularSequence(moveSeq1, moveSeq2)
   override def isFinished: Boolean = matrix.isFinished
   override def isEdge(move: Move): Boolean = matrix.isEdge(move)
-
-  override def winner: String = if (playerList.indices.map(playerList(_).points).count(_ == playerList.maxBy(_._2).points) > 1)
-    "It's a draw!" else s"Player ${playerList.maxBy(_._2).playerId} wins!"
-  override def stats: String = playerList.indices.map(x => s"Player ${playerList(x).playerId} [points: ${playerList(x).points}]").mkString("\n")
   
   override def playerList: Vector[Player] = matrix.playerList
   override def currentPlayer: Player = matrix.getCurrentPlayer
@@ -80,7 +81,6 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
   override def getPlayerPoints(playerIndex: Int): Int = matrix.getPlayerPoints(playerIndex)
   override def currentStatus: Vector[Vector[Status]] = matrix.vectorStatus
 
-  override def fieldData(computerDifficulty: ComputerDifficulty): FieldData = FieldData(boardSize, playerSize, playerType, computerDifficulty)
   override def gameBoardData: GameBoardData =
     val (row, col) = boardSize.dimensions
     GameBoardData(
@@ -89,6 +89,7 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
       Vector.tabulate(col, row+1)((row, col) => getColCell(row, col)),
       Vector.tabulate(col, row)((row, col) => getStatusCell(row, col).toString)
     )
+  override def fieldData(computerDifficulty: ComputerDifficulty): FieldData = FieldData(boardSize, playerSize, playerType, computerDifficulty)
   override def playerGameData: PlayerGameData = PlayerGameData(currentPlayer, winner, stats, playerList)
   override def fieldSizeData: FieldSizeData = FieldSizeData(rowSize, colSize)
   override def getWinningMoves(coords: Vector[(Int, Int, Int)], field: FieldInterface): Vector[Move] =

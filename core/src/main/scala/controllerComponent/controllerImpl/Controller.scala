@@ -34,8 +34,6 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
   override def playerGameData: PlayerGameData = ModelRequestHttp.playerGameData(field)
   override def fieldSizeData: FieldSizeData = ModelRequestHttp.fieldSizeData(field)
   override def gameEnded: Boolean = ModelRequestHttp.gameData("gameEnded", field).toBoolean
-  override def winner: String = ModelRequestHttp.gameData("winner", field)
-  override def stats: String = ModelRequestHttp.gameData("stats", field)
 
   override def put(move: Move): String = undoManager.doStep(field, PutCommand(move, field))
   override def undo: FieldInterface = undoManager.undoStep(field)

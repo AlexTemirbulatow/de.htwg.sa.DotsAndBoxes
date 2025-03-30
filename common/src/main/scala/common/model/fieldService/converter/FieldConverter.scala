@@ -13,11 +13,6 @@ object FieldConverter:
         "playerSize"       -> field.playerSize.toString,
         "playerType"       -> field.playerType.toString,
         "currPlayerIndex"  -> field.currentPlayerIndex,
-        "currPoints"       -> field.currentPlayer.points,
-        "gameEnded"        -> field.isFinished,
-        "winner"           -> field.winner,
-        "colSize"          -> field.colSize,
-        "rowSize"          -> field.rowSize,
         "status" -> (
           for
             x <- 0 until col

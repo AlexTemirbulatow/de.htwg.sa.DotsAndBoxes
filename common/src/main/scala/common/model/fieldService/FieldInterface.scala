@@ -28,15 +28,13 @@ trait FieldInterface:
   def isCircularSequence(moveSeq1: (Int, Vector[(Int, Int, Int)]), moveSeq2: (Int, Vector[(Int, Int, Int)])): Boolean
   def isFinished: Boolean
   def isEdge(move: Move): Boolean
-  def winner: String
-  def stats: String
   def playerList: Vector[Player]
   def currentPlayer: Player
   def currentPlayerIndex: Int
   def getPlayerPoints(playerIndex: Int): Int
   def currentStatus: Vector[Vector[Status]]
-  def fieldData(computerDifficulty: ComputerDifficulty): FieldData
   def gameBoardData: GameBoardData
+  def fieldData(computerDifficulty: ComputerDifficulty): FieldData
   def playerGameData: PlayerGameData
   def fieldSizeData: FieldSizeData
   def getWinningMoves(coords: Vector[(Int, Int, Int)], field: FieldInterface): Vector[Move]

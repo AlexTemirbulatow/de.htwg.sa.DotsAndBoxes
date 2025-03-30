@@ -12,8 +12,6 @@ trait ControllerInterface extends Observable:
   def playerGameData: PlayerGameData
   def fieldSizeData: FieldSizeData
   def gameEnded: Boolean
-  def winner: String
-  def stats: String
   def put(move: Move): String
   def undo: FieldInterface
   def redo: FieldInterface

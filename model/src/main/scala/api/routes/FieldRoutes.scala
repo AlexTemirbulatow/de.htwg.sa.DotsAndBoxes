@@ -1,7 +1,7 @@
 package api.routes
 
 import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.model.StatusCodes.{BadRequest, Conflict, InternalServerError, NotFound}
+import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import common.model.fieldService.FieldInterface
@@ -20,8 +20,7 @@ class FieldRoutes:
       handlePreConnectRequest,
       handleNewFieldRequest,
       handlePlaceRequests,
-      handlePlayerPointsRequests,
-      handlePlayerNextRequests,
+      handlePlayerRequests,
       handleGameDataRequests,
       handleIsEdgeRequest,
       handleGetWinningMovesRequest,
@@ -80,7 +79,7 @@ class FieldRoutes:
     }
   }
 
-  private def handlePlayerPointsRequests: Route = post {
+  private def handlePlayerRequests: Route = post {
     pathPrefix("player") {
       path("add") {
         entity(as[String]) { json =>
@@ -94,12 +93,7 @@ class FieldRoutes:
             .updatePlayer(playerIndex)
           complete(fieldToJsonString(updatedField))
         }
-      }
-    }
-  }
-
-  private def handlePlayerNextRequests: Route = post {
-    pathPrefix("player") {
+      } ~
       path("next") {
         entity(as[String]) { json =>
           val jsonValue: JsValue = Json.parse(json)
@@ -111,76 +105,68 @@ class FieldRoutes:
     }
   }
 
-  private def handleGameDataRequests: Route = pathPrefix("get") {
-    path("asString") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).toString)
-      }
-    } ~
-    path("maxPosX") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).maxPosX.toString)
-      }
-    } ~
-    path("maxPosY") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).maxPosY.toString)
-      }
-    } ~
-    path("allAvailableCoords") {
-      entity(as[String]) { json =>
-        val field: FieldInterface = parsedField(json)
-        val allAvailableCoords: Vector[(Int, Int, Int)] =
-          field.getUnoccupiedRowCoords ++ field.getUnoccupiedColCoords
-        complete(allAvailableCoords.asJson.toString)
-      }
-    } ~
-    path("fieldData") {
-      entity(as[String]) { json =>
-        val jsonValue: JsValue = Json.parse(json)
-        val computerDifficulty: ComputerDifficulty =
-          Try(ComputerDifficulty.valueOf((jsonValue \ "computerDifficulty").as[String])).getOrElse(throw new RuntimeException("Invalid Computer Difficulty"))
-        complete(parsedField(json).fieldData(computerDifficulty).asJson.toString)
-      }
-    } ~
-    path("gameBoardData") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).gameBoardData.asJson.toString)
-      }
-    } ~
-    path("playerGameData") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).playerGameData.asJson.toString)
-      }
-    } ~
-    path("fieldSizeData") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).fieldSizeData.asJson.toString)
-      }
-    } ~
-    path("currentPlayer") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).currentPlayer.asJson.toString)
-      }
-    } ~
-    path("currentStatus") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).currentStatus.asJson.noSpaces)
-      }
-    } ~
-    path("gameEnded") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).isFinished.toString)
-      }
-    } ~
-    path("winner") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).winner)
-      }
-    } ~
-    path("stats") {
-      entity(as[String]) { json =>
-        complete(parsedField(json).stats)
+  private def handleGameDataRequests: Route = post {
+    pathPrefix("get") {
+      path("asString") {
+        entity(as[String]) { json =>
+          complete(parsedField(json).toString)
+        }
+      } ~
+      path("maxPosX") {
+        entity(as[String]) { json =>
+          complete(parsedField(json).maxPosX.toString)
+        }
+      } ~
+      path("maxPosY") {
+        entity(as[String]) { json =>
+          complete(parsedField(json).maxPosY.toString)
+        }
+      } ~
+      path("allAvailableCoords") {
+        entity(as[String]) { json =>
+          val field: FieldInterface = parsedField(json)
+          val allAvailableCoords: Vector[(Int, Int, Int)] =
+            field.getUnoccupiedRowCoords ++ field.getUnoccupiedColCoords
+          complete(allAvailableCoords.asJson.toString)
+        }
+      } ~
+      path("fieldData") {
+        entity(as[String]) { json =>
+          val jsonValue: JsValue = Json.parse(json)
+          val computerDifficulty: ComputerDifficulty =
+            Try(ComputerDifficulty.valueOf((jsonValue \ "computerDifficulty").as[String])).getOrElse(throw new RuntimeException("Invalid Computer Difficulty"))
+          complete(parsedField(json).fieldData(computerDifficulty).asJson.toString)
+        }
+      } ~
+      path("gameBoardData") {
+        entity(as[String]) { json =>
+          complete(parsedField(json).gameBoardData.asJson.toString)
+        }
+      } ~
+      path("playerGameData") {
+        entity(as[String]) { json =>
+          complete(parsedField(json).playerGameData.asJson.toString)
+        }
+      } ~
+      path("fieldSizeData") {
+        entity(as[String]) { json =>
+          complete(parsedField(json).fieldSizeData.asJson.toString)
+        }
+      } ~
+      path("currentPlayer") {
+        entity(as[String]) { json =>
+          complete(parsedField(json).currentPlayer.asJson.toString)
+        }
+      } ~
+      path("currentStatus") {
+        entity(as[String]) { json =>
+          complete(parsedField(json).currentStatus.asJson.noSpaces)
+        }
+      } ~
+      path("gameEnded") {
+        entity(as[String]) { json =>
+          complete(parsedField(json).isFinished.toString)
+        }
       }
     }
   }
