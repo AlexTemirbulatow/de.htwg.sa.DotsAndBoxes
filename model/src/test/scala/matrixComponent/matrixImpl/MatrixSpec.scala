@@ -3,11 +3,11 @@ package matrixComponent.matrixImpl
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 
+import de.github.dotsandboxes.lib._
 import matrixComponent.MatrixInterface
-import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, SquareCase, Status, Player, Move, list}
 
 class MatrixSpec extends AnyWordSpec {
-  "A Matrix" when {/*
+  "A Matrix" when {
     "initialized" should {
       "have the correct size" in {
         val matrix1 = new Matrix(
@@ -49,8 +49,6 @@ class MatrixSpec extends AnyWordSpec {
             Vector(false, false, false, false, false)
           )
         matrix.vectorStatus should be(expectedVectorStatus)
-        matrix.vectorRow should be(expectedVectorRow)
-        matrix.vectorCol should be(expectedVectorCol)
       }
       "return proper max positions" in {
         matrix.maxPosX should be(3)
@@ -281,23 +279,24 @@ class MatrixSpec extends AnyWordSpec {
       "return the correct player" in {
         val matrix = new Matrix(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
 
-        matrix.currentPlayerInfo._1 should be("Blue")
-        matrix.currentPlayerInfo._2 should be(0)
-        matrix.updatePlayer(0).currentPlayerInfo._2 should be(0)
-        matrix.updatePlayer(0).changePlayer.currentPlayerInfo._2 should be(1)
+        matrix.updatePlayer(0).currentPlayer shouldBe Player("Blue", 0, Status.Blue, PlayerType.Human)
+        matrix.updatePlayer(0).changePlayer.currentPlayer shouldBe Player("Red", 0, Status.Red, PlayerType.Human)
+        matrix.updatePlayer(1).changePlayer.currentPlayer shouldBe Player("Blue", 0, Status.Blue, PlayerType.Human)
       }
       "return correct player points" in {
         val matrix = new Matrix(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
 
-        matrix.currentPlayerInfo(0) should be("Blue")
-        matrix.currentPoints should be(0)
+        matrix.currentPlayer.playerId should be("Blue")
+        matrix.currentPlayer.points should be(0)
+        matrix.currentPlayer.status shouldBe Status.Blue
+        matrix.currentPlayer.playerType shouldBe PlayerType.Human
 
-        matrix.addPoints(0, 1).updatePlayer(0).currentPoints should be(1)
-        matrix.addPoints(1, 5).updatePlayer(1).currentPoints should be(5)
+        matrix.addPoints(0, 1).updatePlayer(0).currentPlayer.points should be(1)
+        matrix.addPoints(1, 5).updatePlayer(1).currentPlayer.points should be(5)
         matrix
           .addPoints(1, 5).updatePlayer(1)
           .addPoints(1, 3).updatePlayer(1)
-          .currentPoints should be(8)
+          .currentPlayer.points should be(8)
       }
       "return cells to check" in {
         val matrix = new Matrix(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
@@ -329,13 +328,13 @@ class MatrixSpec extends AnyWordSpec {
           .replaceRowCell(1, 0, true).replaceRowCell(1, 1, true).replaceRowCell(1, 2, true).replaceRowCell(1, 3, true)
           .replaceRowCell(2, 0, true).replaceRowCell(2, 1, true).replaceRowCell(2, 2, true).replaceRowCell(2, 3, true)
 
-        matrix.getUnoccupiedRowCoord shouldBe Vector(
+        matrix.getUnoccupiedRowCoords shouldBe Vector(
           (1, 0, 3), (1, 3, 0), (1, 3, 1), (1, 3, 2), (1, 3, 3)
         )
 
         val newMatrix = matrix.replaceRowCell(0, 3, true).replaceRowCell(3, 0, true).replaceRowCell(3, 1, true)
 
-        newMatrix.getUnoccupiedRowCoord shouldBe Vector(
+        newMatrix.getUnoccupiedRowCoords shouldBe Vector(
           (1, 3, 2), (1, 3, 3)
         )
       }
@@ -344,13 +343,13 @@ class MatrixSpec extends AnyWordSpec {
           .replaceColCell(0, 0, true).replaceColCell(0, 1, true).replaceColCell(0, 2, true).replaceColCell(0, 4, true)
           .replaceColCell(1, 0, true).replaceColCell(1, 1, true).replaceColCell(1, 2, true).replaceColCell(1, 3, true).replaceColCell(1, 4, true)
 
-        matrix.getUnoccupiedColCoord shouldBe Vector(
+        matrix.getUnoccupiedColCoords shouldBe Vector(
           (2, 0, 3), (2, 2, 0), (2, 2, 1), (2, 2, 2), (2, 2, 3), (2, 2, 4)
         )
 
         val newMatrix = matrix.replaceColCell(0, 3, true).replaceColCell(2, 0, true).replaceColCell(2, 1, true)
 
-        newMatrix.getUnoccupiedColCoord shouldBe Vector(
+        newMatrix.getUnoccupiedColCoords shouldBe Vector(
           (2, 2, 2), (2, 2, 3), (2, 2, 4)
         )
       }
@@ -503,7 +502,7 @@ class MatrixSpec extends AnyWordSpec {
           )
         )
 
-        matrix.addPoints(1, 5).updatePlayer(1).getPoints(1) should be(5)
+        matrix.addPoints(1, 5).updatePlayer(1).getPlayerPoints(1) should be(5)
 
         matrix.list should not be (list)
 
@@ -589,6 +588,6 @@ class MatrixSpec extends AnyWordSpec {
           )
         )
       }
-    }*/
+    }
   }
 }

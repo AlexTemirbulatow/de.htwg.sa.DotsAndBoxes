@@ -9,13 +9,11 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
   def this(boardSize: BoardSize, status: Status, playerSize: PlayerSize, playerType: PlayerType) =
     this(new Matrix(boardSize, status, playerSize, playerType))
 
-  def bar(length: Int, cellNum: Int, rowIndex: Int): String = List
-    .tabulate(cellNum)(colIndex => rows(rowIndex, colIndex, length))
-    .mkString(Connectors("O"), Connectors("O"), Connectors("O")) + "\n"
+  def space(length: Int): String = " " * ((length - 1) / 2)
 
-  def cells( rowSize: Int, length: Int, height: Int): String = List.fill(height)(List
-    .tabulate(maxPosY + 1)(colIndex => columns(rowSize, colIndex, length))
-    .mkString + "\n").mkString
+  def status(rowIndex: Int, colIndex: Int, length: Int): String = (colIndex < maxPosY) match
+    case false => Connectors("")
+    case true  => space(length) + getStatusCell(rowIndex, colIndex) + space(length)
 
   def rows(rowIndex: Int, colIndex: Int, length: Int): String = getRowCell(rowIndex, colIndex) match
     case false => Connectors("-") * length
@@ -25,11 +23,13 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
     case false => Connectors("¦") + status(rowIndex, colIndex, length)
     case true  => Connectors("‖") + status(rowIndex, colIndex, length)
 
-  def status(rowIndex: Int, colIndex: Int, length: Int): String = (colIndex < maxPosY) match
-    case false => Connectors("")
-    case true  => space(length) + getStatusCell(rowIndex, colIndex) + space(length)
+  def bar(length: Int, cellNum: Int, rowIndex: Int): String = List
+    .tabulate(cellNum)(colIndex => rows(rowIndex, colIndex, length))
+    .mkString(Connectors("O"), Connectors("O"), Connectors("O")) + "\n"
 
-  def space(length: Int): String = " " * ((length - 1) / 2)
+  def cells(rowSize: Int, length: Int, height: Int): String = List.fill(height)(List
+    .tabulate(maxPosY + 1)(colIndex => columns(rowSize, colIndex, length))
+    .mkString + "\n").mkString
 
   def mesh(length: Int, height: Int): String = List
     .tabulate(maxPosX)(x => bar(length, maxPosY, x) + cells(x, length, height))

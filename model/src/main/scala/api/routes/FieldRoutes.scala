@@ -42,10 +42,10 @@ class FieldRoutes:
     path("newField") {
       entity(as[String]) { json =>
         val jsonValue: JsValue = Json.parse(json)
-        val boardSize: BoardSize   = Try(BoardSize.valueOf((jsonValue \ "boardSize").as[String])).getOrElse(throw new RuntimeException("Invalid Board Size."))
-        val status: Status         = Status.values.find(_.toString == (jsonValue \ "status").as[String]).getOrElse(throw new RuntimeException("Invalid Status."))
-        val playerSize: PlayerSize = Try(PlayerSize.valueOf((jsonValue \ "playerSize").as[String])).getOrElse(throw new RuntimeException("Invalid Player Size."))
-        val playerType: PlayerType = Try(PlayerType.valueOf((jsonValue \ "playerType").as[String])).getOrElse(throw new RuntimeException("Invalid Player Type."))
+        val boardSize: BoardSize   = Try(BoardSize.valueOf((jsonValue \ "boardSize").as[String])).getOrElse(throw new IllegalArgumentException("Invalid Board Size."))
+        val status: Status         = Status.values.find(_.toString == (jsonValue \ "status").as[String]).getOrElse(throw new IllegalArgumentException("Invalid Status."))
+        val playerSize: PlayerSize = Try(PlayerSize.valueOf((jsonValue \ "playerSize").as[String])).getOrElse(throw new IllegalArgumentException("Invalid Player Size."))
+        val playerType: PlayerType = Try(PlayerType.valueOf((jsonValue \ "playerType").as[String])).getOrElse(throw new IllegalArgumentException("Invalid Player Type."))
         val fieldResult: JsLookupResult = (jsonValue \ "field")
         complete(fieldToJsonString(parsedField(fieldResult).newField(boardSize, status, playerSize, playerType)))
       }
@@ -134,7 +134,7 @@ class FieldRoutes:
         entity(as[String]) { json =>
           val jsonValue: JsValue = Json.parse(json)
           val computerDifficulty: ComputerDifficulty =
-            Try(ComputerDifficulty.valueOf((jsonValue \ "computerDifficulty").as[String])).getOrElse(throw new RuntimeException("Invalid Computer Difficulty"))
+            Try(ComputerDifficulty.valueOf((jsonValue \ "computerDifficulty").as[String])).getOrElse(throw new IllegalArgumentException("Invalid Computer Difficulty."))
           complete(parsedField(json).fieldData(computerDifficulty).asJson.toString)
         }
       } ~
@@ -195,7 +195,7 @@ class FieldRoutes:
           val coords: Vector[(Int, Int, Int)] =
             decode[Vector[(Int, Int, Int)]]((jsonValue \ "coords").as[String]) match
               case Right(coords) => coords
-              case Left(error)   => throw new RuntimeException(s"Error decoding Vector[(Int, Int, Int)]: ${error.getMessage}")
+              case Left(error)   => throw new IllegalArgumentException(s"Error decoding Vector[(Int, Int, Int)]: ${error.getMessage}")
           val fieldResult: JsLookupResult = (jsonValue \ "field")
           val field: FieldInterface = parsedField(fieldResult)
           complete(field.getWinningMoves(coords, field).asJson.toString)
@@ -212,7 +212,7 @@ class FieldRoutes:
           val coords: Vector[(Int, Int, Int)] =
             decode[Vector[(Int, Int, Int)]]((jsonValue \ "coords").as[String]) match
               case Right(coords) => coords
-              case Left(error)   => throw new RuntimeException(s"Error decoding Vector[(Int, Int, Int)]: ${error.getMessage}")
+              case Left(error)   => throw new IllegalArgumentException(s"Error decoding Vector[(Int, Int, Int)]: ${error.getMessage}")
           val fieldResult: JsLookupResult = (jsonValue \ "field")
           val field: FieldInterface = parsedField(fieldResult)
           complete(field.getSaveMoves(coords, field).asJson.toString)
@@ -245,13 +245,13 @@ class FieldRoutes:
           val moveSeq1: (Int, Vector[(Int, Int, Int)]) =
             decode[(Int, Vector[(Int, Int, Int)])]((jsonValue \ "moveSeq1").as[String]) match
               case Right(moveSeq) => moveSeq
-              case Left(error)    => throw new RuntimeException(s"Error decoding (Int, Vector[(Int, Int, Int)]): ${error.getMessage}")
+              case Left(error)    => throw new IllegalArgumentException(s"Error decoding (Int, Vector[(Int, Int, Int)]): ${error.getMessage}")
           val moveSeq2: (Int, Vector[(Int, Int, Int)]) =
             decode[(Int, Vector[(Int, Int, Int)])]((jsonValue \ "moveSeq2").as[String]) match
               case Right(moveSeq) => moveSeq
-              case Left(error)    => throw new RuntimeException(s"Error decoding (Int, Vector[(Int, Int, Int)]): ${error.getMessage}")
+              case Left(error)    => throw new IllegalArgumentException(s"Error decoding (Int, Vector[(Int, Int, Int)]): ${error.getMessage}")
           val fieldResult: JsLookupResult = (jsonValue \ "field")
-          complete(parsedField(fieldResult).isCircularSequence(moveSeq1, moveSeq2).asJson.toString)
+          complete(parsedField(fieldResult).isCircularSequence(moveSeq1, moveSeq2).toString)
         }
       }
     }
@@ -265,7 +265,7 @@ class FieldRoutes:
           val coords: Vector[(Int, Int, Int)] =
             decode[Vector[(Int, Int, Int)]]((jsonValue \ "coords").as[String]) match
               case Right(coords) => coords
-              case Left(error)   => throw new RuntimeException(s"Error decoding Vector[(Int, Int, Int)]: ${error.getMessage}")
+              case Left(error)   => throw new IllegalArgumentException(s"Error decoding Vector[(Int, Int, Int)]: ${error.getMessage}")
           val fieldResult: JsLookupResult = (jsonValue \ "field")
           val field: FieldInterface = parsedField(fieldResult)
           complete(field.chainsWithPointsOutcome(coords, field).asJson.toString)
@@ -356,11 +356,9 @@ class FieldRoutes:
   private def fieldToJsonString(field: FieldInterface): String =
     FieldConverter.toJson(field).toString
 
-private val exceptionHandler = ExceptionHandler {
-  case e: NoSuchElementException =>
-    complete(NotFound -> e.getMessage)
-  case e: IllegalArgumentException =>
-    complete(Conflict -> e.getMessage)
-  case e: Throwable =>
-    complete(InternalServerError -> Option(e.getMessage).getOrElse("Unknown error"))
-}
+  private val exceptionHandler = ExceptionHandler {
+    case e: IllegalArgumentException =>
+      complete(Conflict -> e.getMessage)
+    case e: Throwable =>
+      complete(InternalServerError -> e.getMessage)
+  }
