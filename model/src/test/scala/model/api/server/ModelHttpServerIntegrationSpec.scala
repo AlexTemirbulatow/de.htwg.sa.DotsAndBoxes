@@ -1,4 +1,4 @@
-package api.server
+package model.api.server
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
@@ -18,7 +18,7 @@ class ModelHttpServerIntegrationSpec extends AnyWordSpec with BeforeAndAfterAll 
 
   "ModelHttpServer" should {
     "start and respond to requests" in {
-      val serverBindingFuture: Future[ServerBinding] = ModelHttpServer.run
+      val serverBindingFuture: Future[ServerBinding] = model.api.server.ModelHttpServer.run
 
       serverBindingFuture.flatMap { binding =>
         val request = Http().singleRequest(HttpRequest(

@@ -1,10 +1,11 @@
-package matrixComponent.matrixImpl
+package model.matrixComponent.matrixImpl
 
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 
 import de.github.dotsandboxes.lib._
-import matrixComponent.MatrixInterface
+import model.matrixComponent.MatrixInterface
+import model.matrixComponent.matrixImpl.Matrix
 
 class MatrixSpec extends AnyWordSpec {
   "A Matrix" when {

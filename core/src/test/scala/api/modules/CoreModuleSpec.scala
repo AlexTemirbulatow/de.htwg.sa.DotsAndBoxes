@@ -4,7 +4,7 @@ import CoreModule.given
 import common.model.fieldService.FieldInterface
 import controllerComponent.ControllerInterface
 import de.github.dotsandboxes.lib._
-import fieldComponent.fieldImpl.Field
+import model.fieldComponent.fieldImpl.Field
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 

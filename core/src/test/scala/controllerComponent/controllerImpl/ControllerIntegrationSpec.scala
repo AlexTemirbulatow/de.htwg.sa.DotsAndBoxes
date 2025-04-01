@@ -6,13 +6,13 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Directives.pathPrefix
 import akka.http.scaladsl.server.Route
-import api.routes.FieldRoutes
+import model.api.routes.FieldRoutes
 import api.service.ComputerRequestHttp
 import common.config.ServiceConfig._
 import common.model.fieldService.FieldInterface
 import computer.api.routes.ComputerRoutes
 import de.github.dotsandboxes.lib._
-import fieldComponent.fieldImpl.Field
+import model.fieldComponent.fieldImpl.Field
 import observer.Observer
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterAll

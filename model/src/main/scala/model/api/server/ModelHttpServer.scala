@@ -1,12 +1,12 @@
-package api.server
+package model.api.server
 
 import akka.actor.{ActorSystem, CoordinatedShutdown}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import api.routes.FieldRoutes
 import common.config.ServiceConfig.{MODEL_BASE_URL, MODEL_HOST, MODEL_PORT}
+import model.api.routes.FieldRoutes
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}

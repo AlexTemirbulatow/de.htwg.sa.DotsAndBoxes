@@ -11,7 +11,7 @@ import controllerImpl.moveHandler.MoveValidator
 import controllerImpl.moveStrategy.{EdgeState, MidState, MoveStrategy}
 import controllerImpl.playerStrategy.PlayerStrategy
 import de.github.dotsandboxes.lib._
-import fieldComponent.parser.FieldParser
+import model.fieldComponent.parser.FieldParser
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}

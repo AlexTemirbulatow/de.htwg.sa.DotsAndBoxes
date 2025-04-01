@@ -1,9 +1,9 @@
-package fieldComponent.fieldImpl
+package model.fieldComponent.fieldImpl
 
 import common.model.fieldService.FieldInterface
 import de.github.dotsandboxes.lib._
-import matrixComponent.MatrixInterface
-import matrixComponent.matrixImpl.Matrix
+import model.matrixComponent.MatrixInterface
+import model.matrixComponent.matrixImpl.Matrix
 
 case class Field(matrix: MatrixInterface) extends FieldInterface:
   def this(boardSize: BoardSize, status: Status, playerSize: PlayerSize, playerType: PlayerType) =

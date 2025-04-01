@@ -1,4 +1,4 @@
-package matrixComponent
+package model.matrixComponent
 
 import de.github.dotsandboxes.lib._
 

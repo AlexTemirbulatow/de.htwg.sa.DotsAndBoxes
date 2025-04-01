@@ -1,11 +1,12 @@
-package fieldComponent.fieldImpl
+package model.fieldComponent.fieldImpl
 
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 
 import common.model.fieldService.FieldInterface
 import de.github.dotsandboxes.lib._
-import matrixComponent.matrixImpl.Matrix
+import model.fieldComponent.fieldImpl.Field
+import model.matrixComponent.matrixImpl.Matrix
 
 class FieldSpec extends AnyWordSpec {
   "A Dots and Boxes Field" when {

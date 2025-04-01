@@ -1,4 +1,4 @@
-package fieldComponent.fieldImpl
+package model.fieldComponent.fieldImpl
 
 trait Connectors:
   val stringRepresentation: String

@@ -1,4 +1,4 @@
-package fieldComponent.parser
+package model.fieldComponent.parser
 
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
@@ -6,7 +6,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import common.model.fieldService.FieldInterface
 import common.model.fieldService.converter.FieldConverter
 import de.github.dotsandboxes.lib._
-import fieldComponent.fieldImpl.Field
+import model.fieldComponent.fieldImpl.Field
 
 class FieldParserSpec extends AnyWordSpec {
   "A FieldParser" when {

@@ -1,4 +1,4 @@
-package api.routes
+package model.api.routes
 
 import akka.http.scaladsl.model.HttpEntity.Strict
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, StatusCodes}
@@ -7,12 +7,13 @@ import akka.http.scaladsl.testkit.ScalatestRouteTest
 import common.model.fieldService.FieldInterface
 import common.model.fieldService.converter.FieldConverter
 import de.github.dotsandboxes.lib._
-import fieldComponent.fieldImpl.Field
-import fieldComponent.parser.FieldParser
 import io.circe.Error
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import io.circe.syntax._
+import model.api.routes.FieldRoutes
+import model.fieldComponent.fieldImpl.Field
+import model.fieldComponent.parser.FieldParser
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.Json

@@ -1,8 +1,8 @@
-package fieldComponent.parser
+package model.fieldComponent.parser
 
 import common.model.fieldService.FieldInterface
 import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, Status}
-import fieldComponent.fieldImpl.Field
+import model.fieldComponent.fieldImpl.Field
 import play.api.libs.json.{JsLookupResult, JsValue, Json}
 import scala.util.Try
 import scala.xml.{Elem, NodeSeq, XML}

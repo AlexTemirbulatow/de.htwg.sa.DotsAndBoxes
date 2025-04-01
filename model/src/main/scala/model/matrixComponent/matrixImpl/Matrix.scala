@@ -1,7 +1,7 @@
-package matrixComponent.matrixImpl
+package model.matrixComponent.matrixImpl
 
 import de.github.dotsandboxes.lib._
-import matrixComponent.MatrixInterface
+import model.matrixComponent.MatrixInterface
 
 case class Matrix(
   vecStatus: Vector[Vector[Status]],

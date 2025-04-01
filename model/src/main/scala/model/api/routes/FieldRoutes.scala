@@ -1,4 +1,4 @@
-package api.routes
+package model.api.routes
 
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.StatusCodes._
@@ -7,10 +7,10 @@ import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import common.model.fieldService.FieldInterface
 import common.model.fieldService.converter.FieldConverter
 import de.github.dotsandboxes.lib._
-import fieldComponent.parser.FieldParser
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import io.circe.syntax._
+import model.fieldComponent.parser.FieldParser
 import play.api.libs.json.{JsLookupResult, JsValue, Json}
 import scala.util.Try
 
