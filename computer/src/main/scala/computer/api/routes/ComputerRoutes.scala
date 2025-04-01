@@ -1,14 +1,14 @@
-package api.routes
+package computer.api.routes
 
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
-import api.service.ModelRequestHttp
-import computerComponent.ComputerInterface
-import computerComponent.computerEasyImpl.ComputerEasy
-import computerComponent.computerHardImpl.ComputerHard
-import computerComponent.computerMediumImpl.ComputerMedium
+import computer.api.service.ModelRequestHttp
+import computer.computerComponent.ComputerInterface
+import computer.computerComponent.computerEasyImpl.ComputerEasy
+import computer.computerComponent.computerHardImpl.ComputerHard
+import computer.computerComponent.computerMediumImpl.ComputerMedium
 import de.github.dotsandboxes.lib.ComputerDifficulty
 import io.circe.generic.auto._
 import io.circe.syntax._

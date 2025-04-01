@@ -1,4 +1,4 @@
-package computerComponent
+package computer.computerComponent
 
 import de.github.dotsandboxes.lib.Move
 

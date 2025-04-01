@@ -1,7 +1,7 @@
-package computerComponent.computerEasyImpl
+package computer.computerComponent.computerEasyImpl
 
-import api.service.ModelRequestHttp
-import computerComponent.ComputerInterface
+import computer.api.service.ModelRequestHttp
+import computer.computerComponent.ComputerInterface
 import de.github.dotsandboxes.lib.Move
 import scala.util.Random.shuffle
 

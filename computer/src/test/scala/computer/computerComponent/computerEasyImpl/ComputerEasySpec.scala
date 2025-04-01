@@ -1,4 +1,4 @@
-package computerComponent.computerEasyImpl
+package computer.computerComponent.computerEasyImpl
 
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec

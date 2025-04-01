@@ -1,6 +1,6 @@
-package api.service
+package computer.api.service
 
-import api.client.ModelClient
+import computer.api.client.ModelClient
 import de.github.dotsandboxes.lib.Move
 import io.circe.generic.auto._
 import io.circe.parser.decode
