@@ -1,7 +1,7 @@
-package guiComponent
+package gui.guiComponent
 
-import api.service.CoreRequestHttp
 import de.github.dotsandboxes.lib._
+import gui.api.service.CoreRequestHttp
 import java.awt.{Color, Cursor, Font, GradientPaint, RenderingHints}
 import java.io.File
 import javax.imageio.ImageIO

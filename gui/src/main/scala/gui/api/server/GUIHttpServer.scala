@@ -1,14 +1,14 @@
-package api.server
+package gui.api.server
 
 import akka.actor.{ActorSystem, CoordinatedShutdown}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import api.routes.GUIRoutes
-import api.service.CoreRequestHttp
 import common.config.ServiceConfig.{GUI_BASE_URL, GUI_HOST, GUI_OBSERVER_URL, GUI_PORT}
-import guiComponent.GUI
+import gui.api.routes.GUIRoutes
+import gui.api.service.CoreRequestHttp
+import gui.guiComponent.GUI
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}

@@ -1,4 +1,4 @@
-package api.client
+package gui.api.client
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http

@@ -1,4 +1,4 @@
-package guiComponent
+package gui.guiComponent
 
 import org.scalatest.wordspec.AnyWordSpec
 

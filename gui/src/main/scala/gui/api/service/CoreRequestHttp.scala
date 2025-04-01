@@ -1,7 +1,7 @@
-package api.service
+package gui.api.service
 
-import api.client.CoreClient
 import de.github.dotsandboxes.lib._
+import gui.api.client.CoreClient
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import play.api.libs.json.Json

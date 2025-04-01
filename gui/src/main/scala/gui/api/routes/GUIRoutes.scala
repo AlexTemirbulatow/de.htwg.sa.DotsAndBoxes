@@ -1,11 +1,11 @@
-package api.routes
+package gui.api.routes
 
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import de.github.dotsandboxes.lib.Event
-import guiComponent.GUI
+import gui.guiComponent.GUI
 
 class GUIRoutes(val gui: GUI):
   def guiRoutes: Route = handleExceptions(exceptionHandler) {
