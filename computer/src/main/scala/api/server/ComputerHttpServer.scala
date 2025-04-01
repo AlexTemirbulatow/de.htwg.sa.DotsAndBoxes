@@ -1,6 +1,6 @@
 package api.server
 
-import akka.actor.ActorSystem
+import akka.actor.{ActorSystem, CoordinatedShutdown}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Directives._
@@ -10,7 +10,7 @@ import api.service.ModelRequestHttp
 import common.config.ServiceConfig.{COMPUTER_BASE_URL, COMPUTER_HOST, COMPUTER_PORT}
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}
-import scala.io.StdIn
+import scala.util.{Failure, Success}
 
 object ComputerHttpServer:
   private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
@@ -18,13 +18,18 @@ object ComputerHttpServer:
 
   private val logger = LoggerFactory.getLogger(getClass)
 
-  def run: Unit =
-    val server = Http()
+  def run: Future[ServerBinding] =
+    val serverBinding = Http()
       .newServerAt(COMPUTER_HOST, COMPUTER_PORT)
       .bind(routes(new ComputerRoutes))
-    logger.info(s"Computer Service -- Http Server is running at $COMPUTER_BASE_URL\n\nPress RETURN to terminate...\n")
-    StdIn.readLine()
-    shutdown(server)
+
+    CoordinatedShutdown(system).addJvmShutdownHook(shutdown(serverBinding))
+
+    serverBinding.onComplete {
+      case Success(binding)   => logger.info(s"Computer Service -- Http Server is running at $COMPUTER_BASE_URL\n")
+      case Failure(exception) => logger.error(s"Computer Service -- Http Server failed to start", exception)
+    }
+    serverBinding
 
   private def routes(computerRoutes: ComputerRoutes): Route =
     pathPrefix("api") {
@@ -37,8 +42,8 @@ object ComputerHttpServer:
       )
     }
 
-  private def shutdown(server: Future[ServerBinding]): Unit =
-    server
+  private def shutdown(serverBinding: Future[ServerBinding]): Unit =
+    serverBinding
       .flatMap(_.unbind())
       .onComplete { _ =>
         logger.info("Computer Service -- Shutting Down Http Server...")

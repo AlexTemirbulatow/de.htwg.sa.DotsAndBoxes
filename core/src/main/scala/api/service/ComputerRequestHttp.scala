@@ -20,5 +20,3 @@ object ComputerRequestHttp:
     ) match
       case Right(move) => move
       case Left(error) => throw new RuntimeException(s"Error decoding Move: ${error.getMessage}")
-
-  def shutdown: Future[Unit] = ComputerClient.shutdown

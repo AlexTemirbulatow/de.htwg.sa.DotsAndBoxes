@@ -45,9 +45,10 @@ object ModelHttpServer:
       )
     }
 
-  private def shutdown(serverBinding: Future[ServerBinding]): Unit = serverBinding
-    .flatMap(_.unbind())
-    .onComplete { _ =>
-      logger.info("Model Service -- Shutting Down Http Server...")
-      system.terminate()
-    }
+  private def shutdown(serverBinding: Future[ServerBinding]): Unit =
+    serverBinding
+      .flatMap(_.unbind())
+      .onComplete { _ =>
+        logger.info("Model Service -- Shutting Down Http Server...")
+        system.terminate()
+      }

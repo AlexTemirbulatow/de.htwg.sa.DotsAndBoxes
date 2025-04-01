@@ -17,5 +17,3 @@ object PersistenceRequestHttp:
     Await.result(PersistenceClient.postRequest("api/persistence/fileIO/load", Json.obj(
       "fileFormat" -> fileFormat.toString
     )), 5.seconds)
-
-  def shutdown: Future[Unit] = PersistenceClient.shutdown

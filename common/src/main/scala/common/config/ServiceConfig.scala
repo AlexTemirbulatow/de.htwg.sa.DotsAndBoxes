@@ -20,8 +20,10 @@ object ServiceConfig:
 
   val TUI_HOST = "localhost"
   val TUI_PORT = 8084
+  val TUI_BASE_URL = s"http://$TUI_HOST:$TUI_PORT/"
   val TUI_OBSERVER_URL = s"http://$TUI_HOST:$TUI_PORT/api/tui/update"
 
   val GUI_HOST = "localhost"
   val GUI_PORT = 8085
+  val GUI_BASE_URL = s"http://$GUI_HOST:$GUI_PORT/"
   val GUI_OBSERVER_URL = s"http://$GUI_HOST:$GUI_PORT/api/gui/update"

@@ -141,6 +141,4 @@ object ModelRequestHttp:
       "y"     -> y
     )), 5.seconds)
 
-  def shutdown: Future[Unit] = ModelClient.shutdown
-
   private def fieldJsonString(field: FieldInterface): String = FieldConverter.toJson(field).toString
