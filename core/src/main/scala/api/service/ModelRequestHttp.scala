@@ -28,7 +28,7 @@ object ModelRequestHttp:
       "y"     -> y
     )), 5.seconds)
 
-  def newGame(boardSize: BoardSize, status: Status, playerSize: PlayerSize, playerType: PlayerType, field: FieldInterface): String =
+  def newField(boardSize: BoardSize, status: Status, playerSize: PlayerSize, playerType: PlayerType, field: FieldInterface): String =
     Await.result(ModelClient.postRequest("api/model/field/newField", Json.obj(
       "field"      -> fieldJsonString(field),
       "boardSize"  -> boardSize.toString,

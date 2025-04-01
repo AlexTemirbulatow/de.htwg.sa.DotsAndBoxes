@@ -4,7 +4,6 @@ import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 import scala.util.{Failure, Success}
 
-import common.model.fieldService.FieldInterface
 import fieldComponent.fieldImpl.Field
 import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, Status, Move}
 
@@ -47,28 +46,29 @@ class MoveValidatorSpec extends AnyWordSpec {
       val move = Move(1, 2, 2, true)
       MoveValidator.validate(move, field) shouldBe Success("Move was successful!")
     }
-
     "fail when move vector is invalid" in {
       val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
       val move = Move(3, 2, 2, true)
       MoveValidator.validate(move, field).failed.get shouldBe a[MatchError]
     }
-
     "fail when x-coordinate is out of bounds" in {
       val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
       val move = Move(1, -1, 2, true)
       MoveValidator.validate(move, field).failed.get shouldBe a[MatchError]
     }
-
     "fail when y-coordinate is out of bounds" in {
       val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
       val move = Move(1, 2, 6, true)
       MoveValidator.validate(move, field).failed.get shouldBe a[MatchError]
     }
-
-    "fail when the move is already taken" in {
+    "fail when the row move is already taken" in {
       val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human).putRow(1, 1, true)
       val move = Move(1, 1, 1, true)
+      MoveValidator.validate(move, field).failed.get shouldBe a[MatchError]
+    }
+    "fail when the col move is already taken" in {
+      val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human).putCol(1, 1, true)
+      val move = Move(2, 1, 1, true)
       MoveValidator.validate(move, field).failed.get shouldBe a[MatchError]
     }
   }

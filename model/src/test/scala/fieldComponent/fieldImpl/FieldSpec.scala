@@ -132,7 +132,6 @@ class FieldSpec extends AnyWordSpec {
           "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
           "¦   -   ¦   -   ¦   -   ¦   -   ¦\n" +
           "O-------O-------O-------O-------O\n"
-          
         )
         field1.mesh(1, 2) should be(
           "O-O-O-O-O\n" +

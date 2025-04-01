@@ -19,13 +19,13 @@ import scala.util.{Failure, Success, Try}
 class Controller(using var field: FieldInterface, var fileFormat: FileFormat, var computerDifficulty: ComputerDifficulty) extends ControllerInterface:
   private val undoManager = new UndoManager
 
-  def newGame(boardSize: BoardSize, status: Status, playerSize: PlayerSize, playerType: PlayerType, field: FieldInterface): FieldInterface =
-    FieldParser.fromJson(ModelRequestHttp.newGame(boardSize, Status.Empty, playerSize, playerType, field))
+  def newField(boardSize: BoardSize, status: Status, playerSize: PlayerSize, playerType: PlayerType): FieldInterface =
+    FieldParser.fromJson(ModelRequestHttp.newField(boardSize, Status.Empty, playerSize, playerType, field))
 
   def fieldString: String = ModelRequestHttp.gameData("asString", field)
   def currentPlayer: Player = ModelRequestHttp.currentPlayer(field)
-  def currentStatus(field: FieldInterface): Vector[Vector[Status]] = ModelRequestHttp.currentStatus(field)
-  def isEdge(move: Move, field: FieldInterface): Boolean = ModelRequestHttp.isEdge(move, field)
+  def currentStatus: Vector[Vector[Status]] = ModelRequestHttp.currentStatus(field)
+  def isEdge(move: Move): Boolean = ModelRequestHttp.isEdge(move, field)
 
   override def fieldData: FieldData = ModelRequestHttp.fieldData(computerDifficulty, field)
   override def gameBoardData: GameBoardData = ModelRequestHttp.gameBoardData(field)
@@ -54,7 +54,7 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
     initGame(data.boardSize, data.playerSize, data.playerType, computerDifficulty)
   override def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, difficulty: ComputerDifficulty): FieldInterface =
     if playerType == PlayerType.Computer then ComputerRequestHttp.preConnect
-    field = newGame(boardSize, Status.Empty, playerSize, playerType, field)
+    field = newField(boardSize, Status.Empty, playerSize, playerType)
     computerDifficulty = if playerSize != PlayerSize.Two && difficulty == ComputerDifficulty.Hard then ComputerDifficulty.Medium else difficulty
     notifyObservers(Event.Move)
     field
@@ -69,10 +69,10 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
       case Failure(exception) => Failure(exception)
       case Success(_) =>
         field = FieldParser.fromJson(doThis(move))
-        val preStatus = currentStatus(field)
-        val movePosition = if isEdge(move, field) then EdgeState else MidState
+        val preStatus = currentStatus
+        val movePosition = if isEdge(move) then EdgeState else MidState
         field = FieldParser.fromJson(MoveStrategy.executeStrategy(movePosition, move, field))
-        val postStatus = currentStatus(field)
+        val postStatus = currentStatus
         field = FieldParser.fromJson(PlayerStrategy.updatePlayer(field, preStatus, postStatus))
         notifyObservers(Event.Move)
         if gameEnded then notifyObservers(Event.End); Success(field)

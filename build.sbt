@@ -50,6 +50,7 @@ lazy val core = project
   .settings(name := "core")
   .settings(commonSettings)
   .dependsOn(common, model)
+  .dependsOn(persistence % Test, computer % Test)
 
 lazy val model = project
   .in(file("model"))
