@@ -3,13 +3,14 @@ package controllerImpl
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
+import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Directives.pathPrefix
 import akka.http.scaladsl.server.Route
 import api.routes.FieldRoutes
-import api.routes.{ComputerRoutes, FileIORoutes}
 import api.service.ComputerRequestHttp
 import common.config.ServiceConfig._
 import common.model.fieldService.FieldInterface
+import computer.api.routes.ComputerRoutes
 import de.github.dotsandboxes.lib._
 import fieldComponent.fieldImpl.Field
 import observer.Observer
@@ -18,11 +19,11 @@ import org.scalatest.BeforeAndAfterAll
 import org.scalatest.concurrent.Eventually
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
+import persistence.api.routes.FileIORoutes
 import scala.compiletime.uninitialized
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.util.Failure
-import akka.http.scaladsl.Http.ServerBinding
 
 class ControllerIntegrationSpec extends AnyWordSpec with Eventually with BeforeAndAfterAll {
   private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)

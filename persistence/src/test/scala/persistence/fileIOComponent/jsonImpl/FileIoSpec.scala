@@ -1,16 +1,17 @@
-package fileIOComponent.xmlImpl
+package fileIOComponent.jsonImpl
 
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 
 import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, Status}
-import fileIOComponent.xmlImpl.FileIO
+import persistence.fileIOComponent.jsonImpl.FileIO
 
 class FileIoSpec extends AnyWordSpec {
-  "A game state" when {/*
-    "saved to xml" should {
+  "A game state" when {
+    /*
+    "saved to json" should {
       "be equal when loaded" in {
-        val field: Field = new Field(BoardSize.Medium, Status.Empty, PlayerSize.Two, PlayerType.Human)
+        val field: FieldInterface = new Field(BoardSize.Medium, Status.Empty, PlayerSize.Two, PlayerType.Human)
         val fileIO = new FileIO()
         fileIO.save(field)
         fileIO.load should be(field)

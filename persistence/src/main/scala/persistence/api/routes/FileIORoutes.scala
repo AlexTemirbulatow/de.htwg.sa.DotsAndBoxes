@@ -1,12 +1,13 @@
-package api.routes
+package persistence.api.routes
 
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import de.github.dotsandboxes.lib.FileFormat
-import fileIOComponent.{FileIOInterface, jsonImpl, xmlImpl}
 import org.slf4j.LoggerFactory
+import persistence.fileIOComponent.jsonImpl.FileIO
+import persistence.fileIOComponent.{FileIOInterface, jsonImpl, xmlImpl}
 import play.api.libs.json.{JsValue, Json}
 import scala.util.Try
 

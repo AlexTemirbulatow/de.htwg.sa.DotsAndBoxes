@@ -1,13 +1,13 @@
-package api.server
+package persistence.api.server
 
 import akka.actor.{ActorSystem, CoordinatedShutdown}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import api.routes.FileIORoutes
 import common.config.ServiceConfig.{PERSISTENCE_BASE_URL, PERSISTENCE_HOST, PERSISTENCE_PORT}
 import org.slf4j.LoggerFactory
+import persistence.api.routes.FileIORoutes
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 

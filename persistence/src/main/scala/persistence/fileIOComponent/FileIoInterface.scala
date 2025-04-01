@@ -1,4 +1,4 @@
-package fileIOComponent
+package persistence.fileIOComponent
 
 trait FileIOInterface:
   def save(field: String): Either[(String, String), String]
