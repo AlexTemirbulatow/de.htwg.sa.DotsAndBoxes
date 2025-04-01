@@ -1,9 +1,9 @@
-package tuiComponent
+package tui.tuiComponent
 
-import api.service.CoreRequestHttp
 import de.github.dotsandboxes.lib._
 import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}
+import tui.api.service.CoreRequestHttp
 
 class TUI:
   def run: Unit =

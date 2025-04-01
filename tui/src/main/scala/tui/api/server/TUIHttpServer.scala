@@ -1,17 +1,17 @@
-package api.server
+package tui.api.server
 
 import akka.actor.{ActorSystem, CoordinatedShutdown}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import api.routes.TUIRoutes
-import api.service.CoreRequestHttp
 import common.config.ServiceConfig.{TUI_BASE_URL, TUI_HOST, TUI_OBSERVER_URL, TUI_PORT}
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
-import tuiComponent.TUI
+import tui.api.routes.TUIRoutes
+import tui.api.service.CoreRequestHttp
+import tui.tuiComponent.TUI
 
 object TUIHttpServer:
   private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)

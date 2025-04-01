@@ -1,4 +1,4 @@
-package tuiComponent
+package tui.tuiComponent
 
 import org.scalatest.wordspec.AnyWordSpec
 

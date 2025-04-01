@@ -1,12 +1,12 @@
-package api.service
+package tui.api.service
 
-import api.client.CoreClient
 import de.github.dotsandboxes.lib._
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import play.api.libs.json.Json
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
+import tui.api.client.CoreClient
 
 object CoreRequestHttp:
   def fieldString: String = Await.result(CoreClient.getRequest("api/core/"), 5.seconds) match
