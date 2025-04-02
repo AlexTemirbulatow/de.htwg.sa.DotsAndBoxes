@@ -225,10 +225,10 @@ class FieldRoutesSpec extends AnyWordSpec with ScalatestRouteTest {
           "field" -> fieldToJsonString(field)
         ).toString
         Post("/get/gameBoardData", fieldJson) ~> routes ~> check {
-          val fieldData = decode[GameBoardData](responseAs[String]) match
+          val gameBoardData = decode[GameBoardData](responseAs[String]) match
             case Left(value)  => value
             case Right(value) => value
-          fieldData shouldBe GameBoardData(
+          gameBoardData shouldBe GameBoardData(
             Player("Blue", 0, Status.Blue, PlayerType.Human),
             Vector(Vector(false, false, false, false, false), Vector(false, false, false, false, false), Vector(false, false, false, false, false), Vector(false, false, false, false, false), Vector(false, false, false, false, false)),
             Vector(Vector(false, false, false, false, false, false), Vector(false, false, false, false, false, false), Vector(false, false, false, false, false, false), Vector(false, false, false, false, false, false)),
@@ -241,10 +241,10 @@ class FieldRoutesSpec extends AnyWordSpec with ScalatestRouteTest {
           "field" -> fieldToJsonString(field)
         ).toString
         Post("/get/playerGameData", fieldJson) ~> routes ~> check {
-          val fieldData = decode[PlayerGameData](responseAs[String]) match
+          val playerGameData = decode[PlayerGameData](responseAs[String]) match
             case Left(value)  => value
             case Right(value) => value
-          fieldData shouldBe PlayerGameData(
+          playerGameData shouldBe PlayerGameData(
             Player("Blue", 0, Status.Blue, PlayerType.Human),
             "It's a draw!",
             "Player Blue [points: 0]\n" +
@@ -258,10 +258,10 @@ class FieldRoutesSpec extends AnyWordSpec with ScalatestRouteTest {
           "field" -> fieldToJsonString(field)
         ).toString
         Post("/get/fieldSizeData", fieldJson) ~> routes ~> check {
-          val fieldData = decode[FieldSizeData](responseAs[String]) match
+          val fieldSizeData = decode[FieldSizeData](responseAs[String]) match
             case Left(value)  => value
             case Right(value) => value
-          fieldData shouldBe FieldSizeData(5, 6)
+          fieldSizeData shouldBe FieldSizeData(5, 6)
         }
       }
       "return currentPlayer" in {
@@ -269,10 +269,10 @@ class FieldRoutesSpec extends AnyWordSpec with ScalatestRouteTest {
           "field" -> fieldToJsonString(field)
         ).toString
         Post("/get/currentPlayer", fieldJson) ~> routes ~> check {
-          val fieldData = decode[Player](responseAs[String]) match
+          val currentPlayer = decode[Player](responseAs[String]) match
             case Left(value)  => value
             case Right(value) => value
-          fieldData shouldBe Player("Blue", 0, Status.Blue, PlayerType.Human)
+          currentPlayer shouldBe Player("Blue", 0, Status.Blue, PlayerType.Human)
         }
       }
       "return currentStatus" in {
@@ -280,10 +280,10 @@ class FieldRoutesSpec extends AnyWordSpec with ScalatestRouteTest {
           "field" -> fieldToJsonString(field)
         ).toString
         Post("/get/currentStatus", fieldJson) ~> routes ~> check {
-          val fieldData = decode[Vector[Vector[Status]]](responseAs[String]) match
+          val currentStatus = decode[Vector[Vector[Status]]](responseAs[String]) match
             case Left(value)  => value
             case Right(value) => value
-          fieldData shouldBe Vector(
+          currentStatus shouldBe Vector(
             Vector(Status.Empty, Status.Empty, Status.Empty, Status.Empty, Status.Empty),
             Vector(Status.Empty, Status.Empty, Status.Empty, Status.Empty, Status.Empty),
             Vector(Status.Empty, Status.Empty, Status.Empty, Status.Empty, Status.Empty),
