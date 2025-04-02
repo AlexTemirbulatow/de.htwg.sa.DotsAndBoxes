@@ -1,0 +1,5 @@
+<configuration>
+    <logger name="com.github.tomakehurst.wiremock" level="WARN"/>
+    <logger name="org.eclipse.jetty" level="WARN"/>
+    <logger name="org.eclipse.jetty.util.thread.QueuedThreadPool" level="WARN"/>
+</configuration>

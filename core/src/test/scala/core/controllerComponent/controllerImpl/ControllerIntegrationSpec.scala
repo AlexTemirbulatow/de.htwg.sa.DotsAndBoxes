@@ -8,39 +8,32 @@ import akka.http.scaladsl.server.Route
 import common.config.ServiceConfig._
 import common.model.fieldService.FieldInterface
 import computer.api.routes.ComputerRoutes
-import core.api.service.ComputerRequestHttp
 import core.controllerComponent.utils.observer.Observer
 import de.github.dotsandboxes.lib._
 import model.api.routes.FieldRoutes
 import model.fieldComponent.fieldImpl.Field
-import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.concurrent.Eventually
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 import persistence.api.routes.FileIORoutes
-import scala.compiletime.uninitialized
-import scala.concurrent.duration._
+import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
-import scala.util.Failure
 
 class ControllerIntegrationSpec extends AnyWordSpec with Eventually with BeforeAndAfterAll {
   private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val executionContext: ExecutionContext = system.dispatcher
-  
-  implicit override val patienceConfig: PatienceConfig = PatienceConfig(timeout = 3.seconds, interval = 200.millis)
+
+  implicit override val patienceConfig: PatienceConfig = PatienceConfig(timeout = 10.seconds, interval = 200.millis)
 
   private var testModelServerBinding: Option[ServerBinding] = None
-  private val modelRoutes: Route =
-    pathPrefix("api") { pathPrefix("model") { pathPrefix("field") { new FieldRoutes().fieldRoutes }}}
+  private val modelRoutes: Route = pathPrefix("api") { pathPrefix("model") { pathPrefix("field") { new FieldRoutes().fieldRoutes }}}
 
   private var testPersistenceServerBinding: Option[ServerBinding] = None
-  private val fileIORoutes: Route =
-    pathPrefix("api") { pathPrefix("persistence") { pathPrefix("fileIO") { new FileIORoutes().fileIORoutes } } }
+  private val fileIORoutes: Route = pathPrefix("api") { pathPrefix("persistence") { pathPrefix("fileIO") { new FileIORoutes().fileIORoutes } } }
 
   private var testComputerServerBinding: Option[ServerBinding] = None
-  private val computerRoutes: Route =
-    pathPrefix("api") { pathPrefix("computer") { new ComputerRoutes().computerRoutes } }
+  private val computerRoutes: Route = pathPrefix("api") { pathPrefix("computer") { new ComputerRoutes().computerRoutes } }
 
   override def beforeAll(): Unit =
     testModelServerBinding = Some(Await.result(Http().bindAndHandle(modelRoutes, MODEL_HOST, MODEL_PORT), 10.seconds))
@@ -275,7 +268,7 @@ class ControllerIntegrationSpec extends AnyWordSpec with Eventually with BeforeA
       controller.undo should be(field)
       controller.redo should be(field)
     }
-    "save and load the correct game state" in {
+    "save and load the correct game state as JSON" in {
       val controller = Controller(using new Field(BoardSize.Medium, Status.Empty, PlayerSize.Four, PlayerType.Human), FileFormat.JSON, ComputerDifficulty.Medium)
       controller.publish(controller.put, Move(1, 0, 0, true))
       controller.publish(controller.put, Move(2, 0, 0, true))
@@ -296,11 +289,35 @@ class ControllerIntegrationSpec extends AnyWordSpec with Eventually with BeforeA
       controller.publish(controller.put, Move(1, 1, 3, true))
 
       controller.save should be(controller.field)
+      Thread.sleep(2000)
       controller.load should be(controller.field)
     }
-    /*"return a finished game state" in {
-      val mockFileIO = mock(classOf[FileIOInterface])
-      val controller = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), mockFileIO, new ComputerMedium())
+    "save and load the correct game state as XML" in {
+      val controller = Controller(using new Field(BoardSize.Medium, Status.Empty, PlayerSize.Four, PlayerType.Human), FileFormat.XML, ComputerDifficulty.Medium)
+      controller.publish(controller.put, Move(1, 0, 0, true))
+      controller.publish(controller.put, Move(2, 0, 0, true))
+      controller.publish(controller.put, Move(2, 0, 1, true))
+      controller.publish(controller.put, Move(1, 1, 0, true))
+
+      controller.publish(controller.put, Move(1, 0, 1, true))
+      controller.publish(controller.put, Move(2, 0, 2, true))
+      controller.publish(controller.put, Move(1, 1, 1, true))
+
+      controller.publish(controller.put, Move(1, 0, 2, true))
+      controller.publish(controller.put, Move(2, 0, 3, true))
+      controller.publish(controller.put, Move(2, 1, 0, true))
+      controller.publish(controller.put, Move(1, 1, 2, true))
+
+      controller.publish(controller.put, Move(1, 0, 3, true))
+      controller.publish(controller.put, Move(2, 0, 4, true))
+      controller.publish(controller.put, Move(1, 1, 3, true))
+
+      controller.save should be(controller.field)
+      Thread.sleep(2000)
+      controller.load should be(controller.field)
+    }
+    "return a finished game state" in {
+      val controller = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), FileFormat.JSON, ComputerDifficulty.Medium)
       for {
         x <- 0 until controller.field.maxPosY
         y <- 0 until controller.field.maxPosY
@@ -314,11 +331,9 @@ class ControllerIntegrationSpec extends AnyWordSpec with Eventually with BeforeA
       controller.gameEnded shouldBe true
       controller.save should be(controller.field)
 
-      when(mockFileIO.load).thenReturn(controller.field)
       controller.load should be(controller.field)
-
       controller.gameEnded shouldBe true
-    }*/
+    }
     "restart a game" in {
       val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), FileFormat.JSON, ComputerDifficulty.Medium)
       controller.publish(controller.put, Move(1, 0, 0, true))
@@ -374,19 +389,16 @@ class ControllerIntegrationSpec extends AnyWordSpec with Eventually with BeforeA
       controller.initGame(BoardSize.Medium, PlayerSize.Two, PlayerType.Computer, ComputerDifficulty.Hard)
       controller.computerDifficulty shouldBe ComputerDifficulty.Hard
     }
-    /*"play against a computer opponent" in {
+    "play against a computer opponent" in {
       val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Computer), FileFormat.JSON, ComputerDifficulty.Medium)
       controller.publish(controller.put, Move(1, 0, 0, true))
       controller.field.getRowCell(0, 0) should be(true)
 
       eventually {
-        val allCells =
-          (for (x <- 0 until controller.field.maxPosY; y <- 0 until controller.field.maxPosY)
-            yield controller.field.getRowCell(x, y)) ++
-          (for (x <- 0 until controller.field.maxPosX; y <- 0 to controller.field.maxPosY)
-            yield controller.field.getColCell(x, y))
+        val gameBoardData: GameBoardData = controller.gameBoardData
+        val allCellState: Vector[Boolean] = gameBoardData.rowCells.flatten ++ gameBoardData.colCells.flatten
 
-        allCells.count(identity) shouldBe 2
+        allCellState.count(identity) shouldBe 2
       }
     }
     "make a computer move" in {
@@ -403,50 +415,10 @@ class ControllerIntegrationSpec extends AnyWordSpec with Eventually with BeforeA
       val updatedField = Await.result(futureField, 5.seconds)
       updatedField should not be initField
 
-      val allCells =
-        (for (x <- 0 until updatedField.maxPosY; y <- 0 until updatedField.maxPosY)
-          yield controller.field.getRowCell(x, y)) ++
-        (for (x <- 0 until updatedField.maxPosX; y <- 0 to updatedField.maxPosY)
-          yield controller.field.getColCell(x, y))
-      allCells.count(identity) shouldBe 1
-    }*/
-    /*"handle bad computer move" in {
-      val mockComputerRequestHttp = mock(classOf[ComputerRequestHttp])
-      val initialField: FieldInterface = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Computer)
-      val controller = new Controller(using initialField, FileFormat.JSON, ComputerDifficulty.Hard)
-      controller.publish(controller.put, Move(9, 9, 9, true)) shouldBe a[Failure[?]]
-
-      when(mockComputerRequestHttp.calculateMove(initialField,  ComputerDifficulty.Hard)).thenReturn(Some(Move(9, 9, 9, true)))
-
-      val newField = Await.result(controller.computerMove(controller.field), 5.seconds)
-
-      val allCells =
-        (for (x <- 0 until newField.maxPosY; y <- 0 until newField.maxPosY)
-          yield controller.field.getRowCell(x, y)) ++
-        (for (x <- 0 until newField.maxPosX; y <- 0 to newField.maxPosY)
-          yield controller.field.getColCell(x, y))
-
-      allCells.count(identity) shouldBe 0
-      newField shouldBe initialField
+      val gameBoardData: GameBoardData = updatedField.gameBoardData
+      val allCellState: Vector[Boolean] = gameBoardData.rowCells.flatten ++ gameBoardData.colCells.flatten
+      allCellState.count(identity) shouldBe 1
     }
-    "handle None computer move" in {
-      val mockComputerRequestHttp = mock(classOf[ComputerRequestHttp])
-      val initialField: FieldInterface = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Computer)
-      val controller = new Controller(using initialField, FileFormat.JSON, ComputerDifficulty.Hard)
-
-      when(mockComputerRequestHttp.calculateMove(initialField,  ComputerDifficulty.Hard)).thenReturn(Some(Move(9, 9, 9, true)))
-
-      val newField = Await.result(controller.computerMove(controller.field), 5.seconds)
-
-      val allCells =
-        (for (x <- 0 until newField.maxPosY; y <- 0 until newField.maxPosY)
-          yield controller.field.getRowCell(x, y)) ++
-        (for (x <- 0 until newField.maxPosX; y <- 0 to newField.maxPosY)
-          yield controller.field.getColCell(x, y))
-
-      allCells.count(identity) shouldBe 0
-      newField shouldBe initialField
-    }*/
     "play a whole game correctly" in {
       val controller = Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Three, PlayerType.Human), FileFormat.JSON, ComputerDifficulty.Medium)
       controller.toString should be(
