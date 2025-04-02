@@ -98,10 +98,10 @@ class CoreRoutes(val controller: ControllerInterface):
     path("initGame") {
       entity(as[String]) { json =>
         val jsonValue: JsValue = Json.parse(json)
-        val boardSize: BoardSize   = Try(BoardSize.valueOf((jsonValue \ "boardSize").as[String])).getOrElse(throw new RuntimeException("Invalid Board Size."))
-        val playerSize: PlayerSize = Try(PlayerSize.valueOf((jsonValue \ "playerSize").as[String])).getOrElse(throw new RuntimeException("Invalid Player Size."))
-        val playerType: PlayerType = Try(PlayerType.valueOf((jsonValue \ "playerType").as[String])).getOrElse(throw new RuntimeException("Invalid Player Type."))
-        val computerDifficulty: ComputerDifficulty = Try(ComputerDifficulty.valueOf((jsonValue \ "computerDifficulty").as[String])).getOrElse(throw new RuntimeException("Invalid Computer Difficulty."))
+        val boardSize: BoardSize   = Try(BoardSize.valueOf((jsonValue \ "boardSize").as[String])).getOrElse(throw new IllegalArgumentException("Invalid Board Size."))
+        val playerSize: PlayerSize = Try(PlayerSize.valueOf((jsonValue \ "playerSize").as[String])).getOrElse(throw new IllegalArgumentException("Invalid Player Size."))
+        val playerType: PlayerType = Try(PlayerType.valueOf((jsonValue \ "playerType").as[String])).getOrElse(throw new IllegalArgumentException("Invalid Player Type."))
+        val computerDifficulty: ComputerDifficulty = Try(ComputerDifficulty.valueOf((jsonValue \ "computerDifficulty").as[String])).getOrElse(throw new IllegalArgumentException("Invalid Computer Difficulty."))
         controller.initGame(boardSize, playerSize, playerType, computerDifficulty)
         complete(StatusCodes.OK)
       }
@@ -132,11 +132,9 @@ class CoreRoutes(val controller: ControllerInterface):
     }
   }
 
-private val exceptionHandler = ExceptionHandler {
-  case e: NoSuchElementException =>
-    complete(NotFound -> e.getMessage)
-  case e: IllegalArgumentException =>
-    complete(Conflict -> e.getMessage)
-  case e: Throwable =>
-    complete(InternalServerError -> Option(e.getMessage).getOrElse("Unknown error"))
-}
+  private val exceptionHandler = ExceptionHandler {
+    case e: IllegalArgumentException =>
+      complete(Conflict -> e.getMessage)
+    case e: Throwable =>
+      complete(InternalServerError -> e.getMessage)
+  }
