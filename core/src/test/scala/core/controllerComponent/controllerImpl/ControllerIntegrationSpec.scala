@@ -19,6 +19,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import persistence.api.routes.FileIORoutes
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
+import core.controllerComponent.utils.observer.ObserverHttp
 
 class ControllerIntegrationSpec extends AnyWordSpec with Eventually with BeforeAndAfterAll {
   private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
@@ -47,7 +48,7 @@ class ControllerIntegrationSpec extends AnyWordSpec with Eventually with BeforeA
       testComputerServerBinding.map(_.unbind()).getOrElse(Future.successful(()))
     )
     Await.result(Future.sequence(unbindFutures), 10.seconds)
-    system.terminate()
+    Await.result(system.terminate(), 10.seconds)
 
   "The Controller" should {
     "notify its observers on change and update the game" in {
@@ -64,6 +65,13 @@ class ControllerIntegrationSpec extends AnyWordSpec with Eventually with BeforeA
       controller.publish(controller.put, Move(1, 0, 0, true))
       testObserver.bing shouldBe true
       controller.remove("testID")
+    }
+    "correctly receive and update a http observer" in {
+      val controller = new Controller(using new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human), FileFormat.JSON, ComputerDifficulty.Medium)
+      val testObserverUrl = MODEL_BASE_URL.concat("api/model/field/preConnect")
+      val observerHttp = new ObserverHttp(testObserverUrl)
+      observerHttp.id shouldBe testObserverUrl
+      observerHttp.update(Event.Move) shouldBe Some("OK")
     }
     "create a new field" in {
       val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)

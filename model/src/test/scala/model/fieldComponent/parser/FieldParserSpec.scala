@@ -67,7 +67,6 @@ class FieldParserSpec extends AnyWordSpec {
           .putStatus(0, 3, Status.Yellow)
 
         val fieldAsXmlString: String = FieldConverter.toXml(field).toString
-        println(s"\n\n$fieldAsXmlString\n\n")
         val parsedField: FieldInterface = FieldParser.fromXml(fieldAsXmlString)
 
         parsedField.getRowCell(0, 0) shouldBe true
