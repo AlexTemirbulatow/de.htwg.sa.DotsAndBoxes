@@ -46,6 +46,6 @@ object ModelClient:
           }
     }
 
-  def shutdown: Future[Unit] =
+  def shutdown: Future[Boolean] =
     logger.info("Core Service -- Shutting Down Model Client...")
-    http.shutdownAllConnectionPools().flatMap(_ => system.terminate()).map(_ => ())
+    http.shutdownAllConnectionPools().flatMap(_ => system.terminate()).map(_ => true)
