@@ -57,6 +57,7 @@ class ControllerIntegrationSpec extends AnyWordSpec with Eventually with BeforeA
         var bing = false
         def update(e: Event) =
           bing = true
+          None
         def id = "testID"
       val testObserver = TestObserver(controller)
       testObserver.bing shouldBe false
