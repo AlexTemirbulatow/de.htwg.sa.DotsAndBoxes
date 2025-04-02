@@ -14,7 +14,7 @@ import play.api.libs.json.Json
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
 
-class ModelClientSpec extends AnyWordSpec with ScalatestRouteTest with BeforeAndAfterAll {
+class YModelClientSpec extends AnyWordSpec with ScalatestRouteTest with BeforeAndAfterAll {
   private var testModelServerBinding: Option[ServerBinding] = None
   private val testRoute: Route = pathPrefix("test-endpoint") {
     get {
@@ -53,8 +53,8 @@ class ModelClientSpec extends AnyWordSpec with ScalatestRouteTest with BeforeAnd
       exception.getMessage shouldBe s"HTTP ERROR: 400 Bad Request - http://$MODEL_HOST:$MODEL_PORT/test-endpoint - postFailure"
     }
     "shutdown the ModelClient correctly" in {
-      //val shutdown: Boolean = Await.result(ModelClient.shutdown, 5.seconds)
-      //shutdown shouldBe true
+      val shutdown: Boolean = Await.result(ModelClient.shutdown, 5.seconds)
+      shutdown shouldBe true
     }
   }
 }
