@@ -38,5 +38,5 @@ class GUIRoutes(val gui: GUI):
     case e: IllegalArgumentException =>
       complete(Conflict -> e.getMessage)
     case e: Throwable =>
-      complete(InternalServerError -> Option(e.getMessage).getOrElse("Unknown error"))
+      complete(InternalServerError -> e.getMessage)
   }

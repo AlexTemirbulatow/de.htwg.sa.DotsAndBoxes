@@ -65,5 +65,5 @@ class FileIORoutes:
     case e: IllegalArgumentException =>
       complete(Conflict -> e.getMessage)
     case e: Throwable =>
-      complete(InternalServerError -> Option(e.getMessage).getOrElse("Unknown error"))
+      complete(InternalServerError -> e.getMessage)
   }
