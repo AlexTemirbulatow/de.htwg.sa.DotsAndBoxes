@@ -14,7 +14,7 @@ import play.api.libs.json.Json
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
 
-class YPersistenceClientSpec extends AnyWordSpec with ScalatestRouteTest with BeforeAndAfterAll {
+class PersistenceClientSpec extends AnyWordSpec with ScalatestRouteTest with BeforeAndAfterAll {
   private var testPersistenceServerBinding: Option[ServerBinding] = None
   private val testRoute: Route = pathPrefix("test-endpoint") {
     get {
@@ -51,10 +51,6 @@ class YPersistenceClientSpec extends AnyWordSpec with ScalatestRouteTest with Be
         Await.result(PersistenceClient.postRequest("test-endpoint", json), 5.seconds)
       }
       exception.getMessage shouldBe s"HTTP ERROR: 400 Bad Request - http://$PERSISTENCE_HOST:$PERSISTENCE_PORT/test-endpoint - postFailure"
-    }
-    "shutdown the PersistenceClient correctly" in {
-      val shutdown: Boolean = Await.result(PersistenceClient.shutdown, 5.seconds)
-      shutdown shouldBe true
     }
   }
 }

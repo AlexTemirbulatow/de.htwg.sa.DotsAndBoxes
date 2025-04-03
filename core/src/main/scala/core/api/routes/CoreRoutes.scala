@@ -18,6 +18,7 @@ class CoreRoutes(val controller: ControllerInterface):
 
   def coreRoutes: Route = handleExceptions(exceptionHandler) {
     concat(
+      handlePreConnectRequest,
       handleControllerToStringRequest,
       handleGameDataRequests,
       handlePublishRequests,
@@ -26,6 +27,12 @@ class CoreRoutes(val controller: ControllerInterface):
       handleRegisterObserverRequest,
       handleDeregisterObserverRequest
     )
+  }
+
+  private def handlePreConnectRequest: Route = get {
+    path("preConnect") {
+      complete(StatusCodes.OK)
+    }
   }
 
   private def handleControllerToStringRequest: Route = get {

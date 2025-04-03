@@ -1,5 +1,6 @@
 package core.api.server
 
+import akka.Done
 import akka.actor.{ActorSystem, CoordinatedShutdown}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
@@ -19,18 +20,20 @@ object CoreHttpServer:
 
   private val logger = LoggerFactory.getLogger(getClass)
 
-  def run: Future[ServerBinding] =
+  def run: (Future[ServerBinding], ActorSystem) =
     val serverBinding = Http()
       .newServerAt(CORE_HOST, CORE_PORT)
       .bind(routes(CoreRoutes(given_ControllerInterface)))
 
-    CoordinatedShutdown(system).addJvmShutdownHook(shutdown(serverBinding))
+    CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-server") { () =>
+      shutdown(serverBinding).map(_ => Done)
+    }
 
     serverBinding.onComplete {
       case Success(binding)   => logger.info(s"Core Service -- Http Server is running at $COMPUTER_BASE_URL\n")
       case Failure(exception) => logger.error(s"Core Service -- Http Server failed to start", exception)
     }
-    serverBinding
+    (serverBinding, system)
 
   private def routes(coreRoutes: CoreRoutes): Route =
     pathPrefix("api") {
@@ -43,13 +46,14 @@ object CoreHttpServer:
       )
     }
 
-  private def shutdown(serverBinding: Future[ServerBinding]): Unit =
-    serverBinding
-      .flatMap(_.unbind())
-      .onComplete { _ =>
-        logger.info("Core Service -- Shutting Down Http Server...")
-        system.terminate()
-      }
+  private[server] def shutdown(serverBinding: Future[ServerBinding]): Future[Boolean] =
     ModelClient.shutdown
     ComputerClient.shutdown
     PersistenceClient.shutdown
+    serverBinding.flatMap { binding =>
+      binding.unbind().map { _ =>
+        logger.info("Core Service -- Shutting Down Http Server...")
+        system.terminate()
+        true
+      }
+    }
