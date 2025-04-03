@@ -1,5 +1,6 @@
 package tui.api.server
 
+import akka.Done
 import akka.actor.{ActorSystem, CoordinatedShutdown}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
@@ -19,14 +20,16 @@ object TUIHttpServer:
 
   private val logger = LoggerFactory.getLogger(getClass)
 
-  def run: Future[ServerBinding] =
+  def run: (Future[ServerBinding], ActorSystem) =
     CoreRequestHttp.registerTUIObserver(TUI_OBSERVER_URL)
     val tui = new TUI
     val serverBinding = Http()
       .newServerAt(TUI_HOST, TUI_PORT)
       .bind(routes(TUIRoutes(tui)))
 
-    CoordinatedShutdown(system).addJvmShutdownHook(shutdown(serverBinding))
+    CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-server") { () =>
+      shutdown(serverBinding).map(_ => Done)
+    }
 
     serverBinding.onComplete {
       case Success(binding)   => logger.info(s"TUI Service -- Http Server is running at $TUI_BASE_URL\n")
@@ -34,7 +37,7 @@ object TUIHttpServer:
     }
 
     tui.run
-    serverBinding
+    (serverBinding, system)
 
   private def routes(tuiRoutes: TUIRoutes): Route =
     pathPrefix("api") {
@@ -47,11 +50,12 @@ object TUIHttpServer:
       )
     }
 
-  private def shutdown(serverBinding: Future[ServerBinding]): Unit =
-    serverBinding
-      .flatMap(_.unbind())
-      .onComplete { _ =>
+  private def shutdown(serverBinding: Future[ServerBinding]): Future[Done] =
+    CoreRequestHttp.deregisterTUIObserver(TUI_OBSERVER_URL)
+    serverBinding.flatMap { binding =>
+      binding.unbind().map { _ =>
         logger.info("TUI Service -- Shutting Down Http Server...")
         system.terminate()
+        Done
       }
-    CoreRequestHttp.deregisterTUIObserver(TUI_OBSERVER_URL)
+    }

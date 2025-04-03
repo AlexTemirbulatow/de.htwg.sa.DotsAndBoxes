@@ -1,5 +1,6 @@
 package core.api.client
 
+import akka.Done
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
@@ -46,6 +47,6 @@ object ComputerClient:
           }
     }
 
-  def shutdown: Future[Boolean] =
+  def shutdown: Future[Done] =
     logger.info("Core Service -- Shutting Down Computer Client...")
-    http.shutdownAllConnectionPools().flatMap(_ => system.terminate()).map(_ => true)
+    http.shutdownAllConnectionPools().flatMap(_ => system.terminate()).map(_ => Done)

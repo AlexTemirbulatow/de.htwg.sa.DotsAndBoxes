@@ -1,5 +1,6 @@
 package tui.api.service
 
+import akka.Done
 import de.github.dotsandboxes.lib._
 import io.circe.generic.auto._
 import io.circe.parser.decode
@@ -57,7 +58,7 @@ object CoreRequestHttp:
       "url" -> tuiObserverUrl
     ))
 
-  def deregisterTUIObserver(tuiObserverUrl: String): Future[Unit] =
+  def deregisterTUIObserver(tuiObserverUrl: String): Future[Done] =
     Await.result(CoreClient.postRequest("api/core/deregisterObserver", Json.obj(
       "url" -> tuiObserverUrl
     )), 5.seconds)

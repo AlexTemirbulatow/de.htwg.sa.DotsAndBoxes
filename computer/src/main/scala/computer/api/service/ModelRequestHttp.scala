@@ -69,5 +69,3 @@ object ModelRequestHttp:
     ) match
       case Right(chains) => chains
       case Left(error)   => throw new RuntimeException(s"Error decoding Vector[(Int, Vector[(Int, Int, Int)])]: ${error.getMessage}")
-
-  def shutdown: Future[Unit] = ModelClient.shutdown

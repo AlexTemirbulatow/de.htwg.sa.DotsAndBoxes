@@ -48,11 +48,11 @@ object ModelHttpServer:
       )
     }
 
-  private[server] def shutdown(serverBinding: Future[ServerBinding]): Future[Boolean] =
+  private def shutdown(serverBinding: Future[ServerBinding]): Future[Done] =
     serverBinding.flatMap { binding =>
       binding.unbind().map { _ =>
         logger.info("Model Service -- Shutting Down Http Server...")
         system.terminate()
-        true
+        Done
       }
     }

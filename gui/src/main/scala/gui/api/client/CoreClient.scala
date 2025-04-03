@@ -1,5 +1,6 @@
 package gui.api.client
 
+import akka.Done
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
@@ -64,6 +65,6 @@ object CoreClient:
           Future.failed(exception)
       }
 
-  def shutdown: Future[Unit] =
+  def shutdown: Future[Done] =
     logger.info("GUI Service -- Shutting Down Core Client...")
-    http.shutdownAllConnectionPools().flatMap(_ => system.terminate()).map(_ => ())
+    http.shutdownAllConnectionPools().flatMap(_ => system.terminate()).map(_ => Done)

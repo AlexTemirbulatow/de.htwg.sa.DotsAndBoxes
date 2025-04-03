@@ -1,5 +1,6 @@
 package gui.api.service
 
+import akka.Done
 import de.github.dotsandboxes.lib._
 import gui.api.client.CoreClient
 import io.circe.generic.auto._
@@ -75,7 +76,7 @@ object CoreRequestHttp:
       "url" -> guiObserverUrl
     ))
 
-  def deregisterGUIObserver(guiObserverUrl: String): Future[Unit] =
+  def deregisterGUIObserver(guiObserverUrl: String): Future[Done] =
     Await.result(CoreClient.postRequest("api/core/deregisterObserver", Json.obj(
       "url" -> guiObserverUrl
     )), 5.seconds)

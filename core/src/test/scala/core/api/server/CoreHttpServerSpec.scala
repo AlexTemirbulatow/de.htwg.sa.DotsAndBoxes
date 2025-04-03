@@ -1,8 +1,7 @@
 package core.api.server
 
 import akka.Done
-import akka.actor.ActorSystem
-import akka.actor.CoordinatedShutdown
+import akka.actor.{ActorSystem, CoordinatedShutdown}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.model.StatusCodes
@@ -46,16 +45,6 @@ class ZCoreHttpServerSpec extends AnyWordSpec with BeforeAndAfterAll {
         Await.result(CoreHttpServer.run._1, 5.seconds)
       }
       exception.getMessage should include("Bind failed")
-    }
-    "shutdown the server correctly" in {
-      val shutdown = Await.result(
-        CoreHttpServer.shutdown(
-          Future {
-            testCoreServerBinding.get
-          }
-        ), 5.seconds
-      )
-      shutdown shouldBe true
     }
     "call CoordinatedShutdown when JVM is shutting down" in {
       val shutdownFuture = CoordinatedShutdown(testCoreServerSystem.get).run(CoordinatedShutdown.unknownReason)

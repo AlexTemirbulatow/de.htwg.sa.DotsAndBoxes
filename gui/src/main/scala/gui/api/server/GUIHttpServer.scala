@@ -1,5 +1,6 @@
 package gui.api.server
 
+import akka.Done
 import akka.actor.{ActorSystem, CoordinatedShutdown}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
@@ -19,14 +20,16 @@ object GUIHttpServer:
 
   private val logger = LoggerFactory.getLogger(getClass)
 
-  def run: Future[ServerBinding] =
+  def run: (Future[ServerBinding], ActorSystem) =
     CoreRequestHttp.registerGUIObserver(GUI_OBSERVER_URL)
     val gui = new GUI
     val serverBinding = Http()
       .newServerAt(GUI_HOST, GUI_PORT)
       .bind(routes(GUIRoutes(gui)))
 
-    CoordinatedShutdown(system).addJvmShutdownHook(shutdown(serverBinding))
+    CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-server") { () =>
+      shutdown(serverBinding).map(_ => Done)
+    }
 
     serverBinding.onComplete {
       case Success(binding)   => logger.info(s"GUI Service -- Http Server is running at $GUI_BASE_URL\n")
@@ -34,7 +37,7 @@ object GUIHttpServer:
     }
 
     gui.run
-    serverBinding
+    (serverBinding, system)
 
   private def routes(guiRoutes: GUIRoutes): Route =
     pathPrefix("api") {
@@ -47,11 +50,12 @@ object GUIHttpServer:
       )
     }
 
-  private def shutdown(serverBinding: Future[ServerBinding]): Unit =
-    serverBinding
-      .flatMap(_.unbind())
-      .onComplete { _ =>
+  private def shutdown(serverBinding: Future[ServerBinding]): Future[Done] =
+    CoreRequestHttp.deregisterGUIObserver(GUI_OBSERVER_URL)
+    serverBinding.flatMap { binding =>
+      binding.unbind().map { _ =>
         logger.info("GUI Service -- Shutting Down Http Server...")
         system.terminate()
+        Done
       }
-    CoreRequestHttp.deregisterGUIObserver(GUI_OBSERVER_URL)
+    }

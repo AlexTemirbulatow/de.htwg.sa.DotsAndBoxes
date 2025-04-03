@@ -1,19 +1,16 @@
 package model.api.server
 
 import akka.Done
-import akka.actor.ActorSystem
-import akka.actor.CoordinatedShutdown
+import akka.actor.{ActorSystem, CoordinatedShutdown}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.model._
-import akka.http.scaladsl.unmarshalling.Unmarshal
 import common.config.ServiceConfig.MODEL_BASE_URL
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
-import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 class ModelHttpServerSpec extends AnyWordSpec with BeforeAndAfterAll {
   private implicit val system: ActorSystem = ActorSystem("ModelHttpTest")
@@ -47,16 +44,6 @@ class ModelHttpServerSpec extends AnyWordSpec with BeforeAndAfterAll {
         Await.result(ModelHttpServer.run._1, 5.seconds)
       }
       exception.getMessage should include("Bind failed")
-    }
-    "shutdown the server correctly" in {
-      val shutdown = Await.result(
-        ModelHttpServer.shutdown(
-          Future {
-            testModelServerBinding.get
-          }
-        ), 5.seconds
-      )
-      shutdown shouldBe true
     }
     "call CoordinatedShutdown when JVM is shutting down" in {
       val shutdownFuture = CoordinatedShutdown(testModelServerSystem.get).run(CoordinatedShutdown.unknownReason)

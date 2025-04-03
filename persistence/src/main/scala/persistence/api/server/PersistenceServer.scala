@@ -1,5 +1,6 @@
 package persistence.api.server
 
+import akka.Done
 import akka.actor.{ActorSystem, CoordinatedShutdown}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
@@ -17,18 +18,20 @@ object PersistenceServer:
 
   private val logger = LoggerFactory.getLogger(getClass)
 
-  def run: Future[ServerBinding] =
+  def run: (Future[ServerBinding], ActorSystem) =
     val serverBinding = Http()
       .newServerAt(PERSISTENCE_HOST, PERSISTENCE_PORT)
       .bind(routes(new FileIORoutes))
 
-    CoordinatedShutdown(system).addJvmShutdownHook(shutdown(serverBinding))
+    CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-server") { () =>
+      shutdown(serverBinding).map(_ => Done)
+    }
 
     serverBinding.onComplete {
       case Success(binding)   => logger.info(s"Persistence Service -- Http Server is running at $PERSISTENCE_BASE_URL\n")
       case Failure(exception) => logger.error(s"Persistence Service -- Http Server failed to start", exception)
     }
-    serverBinding
+    (serverBinding, system)
 
   private def routes(fileIORoutes: FileIORoutes): Route =
     pathPrefix("api") {
@@ -43,10 +46,11 @@ object PersistenceServer:
       }
     }
 
-  private def shutdown(serverBinding: Future[ServerBinding]): Unit =
-    serverBinding
-      .flatMap(_.unbind())
-      .onComplete { _ =>
+  private def shutdown(serverBinding: Future[ServerBinding]): Future[Done] =
+    serverBinding.flatMap { binding =>
+      binding.unbind().map { _ =>
         logger.info("Persistence Service -- Shutting Down Http Server...")
         system.terminate()
+        Done
       }
+    }
