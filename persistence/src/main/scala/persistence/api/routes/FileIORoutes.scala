@@ -26,7 +26,7 @@ class FileIORoutes:
       entity(as[String]) { json =>
         val jsonValue: JsValue = Json.parse(json)
         val fileFormat: FileFormat = Try(FileFormat.valueOf((jsonValue \ "fileFormat").as[String]))
-          .getOrElse(throw new RuntimeException(s"Invalid File Format."))
+          .getOrElse(throw new IllegalArgumentException(s"Invalid File Format."))
         val fileIO: FileIOInterface = fileIOFactory(fileFormat)
         fileIO.save((jsonValue \ "field").as[String]) match
           case Right(filename) =>
@@ -44,7 +44,7 @@ class FileIORoutes:
       entity(as[String]) { json =>
         val jsonValue: JsValue = Json.parse(json)
         val fileFormat: FileFormat = Try(FileFormat.valueOf((jsonValue \ "fileFormat").as[String]))
-          .getOrElse(throw new RuntimeException(s"Invalid File Format."))
+          .getOrElse(throw new IllegalArgumentException(s"Invalid File Format."))
         val fileIO: FileIOInterface = fileIOFactory(fileFormat)
         fileIO.load match
           case Right((fieldValue, filename)) =>
@@ -61,11 +61,9 @@ class FileIORoutes:
     case FileFormat.JSON => new jsonImpl.FileIO
     case FileFormat.XML  => new xmlImpl.FileIO
 
-private val exceptionHandler = ExceptionHandler {
-  case e: NoSuchElementException =>
-    complete(NotFound -> e.getMessage)
-  case e: IllegalArgumentException =>
-    complete(Conflict -> e.getMessage)
-  case e: Throwable =>
-    complete(InternalServerError -> Option(e.getMessage).getOrElse("Unknown error"))
-}
+  private val exceptionHandler = ExceptionHandler {
+    case e: IllegalArgumentException =>
+      complete(Conflict -> e.getMessage)
+    case e: Throwable =>
+      complete(InternalServerError -> Option(e.getMessage).getOrElse("Unknown error"))
+  }

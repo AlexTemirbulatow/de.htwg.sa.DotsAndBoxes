@@ -32,11 +32,11 @@ class GUIRoutes(val gui: GUI):
     }
   }
 
-private val exceptionHandler = ExceptionHandler {
-  case e: NoSuchElementException =>
-    complete(NotFound -> e.getMessage)
-  case e: IllegalArgumentException =>
-    complete(Conflict -> e.getMessage)
-  case e: Throwable =>
-    complete(InternalServerError -> Option(e.getMessage).getOrElse("Unknown error"))
-}
+  private val exceptionHandler = ExceptionHandler {
+    case e: NoSuchElementException =>
+      complete(NotFound -> e.getMessage)
+    case e: IllegalArgumentException =>
+      complete(Conflict -> e.getMessage)
+    case e: Throwable =>
+      complete(InternalServerError -> Option(e.getMessage).getOrElse("Unknown error"))
+  }

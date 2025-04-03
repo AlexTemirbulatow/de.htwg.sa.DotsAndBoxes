@@ -37,7 +37,7 @@ class ComputerRoutes:
           val jsonValue: JsValue = Json.parse(json)
           val fieldValue: String = (jsonValue \ "field").as[String]
           val difficulty: ComputerDifficulty = Try(ComputerDifficulty.valueOf((jsonValue \ "difficulty").as[String]))
-            .getOrElse(throw new RuntimeException("Invalid Computer Difficulty."))
+            .getOrElse(throw new IllegalArgumentException("Invalid Computer Difficulty."))
           val computer: ComputerInterface = computerFactory(difficulty)
           complete(computer.calculateMove(fieldValue).get.asJson.toString)
         }
@@ -45,16 +45,14 @@ class ComputerRoutes:
     }
   }
 
-private def computerFactory(difficulty: ComputerDifficulty): ComputerInterface = difficulty match
-  case ComputerDifficulty.Easy   => new ComputerEasy()
-  case ComputerDifficulty.Medium => new ComputerMedium()
-  case ComputerDifficulty.Hard   => new ComputerHard()
+  private def computerFactory(difficulty: ComputerDifficulty): ComputerInterface = difficulty match
+    case ComputerDifficulty.Easy   => new ComputerEasy()
+    case ComputerDifficulty.Medium => new ComputerMedium()
+    case ComputerDifficulty.Hard   => new ComputerHard()
 
-private val exceptionHandler = ExceptionHandler {
-  case e: NoSuchElementException =>
-    complete(NotFound -> e.getMessage)
-  case e: IllegalArgumentException =>
-    complete(Conflict -> e.getMessage)
-  case e: Throwable =>
-    complete(InternalServerError -> Option(e.getMessage).getOrElse("Unknown error"))
-}
+  private val exceptionHandler = ExceptionHandler {
+    case e: IllegalArgumentException =>
+      complete(Conflict -> e.getMessage)
+    case e: Throwable =>
+      complete(InternalServerError -> Option(e.getMessage).getOrElse("Unknown error"))
+  }
