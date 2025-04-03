@@ -22,7 +22,7 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 import core.controllerComponent.utils.observer.ObserverHttp
 
 class ControllerIntegrationSpec extends AnyWordSpec with Eventually with BeforeAndAfterAll {
-  private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
+  private implicit val system: ActorSystem = ActorSystem("ControllerIntegrationTest")
   private implicit val executionContext: ExecutionContext = system.dispatcher
 
   implicit override val patienceConfig: PatienceConfig = PatienceConfig(timeout = 10.seconds, interval = 200.millis)
