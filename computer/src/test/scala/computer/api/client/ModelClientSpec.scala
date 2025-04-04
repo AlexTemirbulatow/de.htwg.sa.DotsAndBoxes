@@ -32,7 +32,9 @@ class ModelClientSpec extends AnyWordSpec with ScalatestRouteTest with BeforeAnd
     testModelServerBinding = Some(Await.result(Http().bindAndHandle(testRoute, MODEL_HOST, MODEL_PORT), 10.seconds))
 
   override def afterAll(): Unit =
-    testModelServerBinding.foreach(binding => Await.result(binding.unbind(), 10.seconds))
+    testModelServerBinding.foreach(binding =>
+      Await.result(binding.unbind(), 10.seconds)
+    )
     Await.result(system.terminate(), 10.seconds)
 
   "ModelClient" should {

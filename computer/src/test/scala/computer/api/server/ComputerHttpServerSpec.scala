@@ -33,10 +33,11 @@ class ZZComputerHttpServerSpec extends AnyWordSpec with BeforeAndAfterAll {
 
   override def afterAll(): Unit =
     val unbindFutures = List(
-      testComputerServerBinding.map(_.unbind()).getOrElse(Future.successful(())),
-      testModelServerBinding.map(_.unbind()).getOrElse(Future.successful(()))
-    )
+      testComputerServerBinding.map(_.unbind()),
+      testModelServerBinding.map(_.unbind())
+    ).flatten
     Await.result(Future.sequence(unbindFutures), 10.seconds)
+    Await.result(system.terminate(), 10.seconds)
 
   "ComputerHttpServer" should {
     "return OK on pre connect request when started" in {

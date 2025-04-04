@@ -31,10 +31,9 @@ class ComputerEasySpec extends AnyWordSpec with BeforeAndAfterAll {
     testModelServerBinding = Some(Await.result(Http().bindAndHandle(modelRoutes, MODEL_HOST, MODEL_PORT), 10.seconds))
 
   override def afterAll(): Unit =
-    val unbindFutures = List(
-      testModelServerBinding.map(_.unbind()).getOrElse(Future.successful(()))
+    testModelServerBinding.foreach(binding =>
+      Await.result(binding.unbind(), 10.seconds)
     )
-    Await.result(Future.sequence(unbindFutures), 10.seconds)
     Await.result(system.terminate(), 10.seconds)
 
   "ComputerEasy" when {
