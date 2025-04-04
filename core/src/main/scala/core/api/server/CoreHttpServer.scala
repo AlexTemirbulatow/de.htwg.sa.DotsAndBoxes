@@ -47,9 +47,6 @@ object CoreHttpServer:
     }
 
   private def shutdown(serverBinding: Future[ServerBinding]): Future[Done] =
-    ModelClient.shutdown
-    ComputerClient.shutdown
-    PersistenceClient.shutdown
     serverBinding.flatMap { binding =>
       binding.unbind().map { _ =>
         logger.info("Core Service -- Shutting Down Http Server...")

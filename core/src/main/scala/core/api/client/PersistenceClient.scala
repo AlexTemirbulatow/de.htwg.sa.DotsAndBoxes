@@ -2,6 +2,7 @@ package core.api.client
 
 import akka.Done
 import akka.actor.ActorSystem
+import akka.actor.CoordinatedShutdown
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshal
@@ -11,8 +12,10 @@ import play.api.libs.json.JsObject
 import scala.concurrent.{ExecutionContext, Future}
 
 object PersistenceClient:
-  private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
+  private[client] implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val ec: ExecutionContext = system.dispatcher
+
+  CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-persistence-client") { () => shutdown }
 
   private val logger = LoggerFactory.getLogger(getClass)
   private val http = Http(system)
@@ -49,4 +52,4 @@ object PersistenceClient:
 
   def shutdown: Future[Done] =
     logger.info("Core Service -- Shutting Down Persistence Client...")
-    http.shutdownAllConnectionPools().flatMap(_ => system.terminate()).map(_ => Done)
+    http.shutdownAllConnectionPools().map(_ => Done)
