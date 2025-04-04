@@ -52,7 +52,6 @@ jobs:
           sbt "; project model; +clean; +coverage; +test; +coverageReport"
           sbt "; project computer; +clean; +coverage; +test; +coverageReport"
           sbt "; project persistence; +clean; +coverage; +test; +coverageReport"
-          sbt "; project common; +clean; +coverage; +test; +coverageReport"
 
       - name: Export Coverage
         env:
@@ -62,7 +61,6 @@ jobs:
           sbt "; project model; coverageAggregate; coveralls"
           sbt "; project computer; coverageAggregate; coveralls"
           sbt "; project persistence; coverageAggregate; coveralls"
-          sbt "; project common; coverageAggregate; coveralls"
 
   refresh_badge:
     runs-on: ubuntu-latest
