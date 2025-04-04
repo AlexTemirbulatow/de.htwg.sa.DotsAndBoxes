@@ -1,12 +1,11 @@
 package model.fieldComponent.fieldImpl
 
-import org.scalatest.matchers.should.Matchers._
-import org.scalatest.wordspec.AnyWordSpec
-
 import common.model.fieldService.FieldInterface
 import de.github.dotsandboxes.lib._
 import model.fieldComponent.fieldImpl.Field
 import model.matrixComponent.matrixImpl.Matrix
+import org.scalatest.matchers.should.Matchers._
+import org.scalatest.wordspec.AnyWordSpec
 
 class FieldSpec extends AnyWordSpec {
   "A Dots and Boxes Field" when {
@@ -615,9 +614,10 @@ class FieldSpec extends AnyWordSpec {
           .putRow(1, 0, true).putRow(1, 1, true).putRow(1, 2, true).putRow(1, 3, true)
           .putCol(0, 0, true).putCol(0, 1, true).putCol(0, 2, true).putCol(0, 3, true).putCol(0, 4, true)
           .putCol(1, 0, true).putCol(1, 1, true).putCol(1, 2, true).putCol(1, 3, true).putCol(1, 4, true)
-        newField.getSaveMoves(newField.getUnoccupiedRowCoords ++ newField.getUnoccupiedColCoords, newField) shouldBe Vector(
-          Move(1, 2, 0, true), Move(1, 2, 1, true), Move(1, 2, 2, true), Move(1, 2, 3, true), Move(1, 3, 0, true), Move(1, 3, 1, true),
-          Move(1, 3, 2, true), Move(1, 3, 3, true), Move(2, 2, 0, true), Move(2, 2, 1, true), Move(2, 2, 2, true), Move(2, 2, 3, true), Move(2, 2, 4, true)
+        val saveMoves: Vector[Move] = newField.getSaveMoves(newField.getUnoccupiedRowCoords ++ newField.getUnoccupiedColCoords, newField)
+        saveMoves shouldBe Vector(
+          Move(1, 3, 0, true), Move(1, 3, 1, true), Move(1, 3, 2, true), Move(1, 3, 3, true),
+          Move(2, 2, 0, true), Move(2, 2, 1, true), Move(2, 2, 2, true), Move(2, 2, 3, true), Move(2, 2, 4, true)
         )
       }
       "return missing moves" in {

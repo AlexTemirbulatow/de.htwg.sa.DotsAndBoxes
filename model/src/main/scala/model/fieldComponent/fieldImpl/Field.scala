@@ -96,7 +96,7 @@ case class Field(matrix: MatrixInterface) extends FieldInterface:
     }
   override def getSaveMoves(coords: Vector[(Int, Int, Int)], field: FieldInterface): Vector[Move] =
     coords.collect {
-      case (vec, x, y) if !isRiskyMove(vec, x, y, field) => Move(vec, x, y, true)
+      case (vec, x, y) if !isRiskyMove(vec, x, y, field) && !isClosingMove(vec, x, y, field) => Move(vec, x, y, true)
     }
   override def getMissingMoves(vec: Int, row: Int, col: Int, field: FieldInterface): Vector[(Int, Int, Int)] =
     val casesWithCellsToCheck: Vector[Vector[(Int, Int, Int)]] =
