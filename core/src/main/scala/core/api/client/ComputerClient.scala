@@ -14,10 +14,12 @@ object ComputerClient:
   private[client] implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val ec: ExecutionContext = system.dispatcher
 
-  CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-computer-client") { () => shutdown }
-
   private val logger = LoggerFactory.getLogger(getClass.getName.init)
   private val http = Http(system)
+
+  CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-computer-client") { () =>
+    shutdown.map(_ => Done)
+  }
 
   def getRequest(endpoint: String): Future[String] =
     sendRequest(
