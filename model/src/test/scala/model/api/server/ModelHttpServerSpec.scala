@@ -13,7 +13,7 @@ import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
 
 class ModelHttpServerSpec extends AnyWordSpec with BeforeAndAfterAll {
-  private implicit val system: ActorSystem = ActorSystem("ModelHttpTest")
+  private implicit val system: ActorSystem = ActorSystem("ModelHttpServerTest")
   private implicit val executionContext: ExecutionContext = system.dispatcher
 
   var testModelServerSystem: Option[ActorSystem] = None

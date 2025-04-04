@@ -13,7 +13,7 @@ import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 
 class ComputerRequestHttpSpec extends AnyWordSpec with BeforeAndAfterAll {
-  val wireMockComputerServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(COMPUTER_PORT))
+  private val wireMockComputerServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(COMPUTER_PORT))
 
   private def fieldToJson(field: FieldInterface) =
     FieldConverter.toJson(field)

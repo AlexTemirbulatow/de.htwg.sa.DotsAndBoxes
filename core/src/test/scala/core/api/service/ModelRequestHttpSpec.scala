@@ -12,10 +12,10 @@ import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 
 class ModelRequestHttpSpec extends AnyWordSpec with BeforeAndAfterAll {
-  val wireMockModelServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(MODEL_PORT))
+  private val wireMockModelServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(MODEL_PORT))
 
-  val field: FieldInterface = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
-  val endpointEndPaths = List("fieldData", "gameBoardData", "playerGameData", "fieldSizeData", "currentStatus", "currentPlayer")
+  private val field: FieldInterface = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
+  private val endpointEndPaths = List("fieldData", "gameBoardData", "playerGameData", "fieldSizeData", "currentStatus", "currentPlayer")
 
   override def beforeAll(): Unit =
     wireMockModelServer.start()

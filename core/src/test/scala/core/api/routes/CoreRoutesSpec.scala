@@ -7,7 +7,6 @@ import akka.http.scaladsl.server.Directives.pathPrefix
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import common.config.ServiceConfig._
-import common.model.fieldService.FieldInterface
 import core.controllerComponent.controllerImpl.Controller
 import de.github.dotsandboxes.lib._
 import io.circe.generic.auto._
@@ -23,9 +22,9 @@ import scala.concurrent.{Await, Future}
 import persistence.api.routes.FileIORoutes
 
 class CoreRoutesSpec extends AnyWordSpec with ScalatestRouteTest with BeforeAndAfterAll {
-  val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
-  val controller = new Controller(using field, FileFormat.JSON, ComputerDifficulty.Medium)
-  val routes: Route = new CoreRoutes(controller).coreRoutes
+  private val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
+  private val controller = new Controller(using field, FileFormat.JSON, ComputerDifficulty.Medium)
+  private val routes: Route = new CoreRoutes(controller).coreRoutes
 
   private var testModelServerBinding: Option[ServerBinding] = None
   private val modelRoutes: Route = pathPrefix("api") { pathPrefix("model") { pathPrefix("field") { new FieldRoutes().fieldRoutes } } }
@@ -43,7 +42,7 @@ class CoreRoutesSpec extends AnyWordSpec with ScalatestRouteTest with BeforeAndA
       testPersistenceServerBinding.map(_.unbind()).getOrElse(Future.successful(()))
     )
     Await.result(Future.sequence(unbindFutures), 10.seconds)
-    system.terminate()
+    Await.result(system.terminate(), 10.seconds)
 
   "CoreRoutes" when {
     "receiving a single slash request" should {

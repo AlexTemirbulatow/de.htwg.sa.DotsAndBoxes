@@ -17,7 +17,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 
 class ControllerServerMockSpec extends AnyWordSpec with BeforeAndAfterAll {
-  val wireMockComputerServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(COMPUTER_PORT))
+  private val wireMockComputerServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(COMPUTER_PORT))
 
   override def beforeAll(): Unit =
     wireMockComputerServer.start()

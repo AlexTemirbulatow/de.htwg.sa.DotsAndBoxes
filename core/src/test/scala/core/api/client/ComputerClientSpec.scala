@@ -32,7 +32,7 @@ class ComputerClientSpec extends AnyWordSpec with ScalatestRouteTest with Before
     testComputerServerBinding = Some(Await.result(Http().bindAndHandle(testRoute, COMPUTER_HOST, COMPUTER_PORT), 10.seconds))
 
   override def afterAll(): Unit =
-    testComputerServerBinding.foreach { binding => Await.result(binding.unbind(), 10.seconds) }
+    testComputerServerBinding.foreach(binding => Await.result(binding.unbind(), 10.seconds))
     Await.result(system.terminate(), 10.seconds)
 
   "ComputerClient" should {

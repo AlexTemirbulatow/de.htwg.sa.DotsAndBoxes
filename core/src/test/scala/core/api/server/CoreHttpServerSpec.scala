@@ -14,11 +14,11 @@ import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
 
 class ZCoreHttpServerSpec extends AnyWordSpec with BeforeAndAfterAll {
-  private implicit val system: ActorSystem = ActorSystem("CoreHttpTest")
+  private implicit val system: ActorSystem = ActorSystem("CoreHttpServerTest")
   private implicit val executionContext: ExecutionContext = system.dispatcher
 
-  var testCoreServerSystem: Option[ActorSystem] = None
-  var testCoreServerBinding: Option[ServerBinding] = None
+  private var testCoreServerSystem: Option[ActorSystem] = None
+  private var testCoreServerBinding: Option[ServerBinding] = None
 
   override def beforeAll(): Unit =
     val (bindingFuture, coreActorSystem) = CoreHttpServer.run
@@ -27,6 +27,7 @@ class ZCoreHttpServerSpec extends AnyWordSpec with BeforeAndAfterAll {
 
   override def afterAll(): Unit =
     Await.result(testCoreServerBinding.map(_.unbind()).getOrElse(Future.successful(())), 10.seconds)
+    Await.result(system.terminate(), 10.seconds)
 
   "CoreHttpServer" should {
     "return OK on pre connect request when started" in {
