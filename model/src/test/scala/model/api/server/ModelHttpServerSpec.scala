@@ -16,8 +16,8 @@ class ModelHttpServerSpec extends AnyWordSpec with BeforeAndAfterAll {
   private implicit val system: ActorSystem = ActorSystem("ModelHttpServerTest")
   private implicit val executionContext: ExecutionContext = system.dispatcher
 
-  var testModelServerSystem: Option[ActorSystem] = None
-  var testModelServerBinding: Option[ServerBinding] = None
+  private var testModelServerSystem: Option[ActorSystem] = None
+  private var testModelServerBinding: Option[ServerBinding] = None
 
   override def beforeAll(): Unit =
     val (bindingFuture, modelActorSystem) = ModelHttpServer.run
@@ -25,7 +25,10 @@ class ModelHttpServerSpec extends AnyWordSpec with BeforeAndAfterAll {
     testModelServerBinding = Some(Await.result(bindingFuture, 10.seconds))
 
   override def afterAll(): Unit =
-    Await.result(testModelServerBinding.map(_.unbind()).getOrElse(Future.successful(())), 10.seconds)
+    testModelServerBinding.foreach(binding =>
+      Await.result(binding.unbind(), 10.seconds)
+    )
+    Await.result(system.terminate(), 10.seconds)
 
   "ModelHttpServer" should {
     "start and respond to requests" in {

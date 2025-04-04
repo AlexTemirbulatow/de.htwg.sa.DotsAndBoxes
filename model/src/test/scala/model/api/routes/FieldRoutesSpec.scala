@@ -14,20 +14,26 @@ import io.circe.syntax._
 import model.api.routes.FieldRoutes
 import model.fieldComponent.fieldImpl.Field
 import model.fieldComponent.parser.FieldParser
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.Json
+import scala.concurrent.Await
+import scala.concurrent.duration.DurationInt
 
-class FieldRoutesSpec extends AnyWordSpec with ScalatestRouteTest {
-  val field: FieldInterface = new Field(BoardSize.Medium, Status.Empty, PlayerSize.Two, PlayerType.Human)
-  val fieldRoutes: FieldRoutes = new FieldRoutes
-  val routes: Route = fieldRoutes.fieldRoutes
+class FieldRoutesSpec extends AnyWordSpec with ScalatestRouteTest with BeforeAndAfterAll {
+  private val field: FieldInterface = new Field(BoardSize.Medium, Status.Empty, PlayerSize.Two, PlayerType.Human)
+  private val fieldRoutes: FieldRoutes = new FieldRoutes
+  private val routes: Route = fieldRoutes.fieldRoutes
 
   private def fieldToJsonString(field: FieldInterface): String =
     FieldConverter.toJson(field).toString
 
   private def fieldFromJsonString(fieldValue: String): FieldInterface =
     FieldParser.fromJson(fieldValue)
+
+  override def afterAll(): Unit =
+    Await.result(system.terminate(), 10.seconds)
 
   "FieldRoutes" when {
     "pre connecting" should {

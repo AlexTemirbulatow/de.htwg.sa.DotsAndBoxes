@@ -1,8 +1,8 @@
 package model.fieldComponent.fieldImpl
 
+import model.fieldComponent.fieldImpl.{ConnectedColumn, ConnectedRow, Connectors, Dot, Empty, EmptyColumn, EmptyRow}
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
-import model.fieldComponent.fieldImpl.{EmptyRow, ConnectedColumn, Empty, Dot, EmptyColumn, ConnectedRow, Connectors}
 
 class ConnectorsSpec extends AnyWordSpec {
   "Connectors" when {
