@@ -1,11 +1,10 @@
 package core.controllerComponent.utils.moveHandler
 
-import org.scalatest.matchers.should.Matchers._
-import org.scalatest.wordspec.AnyWordSpec
-
 import core.controllerComponent.utils.moveHandler._
 import de.github.dotsandboxes.lib._
 import model.fieldComponent.fieldImpl.Field
+import org.scalatest.matchers.should.Matchers._
+import org.scalatest.wordspec.AnyWordSpec
 import scala.util.{Failure, Success}
 
 class MoveValidatorSpec extends AnyWordSpec {
