@@ -1,19 +1,34 @@
 package fileIOComponent.xmlImpl
 
+import common.config.ServiceConfig.FILEIO_FILENAME
+import common.model.fieldService.FieldInterface
+import common.model.fieldService.converter.FieldConverter
+import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, Status}
+import model.fieldComponent.fieldImpl.Field
+import model.fieldComponent.parser.FieldParser
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
-
-import de.github.dotsandboxes.lib.{BoardSize, PlayerSize, PlayerType, Status}
 import persistence.fileIOComponent.xmlImpl.FileIO
 
 class FileIoSpec extends AnyWordSpec {
-  "A game state" when {/*
+
+  private def fieldToXmlString(field: FieldInterface): String =
+    FieldConverter.toXml(field).toString
+
+  private def fieldFromXmlString(fieldValue: String): FieldInterface =
+    FieldParser.fromXml(fieldValue)
+
+  "A game state" when {
     "saved to xml" should {
       "be equal when loaded" in {
         val field: Field = new Field(BoardSize.Medium, Status.Empty, PlayerSize.Two, PlayerType.Human)
         val fileIO = new FileIO()
-        fileIO.save(field)
-        fileIO.load should be(field)
+        fileIO.save(fieldToXmlString(field), FILEIO_FILENAME)
+        val fieldValue = fileIO.load(FILEIO_FILENAME) match
+          case Left(value)  => value
+          case Right(value) => value
+        val loadedField: FieldInterface = fieldFromXmlString(fieldValue._1)
+        loadedField should be(field)
       }
       "return the correct game state" in {
         val field: FieldInterface = new Field(BoardSize.Medium, Status.Empty, PlayerSize.Four, PlayerType.Computer)
@@ -21,9 +36,13 @@ class FileIoSpec extends AnyWordSpec {
           .putCol(0, 0, true).putCol(0, 5, true).putCol(3, 0, true).putCol(3, 5, true).putCol(2, 2, true)
           .putStatus(0, 0, Status.Blue).putStatus(0, 4, Status.Red).putStatus(3, 0, Status.Green).putStatus(3, 4, Status.Yellow).putStatus(2, 2, Status.Blue)
         val fileIO = new FileIO()
-        fileIO.save(field)
+        fileIO.save(fieldToXmlString(field), FILEIO_FILENAME)
 
-        val loadedField: FieldInterface = fileIO.load
+        val fieldValue = fileIO.load(FILEIO_FILENAME) match
+          case Left(value)  => value
+          case Right(value) => value
+        val loadedField: FieldInterface = fieldFromXmlString(fieldValue._1)
+        loadedField should be(field)
 
         loadedField.getRowCell(0, 0) shouldBe true
         loadedField.getRowCell(0, 4) shouldBe true
@@ -62,14 +81,26 @@ class FileIoSpec extends AnyWordSpec {
         val fileIO = new FileIO()
 
         field.isFinished shouldBe true
-        fileIO.save(field)
-        val loadedField: FieldInterface = fileIO.load
+        fileIO.save(fieldToXmlString(field), FILEIO_FILENAME)
+        val fieldValue = fileIO.load(FILEIO_FILENAME) match
+          case Left(value)  => value
+          case Right(value) => value
+        val loadedField: FieldInterface = fieldFromXmlString(fieldValue._1)
+        loadedField should be(field)
         loadedField.isFinished shouldBe true
       }
       "return Left if something went wrong" in {
         val fileIO = new FileIO()
-        fileIO.save(null) should matchPattern { case Left(_) => }
+        fileIO.save(null, FILEIO_FILENAME) should matchPattern { case Left(_) => }
       }
-    }*/
+      "return Left if loading went wrong" in {
+        val fileIO = new FileIO()
+        val fieldValue = fileIO.load("InvalidFilename") match
+          case Left(value)  => value
+          case Right(value) => value
+        fieldValue._1 should include("InvalidFilename.xml")
+        fieldValue._2 shouldBe "InvalidFilename.xml"
+      }
+    }
   }
 }
