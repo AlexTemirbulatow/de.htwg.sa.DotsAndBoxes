@@ -14,7 +14,7 @@ import play.api.libs.json.{JsValue, Json}
 import scala.util.{Failure, Success, Try}
 
 class CoreRoutes(val controller: ControllerInterface):
-  private val logger = LoggerFactory.getLogger(getClass)
+  private val logger = LoggerFactory.getLogger(getClass.getName.init)
 
   def coreRoutes: Route = handleExceptions(exceptionHandler) {
     concat(

@@ -18,7 +18,7 @@ object ModelClient:
     shutdown.map(_ => Done)
   }
 
-  private val logger = LoggerFactory.getLogger(getClass)
+  private val logger = LoggerFactory.getLogger(getClass.getName.init)
   private val http = Http(system)
 
   def getRequest(endpoint: String): Future[String] =

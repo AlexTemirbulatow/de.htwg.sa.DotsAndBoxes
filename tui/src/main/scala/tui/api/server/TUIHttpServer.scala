@@ -19,7 +19,7 @@ object TUIHttpServer:
   private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val executionContext: ExecutionContext = system.dispatcher
 
-  private val logger = LoggerFactory.getLogger(getClass)
+  private val logger = LoggerFactory.getLogger(getClass.getName.init)
 
   def run: (Future[ServerBinding], ActorSystem) =
     CoreRequestHttp.registerTUIObserver(TUI_OBSERVER_URL)
