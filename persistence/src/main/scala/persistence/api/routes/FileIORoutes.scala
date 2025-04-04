@@ -16,9 +16,16 @@ class FileIORoutes:
 
   def fileIORoutes: Route = handleExceptions(exceptionHandler) {
     concat(
+      handlePreConnectRequest,
       handleSaveRequest,
       handleLoadRequest
     )
+  }
+
+  private def handlePreConnectRequest: Route = get {
+    path("preConnect") {
+      complete(StatusCodes.OK)
+    }
   }
 
   private def handleSaveRequest: Route = post {

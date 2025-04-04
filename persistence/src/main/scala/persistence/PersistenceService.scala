@@ -1,2 +1,2 @@
 object PersistenceService:
-  @main def startPersistenceServer: Unit = persistence.api.server.PersistenceServer.run
+  @main def startPersistenceServer: Unit = persistence.api.server.PersistenceHttpServer.run

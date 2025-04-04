@@ -12,7 +12,7 @@ import persistence.api.routes.FileIORoutes
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
-object PersistenceServer:
+object PersistenceHttpServer:
   private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val executionContext: ExecutionContext = system.dispatcher
 

@@ -33,6 +33,13 @@ class FileIORoutesSpec extends AnyWordSpec with ScalatestRouteTest with BeforeAn
     Await.result(system.terminate(), 10.seconds)
 
   "FileIORoutes" when {
+    "receiving a pre connect request" should {
+      "return with StatusCode OK" in {
+        Get("/preConnect") ~> routes ~> check {
+          status shouldBe StatusCodes.OK
+        }
+      }
+    }
     "receiving a save request" should {
       "properly save the field as JSON" in {
         val saveJson = Json.obj(
