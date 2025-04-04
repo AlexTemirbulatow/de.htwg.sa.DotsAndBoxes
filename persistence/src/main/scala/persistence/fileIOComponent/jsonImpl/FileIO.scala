@@ -7,18 +7,21 @@ import scala.io.Source
 import scala.util.{Failure, Success, Try}
 
 class FileIO extends FileIOInterface:
-  private val FILE_NAME = "field.json"
+  private val FILE_PATH = ""
+  private val FILE_EXTENSION = ".json"
 
-  override def save(fieldValue: String): Either[(String, String), String] =
+  override def save(fieldValue: String, filename: String): Either[(String, String), String] =
+    val fullPath = FILE_PATH + filename + FILE_EXTENSION
     Try {
-      val printWriter = new PrintWriter(new File(FILE_NAME))
+      val printWriter = new PrintWriter(new File(fullPath))
       printWriter.write(Json.prettyPrint(Json.parse(fieldValue)))
       printWriter.close()
     } match
-      case Success(_) => Right(FILE_NAME)
-      case Failure(e) => Left((e.getMessage, FILE_NAME))
+      case Success(_) => Right(fullPath)
+      case Failure(e) => Left((e.getMessage, fullPath))
 
-  override def load: Either[(String, String), (String, String)] =
-    Try(Source.fromFile(FILE_NAME).getLines.mkString) match
-      case Success(fieldValue) => Right((fieldValue, FILE_NAME))
-      case Failure(e)          => Left((e.getMessage, FILE_NAME))
+  override def load(filename: String): Either[(String, String), (String, String)] =
+    val fullPath = FILE_PATH + filename + FILE_EXTENSION
+    Try(Source.fromFile(fullPath).getLines.mkString) match
+      case Success(fieldValue) => Right((fieldValue, fullPath))
+      case Failure(e)          => Left((e.getMessage, fullPath))

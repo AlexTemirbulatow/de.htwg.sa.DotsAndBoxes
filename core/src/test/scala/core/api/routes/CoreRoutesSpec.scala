@@ -168,6 +168,10 @@ class CoreRoutesSpec extends AnyWordSpec with ScalatestRouteTest with BeforeAndA
         }
       }
       "load and return OK" in {
+        val saveJson = Json.obj("method" -> "save").toString
+        Post("/publish", saveJson) ~> routes ~> check {
+          status shouldBe StatusCodes.OK
+        }
         val loadJson = Json.obj("method" -> "load").toString
         Post("/publish", loadJson) ~> routes ~> check {
           status shouldBe StatusCodes.OK

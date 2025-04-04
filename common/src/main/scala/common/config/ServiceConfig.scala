@@ -8,6 +8,7 @@ object ServiceConfig:
   val PERSISTENCE_HOST = "localhost"
   val PERSISTENCE_PORT = 8081
   val PERSISTENCE_BASE_URL = s"http://$PERSISTENCE_HOST:$PERSISTENCE_PORT/"
+  val FILEIO_FILENAME = "field"
 
   val COMPUTER_HOST = "localhost"
   val COMPUTER_PORT = 8082

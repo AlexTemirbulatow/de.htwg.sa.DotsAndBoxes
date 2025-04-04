@@ -23,8 +23,7 @@ import scala.concurrent.duration.DurationInt
 
 class FieldRoutesSpec extends AnyWordSpec with ScalatestRouteTest with BeforeAndAfterAll {
   private val field: FieldInterface = new Field(BoardSize.Medium, Status.Empty, PlayerSize.Two, PlayerType.Human)
-  private val fieldRoutes: FieldRoutes = new FieldRoutes
-  private val routes: Route = fieldRoutes.fieldRoutes
+  private val routes: Route = new FieldRoutes().fieldRoutes
 
   private def fieldToJsonString(field: FieldInterface): String =
     FieldConverter.toJson(field).toString

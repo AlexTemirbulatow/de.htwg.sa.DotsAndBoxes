@@ -27,8 +27,10 @@ class FileIORoutes:
         val jsonValue: JsValue = Json.parse(json)
         val fileFormat: FileFormat = Try(FileFormat.valueOf((jsonValue \ "fileFormat").as[String]))
           .getOrElse(throw new IllegalArgumentException(s"Invalid File Format."))
+        val filename: String = ((jsonValue \ "filename")).as[String]
         val fileIO: FileIOInterface = fileIOFactory(fileFormat)
-        fileIO.save((jsonValue \ "field").as[String]) match
+        val fieldValue: String = (jsonValue \ "field").as[String]
+        fileIO.save(fieldValue, filename) match
           case Right(filename) =>
             logger.info(s"Persistence Service [FileIO] -- Field successfully saved as $fileFormat to $filename")
             complete(StatusCodes.OK)
@@ -45,8 +47,9 @@ class FileIORoutes:
         val jsonValue: JsValue = Json.parse(json)
         val fileFormat: FileFormat = Try(FileFormat.valueOf((jsonValue \ "fileFormat").as[String]))
           .getOrElse(throw new IllegalArgumentException(s"Invalid File Format."))
+        val filename: String = ((jsonValue \ "filename")).as[String]
         val fileIO: FileIOInterface = fileIOFactory(fileFormat)
-        fileIO.load match
+        fileIO.load(filename) match
           case Right((fieldValue, filename)) =>
             logger.info(s"Persistence Service [FileIO] -- Field successfully loaded as $fileFormat from $filename")
             complete(fieldValue)

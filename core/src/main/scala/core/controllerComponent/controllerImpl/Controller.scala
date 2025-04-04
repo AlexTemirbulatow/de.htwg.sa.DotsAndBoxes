@@ -1,6 +1,6 @@
 package core.controllerComponent.controllerImpl
 
-import common.config.ServiceConfig.COMPUTER_SLEEP_TIME
+import common.config.ServiceConfig.{COMPUTER_SLEEP_TIME, FILEIO_FILENAME}
 import common.model.fieldService.FieldInterface
 import common.model.fieldService.converter.FieldConverter
 import common.persistence.fileIOService.serializer.FileIOSerializer
@@ -37,11 +37,11 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
   override def undo: FieldInterface = undoManager.undoStep(field)
   override def redo: FieldInterface = undoManager.redoStep(field)
   override def save: FieldInterface =
-    PersistenceRequestHttp.saveFileIO(FileIOSerializer.serialize(field, fileFormat), fileFormat)
+    PersistenceRequestHttp.saveFileIO(FileIOSerializer.serialize(field, fileFormat), fileFormat, FILEIO_FILENAME)
     if !gameEnded then notifyObservers(Event.Move)
     field
   override def load: FieldInterface =
-    val fieldValue: String = PersistenceRequestHttp.loadFileIO(fileFormat)
+    val fieldValue: String = PersistenceRequestHttp.loadFileIO(fileFormat, FILEIO_FILENAME)
     field = fileFormat match
       case FileFormat.JSON => FieldParser.fromJson(fieldValue)
       case FileFormat.XML  => FieldParser.fromXml(fieldValue)

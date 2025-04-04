@@ -7,13 +7,15 @@ import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
 
 object PersistenceRequestHttp:
-  def saveFileIO(fieldValue: String, fileFormat: FileFormat): Future[String] =
+  def saveFileIO(fieldValue: String, fileFormat: FileFormat, filename: String): Future[String] =
     PersistenceClient.postRequest("api/persistence/fileIO/save", Json.obj(
       "field"      -> fieldValue,
-      "fileFormat" -> fileFormat.toString
+      "fileFormat" -> fileFormat.toString,
+      "filename"   -> filename
     ))
 
-  def loadFileIO(fileFormat: FileFormat): String =
+  def loadFileIO(fileFormat: FileFormat, filename: String): String =
     Await.result(PersistenceClient.postRequest("api/persistence/fileIO/load", Json.obj(
-      "fileFormat" -> fileFormat.toString
+      "fileFormat" -> fileFormat.toString,
+      "filename"   -> filename
     )), 5.seconds)

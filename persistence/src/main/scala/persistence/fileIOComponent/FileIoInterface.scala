@@ -1,5 +1,5 @@
 package persistence.fileIOComponent
 
 trait FileIOInterface:
-  def save(field: String): Either[(String, String), String]
-  def load: Either[(String, String), (String, String)]
+  def save(field: String, filename: String): Either[(String, String), String]
+  def load(filename: String): Either[(String, String), (String, String)]
