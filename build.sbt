@@ -64,6 +64,7 @@ lazy val persistence = project
   .in(file("persistence"))
   .settings(name := "persistence")
   .dependsOn(common)
+  .dependsOn(model % Test)
 
 lazy val computer = project
   .in(file("computer"))
