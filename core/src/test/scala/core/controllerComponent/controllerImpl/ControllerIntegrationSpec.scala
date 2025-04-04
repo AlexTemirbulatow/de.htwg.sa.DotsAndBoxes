@@ -43,10 +43,10 @@ class ControllerIntegrationSpec extends AnyWordSpec with Eventually with BeforeA
 
   override def afterAll(): Unit =
     val unbindFutures = List(
-      testModelServerBinding.map(_.unbind()).getOrElse(Future.successful(())),
-      testPersistenceServerBinding.map(_.unbind()).getOrElse(Future.successful(())),
-      testComputerServerBinding.map(_.unbind()).getOrElse(Future.successful(()))
-    )
+      testModelServerBinding.map(_.unbind()),
+      testPersistenceServerBinding.map(_.unbind()),
+      testComputerServerBinding.map(_.unbind())
+    ).flatten
     Await.result(Future.sequence(unbindFutures), 10.seconds)
     Await.result(system.terminate(), 10.seconds)
 

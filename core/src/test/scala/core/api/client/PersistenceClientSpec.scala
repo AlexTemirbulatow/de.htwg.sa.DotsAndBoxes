@@ -32,7 +32,9 @@ class PersistenceClientSpec extends AnyWordSpec with ScalatestRouteTest with Bef
     testPersistenceServerBinding = Some(Await.result(Http().bindAndHandle(testRoute, PERSISTENCE_HOST, PERSISTENCE_PORT), 10.seconds))
 
   override def afterAll(): Unit =
-    testPersistenceServerBinding.foreach(binding => Await.result(binding.unbind(), 10.seconds))
+    testPersistenceServerBinding.foreach(binding =>
+      Await.result(binding.unbind(), 10.seconds)
+    )
     Await.result(system.terminate(), 10.seconds)
 
   "PersistenceClient" should {

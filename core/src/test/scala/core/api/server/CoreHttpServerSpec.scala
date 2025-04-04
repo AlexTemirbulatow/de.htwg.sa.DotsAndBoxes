@@ -26,7 +26,9 @@ class ZCoreHttpServerSpec extends AnyWordSpec with BeforeAndAfterAll {
     testCoreServerBinding = Some(Await.result(bindingFuture, 10.seconds))
 
   override def afterAll(): Unit =
-    Await.result(testCoreServerBinding.map(_.unbind()).getOrElse(Future.successful(())), 10.seconds)
+    testCoreServerBinding.foreach(binding =>
+      Await.result(binding.unbind(), 10.seconds)
+    )
     Await.result(system.terminate(), 10.seconds)
 
   "CoreHttpServer" should {
