@@ -8,7 +8,7 @@ import akka.http.scaladsl.server.Route
 import common.config.ServiceConfig._
 import common.model.fieldService.FieldInterface
 import computer.api.routes.ComputerRoutes
-import core.controllerComponent.utils.observer.Observer
+import core.controllerComponent.utils.observer.{Observer, ObserverHttp}
 import de.github.dotsandboxes.lib._
 import model.api.routes.FieldRoutes
 import model.fieldComponent.fieldImpl.Field
@@ -19,7 +19,6 @@ import org.scalatest.wordspec.AnyWordSpec
 import persistence.api.routes.FileIORoutes
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
-import core.controllerComponent.utils.observer.ObserverHttp
 
 class ControllerIntegrationSpec extends AnyWordSpec with Eventually with BeforeAndAfterAll {
   private implicit val system: ActorSystem = ActorSystem("ControllerIntegrationTest")

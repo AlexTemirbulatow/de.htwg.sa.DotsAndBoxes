@@ -16,10 +16,10 @@ import model.fieldComponent.fieldImpl.Field
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
+import persistence.api.routes.FileIORoutes
 import play.api.libs.json.Json
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
-import persistence.api.routes.FileIORoutes
 
 class CoreRoutesSpec extends AnyWordSpec with ScalatestRouteTest with BeforeAndAfterAll {
   private val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
