@@ -18,8 +18,6 @@ ThisBuild / credentials += Credentials(
   sys.env.getOrElse("GITHUB_TOKEN", "")
 )
 
-ThisBuild / Test / parallelExecution := false
-
 ThisBuild / libraryDependencies ++= Seq(
   "org.scalactic" %% "scalactic" % scalatestVersion,
   "org.scalatest" %% "scalatest" % scalatestVersion % Test,
@@ -39,6 +37,8 @@ ThisBuild / libraryDependencies ++= Seq(
   "org.wiremock" % "wiremock" % "3.12.1" % Test,
   "com.github.AlexTemirbulatow" %% "dotsandboxes" % dotsandboxesLibVersion
 )
+
+ThisBuild / Test / parallelExecution := false
 
 lazy val root = project
   .in(file("."))
