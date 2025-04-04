@@ -39,6 +39,7 @@ class ComputerRoutesSpec extends AnyWordSpec with ScalatestRouteTest with Before
       testModelServerBinding.map(_.unbind()).getOrElse(Future.successful(()))
     )
     Await.result(Future.sequence(unbindFutures), 10.seconds)
+    Await.result(system.terminate(), 10.seconds)
 
   "ComputerRoutes" when {
     "receiving a pre connect request" should {
