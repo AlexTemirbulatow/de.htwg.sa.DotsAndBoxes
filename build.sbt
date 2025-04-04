@@ -18,6 +18,8 @@ ThisBuild / credentials += Credentials(
   sys.env.getOrElse("GITHUB_TOKEN", "")
 )
 
+ThisBuild / Test / parallelExecution := false
+
 ThisBuild / libraryDependencies ++= Seq(
   "org.scalactic" %% "scalactic" % scalatestVersion,
   "org.scalatest" %% "scalatest" % scalatestVersion % Test,
@@ -49,10 +51,7 @@ lazy val common = project
 
 lazy val core = project
   .in(file("core"))
-  .settings(
-    name := "core",
-    Test / parallelExecution := false
-  )
+  .settings(name := "core")
   .dependsOn(common, model)
   .dependsOn(persistence % Test, computer % Test)
 
@@ -70,6 +69,7 @@ lazy val computer = project
   .in(file("computer"))
   .settings(name := "computer")
   .dependsOn(common)
+  .dependsOn(model % Test)
 
 lazy val gui = project
   .in(file("gui"))
