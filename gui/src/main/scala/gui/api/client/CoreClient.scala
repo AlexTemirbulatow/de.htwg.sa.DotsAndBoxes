@@ -1,7 +1,7 @@
 package gui.api.client
 
 import akka.Done
-import akka.actor.ActorSystem
+import akka.actor.{ActorSystem, CoordinatedShutdown}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshal
@@ -15,6 +15,10 @@ import scala.concurrent.{ExecutionContext, Future}
 object CoreClient:
   private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val ec: ExecutionContext = system.dispatcher
+
+  CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-core-client") { () =>
+    shutdown.map(_ => Done)
+  }
 
   private val logger = LoggerFactory.getLogger(getClass)
   private val http = Http(system)
@@ -67,4 +71,4 @@ object CoreClient:
 
   def shutdown: Future[Done] =
     logger.info("GUI Service -- Shutting Down Core Client...")
-    http.shutdownAllConnectionPools().flatMap(_ => system.terminate()).map(_ => Done)
+    http.shutdownAllConnectionPools().map(_ => Done)

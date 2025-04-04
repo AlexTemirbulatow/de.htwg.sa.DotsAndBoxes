@@ -8,7 +8,8 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import common.config.ServiceConfig.{TUI_BASE_URL, TUI_HOST, TUI_OBSERVER_URL, TUI_PORT}
 import org.slf4j.LoggerFactory
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.util.{Failure, Success}
 import tui.api.routes.TUIRoutes
 import tui.api.service.CoreRequestHttp
@@ -51,7 +52,7 @@ object TUIHttpServer:
     }
 
   private def shutdown(serverBinding: Future[ServerBinding]): Future[Done] =
-    CoreRequestHttp.deregisterTUIObserver(TUI_OBSERVER_URL)
+    Await.result(CoreRequestHttp.deregisterTUIObserver(TUI_OBSERVER_URL), 5.seconds)
     serverBinding.flatMap { binding =>
       binding.unbind().map { _ =>
         logger.info("TUI Service -- Shutting Down Http Server...")

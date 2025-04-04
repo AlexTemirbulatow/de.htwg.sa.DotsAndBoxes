@@ -58,8 +58,7 @@ object CoreRequestHttp:
       "url" -> tuiObserverUrl
     ))
 
-  def deregisterTUIObserver(tuiObserverUrl: String): Future[Done] =
-    Await.result(CoreClient.postRequest("api/core/deregisterObserver", Json.obj(
+  def deregisterTUIObserver(tuiObserverUrl: String): Future[Either[String, String]] =
+    CoreClient.postRequest("api/core/deregisterObserver", Json.obj(
       "url" -> tuiObserverUrl
-    )), 5.seconds)
-    CoreClient.shutdown
+    ))

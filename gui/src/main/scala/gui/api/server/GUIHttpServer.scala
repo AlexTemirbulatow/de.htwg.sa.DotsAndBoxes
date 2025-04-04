@@ -11,7 +11,8 @@ import gui.api.routes.GUIRoutes
 import gui.api.service.CoreRequestHttp
 import gui.guiComponent.GUI
 import org.slf4j.LoggerFactory
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 object GUIHttpServer:
@@ -51,7 +52,7 @@ object GUIHttpServer:
     }
 
   private def shutdown(serverBinding: Future[ServerBinding]): Future[Done] =
-    CoreRequestHttp.deregisterGUIObserver(GUI_OBSERVER_URL)
+    Await.result(CoreRequestHttp.deregisterGUIObserver(GUI_OBSERVER_URL), 5.seconds)
     serverBinding.flatMap { binding =>
       binding.unbind().map { _ =>
         logger.info("GUI Service -- Shutting Down Http Server...")

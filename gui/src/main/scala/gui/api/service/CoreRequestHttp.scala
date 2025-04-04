@@ -76,8 +76,7 @@ object CoreRequestHttp:
       "url" -> guiObserverUrl
     ))
 
-  def deregisterGUIObserver(guiObserverUrl: String): Future[Done] =
-    Await.result(CoreClient.postRequest("api/core/deregisterObserver", Json.obj(
+  def deregisterGUIObserver(guiObserverUrl: String): Future[String] =
+    CoreClient.postRequest("api/core/deregisterObserver", Json.obj(
       "url" -> guiObserverUrl
-    )), 5.seconds)
-    CoreClient.shutdown
+    ))
