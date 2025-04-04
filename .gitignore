@@ -39,8 +39,8 @@ metals.sbt
 .DS_Store
 
 # fileIO
-*.xml
-*.json
+field.xml
+field.json
 
 # env
 .env

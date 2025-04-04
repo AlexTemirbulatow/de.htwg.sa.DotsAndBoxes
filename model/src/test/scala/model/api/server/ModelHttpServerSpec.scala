@@ -1,0 +1,57 @@
+package model.api.server
+
+import akka.Done
+import akka.actor.{ActorSystem, CoordinatedShutdown}
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.Http.ServerBinding
+import akka.http.scaladsl.model._
+import common.config.ServiceConfig.MODEL_BASE_URL
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.matchers.should.Matchers._
+import org.scalatest.wordspec.AnyWordSpec
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext, Future}
+
+class ModelHttpServerSpec extends AnyWordSpec with BeforeAndAfterAll {
+  private implicit val system: ActorSystem = ActorSystem("ModelHttpServerTest")
+  private implicit val executionContext: ExecutionContext = system.dispatcher
+
+  private var testModelServerSystem: Option[ActorSystem] = None
+  private var testModelServerBinding: Option[ServerBinding] = None
+
+  override def beforeAll(): Unit =
+    val (bindingFuture, modelActorSystem) = ModelHttpServer.run
+    testModelServerSystem = Some(modelActorSystem)
+    testModelServerBinding = Some(Await.result(bindingFuture, 10.seconds))
+
+  override def afterAll(): Unit =
+    testModelServerBinding.foreach(binding =>
+      Await.result(binding.unbind(), 10.seconds)
+    )
+    Await.result(system.terminate(), 10.seconds)
+
+  "ModelHttpServer" should {
+    "start and respond to requests" in {
+      val futureResponse: Future[StatusCode] = Http()
+        .singleRequest(
+          HttpRequest(
+            method = HttpMethods.GET,
+            uri = MODEL_BASE_URL.concat("api/model/field/preConnect")
+          )
+        ).map { response => response.status }
+      val response: StatusCode = Await.result(futureResponse, 5.seconds)
+      response shouldBe StatusCodes.OK
+    }
+    "handle double binding failure during server startup" in {
+      val exception = intercept[Exception] {
+        Await.result(ModelHttpServer.run._1, 5.seconds)
+      }
+      exception.getMessage should include("Bind failed")
+    }
+    "call CoordinatedShutdown when JVM is shutting down" in {
+      val shutdownFuture = CoordinatedShutdown(testModelServerSystem.get).run(CoordinatedShutdown.unknownReason)
+      val shutdownResult = Await.result(shutdownFuture, 5.seconds)
+      shutdownResult shouldBe Done
+    }
+  }
+}
