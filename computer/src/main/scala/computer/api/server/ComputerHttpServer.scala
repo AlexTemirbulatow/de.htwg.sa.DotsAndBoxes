@@ -46,7 +46,6 @@ object ComputerHttpServer:
     }
 
   private def shutdown(serverBinding: Future[ServerBinding]): Future[Done] =
-    ModelClient.shutdown
     serverBinding.flatMap { binding =>
       binding.unbind().map { _ =>
         logger.info("Computer Service -- Shutting Down Http Server...")

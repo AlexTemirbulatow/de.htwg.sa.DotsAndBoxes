@@ -1,5 +1,7 @@
 package computer.api.client
 
+import akka.Done
+import akka.actor.CoordinatedShutdown
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.model.StatusCodes
@@ -14,7 +16,7 @@ import play.api.libs.json.Json
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
 
-class ModelClientSpec extends AnyWordSpec with ScalatestRouteTest with BeforeAndAfterAll {
+class ZZModelClientSpec extends AnyWordSpec with ScalatestRouteTest with BeforeAndAfterAll {
   private var testModelServerBinding: Option[ServerBinding] = None
   private val testRoute: Route = pathPrefix("test-endpoint") {
     get {
@@ -53,6 +55,11 @@ class ModelClientSpec extends AnyWordSpec with ScalatestRouteTest with BeforeAnd
         Await.result(ModelClient.postRequest("test-endpoint", json), 5.seconds)
       }
       exception.getMessage shouldBe s"HTTP ERROR: 400 Bad Request - http://$MODEL_HOST:$MODEL_PORT/test-endpoint - postFailure"
+    }
+    "call CoordinatedShutdown when JVM is shutting down" in {
+      val shutdownFuture = CoordinatedShutdown(ModelClient.system).run(CoordinatedShutdown.unknownReason)
+      val shutdownResult = Await.result(shutdownFuture, 5.seconds)
+      shutdownResult shouldBe Done
     }
   }
 }

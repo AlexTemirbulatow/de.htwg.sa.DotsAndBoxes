@@ -12,7 +12,7 @@ import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 
-class ModelRequestHttpSpec extends AnyWordSpec with BeforeAndAfterAll {
+class AModelRequestHttpSpec extends AnyWordSpec with BeforeAndAfterAll {
   private val wireMockComputerServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(MODEL_PORT))
 
   private val fieldJsonString: String = FieldConverter.toJson(

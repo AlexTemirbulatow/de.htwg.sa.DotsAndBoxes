@@ -21,7 +21,7 @@ import play.api.libs.json.Json
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
 
-class ComputerRoutesSpec extends AnyWordSpec with ScalatestRouteTest with BeforeAndAfterAll {
+class AComputerRoutesSpec extends AnyWordSpec with ScalatestRouteTest with BeforeAndAfterAll {
   private val field = new Field(BoardSize.Small, Status.Empty, PlayerSize.Two, PlayerType.Human)
   private val routes: Route = new ComputerRoutes().computerRoutes
 
