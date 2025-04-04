@@ -1,7 +1,7 @@
 package tui.api.client
 
 import akka.Done
-import akka.actor.{CoordinatedShutdown, ActorSystem}
+import akka.actor.{ActorSystem, CoordinatedShutdown}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshal
