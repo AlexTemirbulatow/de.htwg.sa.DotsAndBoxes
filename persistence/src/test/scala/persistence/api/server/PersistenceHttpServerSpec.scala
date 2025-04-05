@@ -17,13 +17,10 @@ class PersistenceHttpServerSpec extends AnyWordSpec with BeforeAndAfterAll {
   private implicit val system: ActorSystem = ActorSystem("PersistenceHttpServerTest")
   private implicit val executionContext: ExecutionContext = system.dispatcher
 
-  private var testPersistenceServerSystem: Option[ActorSystem] = None
   private var testPersistenceServerBinding: Option[ServerBinding] = None
 
   override def beforeAll(): Unit =
-    val (bindingFuture, persistenceActorSystem) = PersistenceHttpServer.run
-    testPersistenceServerSystem = Some(persistenceActorSystem)
-    testPersistenceServerBinding = Some(Await.result(bindingFuture, 10.seconds))
+    testPersistenceServerBinding = Some(Await.result(PersistenceHttpServer.run, 10.seconds))
 
   override def afterAll(): Unit =
     testPersistenceServerBinding.foreach(binding =>
@@ -45,12 +42,12 @@ class PersistenceHttpServerSpec extends AnyWordSpec with BeforeAndAfterAll {
     }
     "handle double binding failure during server startup" in {
       val exception = intercept[Exception] {
-        Await.result(PersistenceHttpServer.run._1, 5.seconds)
+        Await.result(PersistenceHttpServer.run, 5.seconds)
       }
       exception.getMessage should include("Bind failed")
     }
     "call CoordinatedShutdown when JVM is shutting down" in {
-      val shutdownFuture = CoordinatedShutdown(testPersistenceServerSystem.get).run(CoordinatedShutdown.unknownReason)
+      val shutdownFuture = CoordinatedShutdown(PersistenceHttpServer.system).run(CoordinatedShutdown.unknownReason)
       val shutdownResult = Await.result(shutdownFuture, 5.seconds)
       shutdownResult shouldBe Done
     }

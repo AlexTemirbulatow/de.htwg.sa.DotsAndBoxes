@@ -18,7 +18,7 @@ object ModelClient:
   private val http = Http(system)
 
   CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-model-client") { () =>
-    shutdown.map(_ => Done)
+    shutdown
   }
 
   def getRequest(endpoint: String): Future[String] =
@@ -51,6 +51,6 @@ object ModelClient:
           }
     }
 
-  def shutdown: Future[Done] =
+  private def shutdown: Future[Done] =
     logger.info("Computer Service -- Shutting Down Model Client...")
     http.shutdownAllConnectionPools().map(_ => Done)
