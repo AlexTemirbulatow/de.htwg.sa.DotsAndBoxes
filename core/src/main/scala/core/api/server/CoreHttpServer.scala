@@ -33,7 +33,7 @@ object CoreHttpServer:
       case Success(binding)   => logger.info(s"Core Service -- Http Server is running at $COMPUTER_BASE_URL\n")
       case Failure(exception) => logger.error(s"Core Service -- Http Server failed to start", exception)
     }
-    return serverBinding
+    serverBinding
 
   private def routes(coreRoutes: CoreRoutes): Route =
     pathPrefix("api") {
