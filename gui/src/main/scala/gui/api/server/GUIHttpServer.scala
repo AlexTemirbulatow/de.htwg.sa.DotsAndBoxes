@@ -38,7 +38,7 @@ object GUIHttpServer:
     }
 
     gui.run
-    return serverBinding
+    serverBinding
 
   private def routes(guiRoutes: GUIRoutes): Route =
     pathPrefix("api") {
