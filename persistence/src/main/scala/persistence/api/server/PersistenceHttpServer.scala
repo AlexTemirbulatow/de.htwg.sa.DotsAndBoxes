@@ -13,25 +13,25 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 object PersistenceHttpServer:
-  private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
+  private[server] implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val executionContext: ExecutionContext = system.dispatcher
 
   private val logger = LoggerFactory.getLogger(getClass.getName.init)
 
-  def run: (Future[ServerBinding], ActorSystem) =
+  def run: Future[ServerBinding] =
     val serverBinding = Http()
       .newServerAt(PERSISTENCE_HOST, PERSISTENCE_PORT)
       .bind(routes(new FileIORoutes))
 
     CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-server") { () =>
-      shutdown(serverBinding).map(_ => Done)
+      shutdown(serverBinding)
     }
 
     serverBinding.onComplete {
       case Success(binding)   => logger.info(s"Persistence Service -- Http Server is running at $PERSISTENCE_BASE_URL\n")
       case Failure(exception) => logger.error(s"Persistence Service -- Http Server failed to start", exception)
     }
-    (serverBinding, system)
+    return serverBinding
 
   private def routes(fileIORoutes: FileIORoutes): Route =
     pathPrefix("api") {
