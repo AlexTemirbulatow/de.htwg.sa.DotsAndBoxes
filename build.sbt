@@ -5,7 +5,7 @@ val akkaVersion = "2.8.5"
 val akkaHttpVersion = "10.5.3"
 val circeVersion = "0.14.1"
 
-val dotsandboxesLibVersion = "1.0.5"
+val dotsandboxesLibVersion = "1.0.6"
 val dotsandboxesLibUrl = "https://maven.pkg.github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes.library"
 
 ThisBuild / scalaVersion := scala3Version
