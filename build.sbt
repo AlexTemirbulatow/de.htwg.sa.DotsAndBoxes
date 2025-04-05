@@ -39,6 +39,7 @@ ThisBuild / libraryDependencies ++= Seq(
 )
 
 ThisBuild / Test / parallelExecution := false
+ThisBuild / Test / fork := true
 
 lazy val root = project
   .in(file("."))
