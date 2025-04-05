@@ -19,9 +19,7 @@ object CoreClient:
   private val logger = LoggerFactory.getLogger(getClass.getName.init)
   private val http = Http(system)
 
-  CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-core-client") { () =>
-    shutdown.map(_ => Done)
-  }
+  CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-core-client") { () => shutdown }
 
   def getRequest(endpoint: String): Future[Either[String, String]] =
     sendRequest(
@@ -69,6 +67,6 @@ object CoreClient:
           Future.failed(exception)
       }
 
-  def shutdown: Future[Done] =
+  private def shutdown: Future[Done] =
     logger.info("TUI Service -- Shutting Down Core Client...")
     http.shutdownAllConnectionPools().map(_ => Done)
