@@ -31,7 +31,7 @@ object PersistenceHttpServer:
       case Success(binding)   => logger.info(s"Persistence Service -- Http Server is running at $PERSISTENCE_BASE_URL\n")
       case Failure(exception) => logger.error(s"Persistence Service -- Http Server failed to start", exception)
     }
-    return serverBinding
+    serverBinding
 
   private def routes(fileIORoutes: FileIORoutes): Route =
     pathPrefix("api") {

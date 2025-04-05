@@ -31,7 +31,7 @@ object ModelHttpServer:
       case Success(binding)   => logger.info(s"Model Service -- Http Server is running at $MODEL_BASE_URL\n")
       case Failure(exception) => logger.error(s"Model Service -- Http Server failed to start", exception)
     }
-    return serverBinding
+    serverBinding
 
   private def routes(fieldRoutes: FieldRoutes): Route =
     pathPrefix("api") {
