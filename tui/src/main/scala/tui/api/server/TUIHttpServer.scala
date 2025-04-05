@@ -38,7 +38,7 @@ object TUIHttpServer:
     }
 
     tui.run
-    return serverBinding
+    serverBinding
 
   private def routes(tuiRoutes: TUIRoutes): Route =
     pathPrefix("api") {
