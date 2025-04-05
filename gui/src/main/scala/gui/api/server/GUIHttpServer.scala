@@ -21,7 +21,7 @@ object GUIHttpServer:
 
   private val logger = LoggerFactory.getLogger(getClass.getName.init)
 
-  def run: (Future[ServerBinding], ActorSystem) =
+  def run: Future[ServerBinding] =
     CoreRequestHttp.registerGUIObserver(GUI_OBSERVER_URL)
     val gui = new GUI
     val serverBinding = Http()
@@ -29,7 +29,7 @@ object GUIHttpServer:
       .bind(routes(GUIRoutes(gui)))
 
     CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-server") { () =>
-      shutdown(serverBinding).map(_ => Done)
+      shutdown(serverBinding)
     }
 
     serverBinding.onComplete {
@@ -38,7 +38,7 @@ object GUIHttpServer:
     }
 
     gui.run
-    (serverBinding, system)
+    return serverBinding
 
   private def routes(guiRoutes: GUIRoutes): Route =
     pathPrefix("api") {
