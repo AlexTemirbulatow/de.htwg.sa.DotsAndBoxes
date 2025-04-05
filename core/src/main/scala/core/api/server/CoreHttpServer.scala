@@ -15,25 +15,25 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 object CoreHttpServer:
-  private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
+  private[server] implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val executionContext: ExecutionContext = system.dispatcher
 
   private val logger = LoggerFactory.getLogger(getClass.getName.init)
 
-  def run: (Future[ServerBinding], ActorSystem) =
+  def run: Future[ServerBinding] =
     val serverBinding = Http()
       .newServerAt(CORE_HOST, CORE_PORT)
       .bind(routes(CoreRoutes(given_ControllerInterface)))
 
     CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-server") { () =>
-      shutdown(serverBinding).map(_ => Done)
+      shutdown(serverBinding)
     }
 
     serverBinding.onComplete {
       case Success(binding)   => logger.info(s"Core Service -- Http Server is running at $COMPUTER_BASE_URL\n")
       case Failure(exception) => logger.error(s"Core Service -- Http Server failed to start", exception)
     }
-    (serverBinding, system)
+    serverBinding
 
   private def routes(coreRoutes: CoreRoutes): Route =
     pathPrefix("api") {

@@ -19,16 +19,13 @@ class ZZComputerHttpServerSpec extends AnyWordSpec with BeforeAndAfterAll {
   private implicit val system: ActorSystem = ActorSystem("ComputerHttpServerTest")
   private implicit val executionContext: ExecutionContext = system.dispatcher
 
-  private var testComputerServerSystem: Option[ActorSystem] = None
   private var testComputerServerBinding: Option[ServerBinding] = None
 
   private var testModelServerBinding: Option[ServerBinding] = None
   private val modelRoutes: Route = pathPrefix("api") { pathPrefix("model") { pathPrefix("field") { new FieldRoutes().fieldRoutes } } }
 
   override def beforeAll(): Unit =
-    val (bindingFuture, coreActorSystem) = ComputerHttpServer.run
-    testComputerServerSystem = Some(coreActorSystem)
-    testComputerServerBinding = Some(Await.result(bindingFuture, 10.seconds))
+    testComputerServerBinding = Some(Await.result(ComputerHttpServer.run, 10.seconds))
     testModelServerBinding = Some(Await.result(Http().bindAndHandle(modelRoutes, MODEL_HOST, MODEL_PORT), 10.seconds))
 
   override def afterAll(): Unit =
@@ -53,12 +50,12 @@ class ZZComputerHttpServerSpec extends AnyWordSpec with BeforeAndAfterAll {
     }
     "handle double binding failure during server startup" in {
       val exception = intercept[Exception] {
-        Await.result(ComputerHttpServer.run._1, 5.seconds)
+        Await.result(ComputerHttpServer.run, 5.seconds)
       }
       exception.getMessage should include("Bind failed")
     }
     "call CoordinatedShutdown when JVM is shutting down" in {
-      val shutdownFuture = CoordinatedShutdown(testComputerServerSystem.get).run(CoordinatedShutdown.unknownReason)
+      val shutdownFuture = CoordinatedShutdown(ComputerHttpServer.system).run(CoordinatedShutdown.unknownReason)
       val shutdownResult = Await.result(shutdownFuture, 5.seconds)
       shutdownResult shouldBe Done
     }

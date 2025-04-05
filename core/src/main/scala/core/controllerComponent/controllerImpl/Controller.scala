@@ -36,10 +36,12 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
   override def put(move: Move): String = undoManager.doStep(field, PutCommand(move, field))
   override def undo: FieldInterface = undoManager.undoStep(field)
   override def redo: FieldInterface = undoManager.redoStep(field)
+
   override def save: FieldInterface =
     PersistenceRequestHttp.saveFileIO(FileIOSerializer.serialize(field, fileFormat), fileFormat, FILEIO_FILENAME)
     if !gameEnded then notifyObservers(Event.Move)
     field
+
   override def load: FieldInterface =
     val fieldValue: String = PersistenceRequestHttp.loadFileIO(fileFormat, FILEIO_FILENAME)
     field = fileFormat match
@@ -52,6 +54,7 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
   override def restart: FieldInterface =
     val data: FieldData = fieldData
     initGame(data.boardSize, data.playerSize, data.playerType, computerDifficulty)
+
   override def initGame(boardSize: BoardSize, playerSize: PlayerSize, playerType: PlayerType, difficulty: ComputerDifficulty): FieldInterface =
     if playerType == PlayerType.Computer then ComputerRequestHttp.preConnect
     field = newField(boardSize, Status.Empty, playerSize, playerType)
@@ -64,6 +67,7 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
     notifyObservers(Event.Move)
     if gameEnded then notifyObservers(Event.End)
     field
+
   override def publish(doThis: Move => String, move: Move): Try[FieldInterface] =
     MoveValidator.validate(move, field) match
       case Failure(exception) => Failure(exception)

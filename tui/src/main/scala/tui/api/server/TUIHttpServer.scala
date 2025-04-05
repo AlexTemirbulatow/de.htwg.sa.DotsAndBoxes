@@ -21,7 +21,7 @@ object TUIHttpServer:
 
   private val logger = LoggerFactory.getLogger(getClass.getName.init)
 
-  def run: (Future[ServerBinding], ActorSystem) =
+  def run: Future[ServerBinding] =
     CoreRequestHttp.registerTUIObserver(TUI_OBSERVER_URL)
     val tui = new TUI
     val serverBinding = Http()
@@ -29,7 +29,7 @@ object TUIHttpServer:
       .bind(routes(TUIRoutes(tui)))
 
     CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-server") { () =>
-      shutdown(serverBinding).map(_ => Done)
+      shutdown(serverBinding)
     }
 
     serverBinding.onComplete {
@@ -38,7 +38,7 @@ object TUIHttpServer:
     }
 
     tui.run
-    (serverBinding, system)
+    serverBinding
 
   private def routes(tuiRoutes: TUIRoutes): Route =
     pathPrefix("api") {

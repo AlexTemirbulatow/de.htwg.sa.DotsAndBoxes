@@ -18,7 +18,7 @@ object PersistenceClient:
   private val http = Http(system)
 
   CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-persistence-client") { () =>
-    shutdown.map(_ => Done)
+    shutdown
   }
 
   def getRequest(endpoint: String): Future[String] =
@@ -51,6 +51,6 @@ object PersistenceClient:
           }
     }
 
-  def shutdown: Future[Done] =
+  private def shutdown: Future[Done] =
     logger.info("Core Service -- Shutting Down Persistence Client...")
     http.shutdownAllConnectionPools().map(_ => Done)

@@ -16,13 +16,10 @@ class ModelHttpServerSpec extends AnyWordSpec with BeforeAndAfterAll {
   private implicit val system: ActorSystem = ActorSystem("ModelHttpServerTest")
   private implicit val executionContext: ExecutionContext = system.dispatcher
 
-  private var testModelServerSystem: Option[ActorSystem] = None
   private var testModelServerBinding: Option[ServerBinding] = None
 
   override def beforeAll(): Unit =
-    val (bindingFuture, modelActorSystem) = ModelHttpServer.run
-    testModelServerSystem = Some(modelActorSystem)
-    testModelServerBinding = Some(Await.result(bindingFuture, 10.seconds))
+    testModelServerBinding = Some(Await.result(ModelHttpServer.run, 10.seconds))
 
   override def afterAll(): Unit =
     testModelServerBinding.foreach(binding =>
@@ -44,12 +41,12 @@ class ModelHttpServerSpec extends AnyWordSpec with BeforeAndAfterAll {
     }
     "handle double binding failure during server startup" in {
       val exception = intercept[Exception] {
-        Await.result(ModelHttpServer.run._1, 5.seconds)
+        Await.result(ModelHttpServer.run, 5.seconds)
       }
       exception.getMessage should include("Bind failed")
     }
     "call CoordinatedShutdown when JVM is shutting down" in {
-      val shutdownFuture = CoordinatedShutdown(testModelServerSystem.get).run(CoordinatedShutdown.unknownReason)
+      val shutdownFuture = CoordinatedShutdown(ModelHttpServer.system).run(CoordinatedShutdown.unknownReason)
       val shutdownResult = Await.result(shutdownFuture, 5.seconds)
       shutdownResult shouldBe Done
     }
