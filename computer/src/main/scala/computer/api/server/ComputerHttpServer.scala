@@ -32,7 +32,7 @@ object ComputerHttpServer:
       case Success(binding)   => logger.info(s"Computer Service -- Http Server is running at $COMPUTER_BASE_URL\n")
       case Failure(exception) => logger.error(s"Computer Service -- Http Server failed to start", exception)
     }
-    return serverBinding
+    serverBinding
 
   private def routes(computerRoutes: ComputerRoutes): Route =
     pathPrefix("api") {
