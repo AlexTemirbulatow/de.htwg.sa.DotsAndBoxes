@@ -17,7 +17,9 @@ object ComputerClient:
   private val logger = LoggerFactory.getLogger(getClass.getName.init)
   private val http = Http(system)
 
-  CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-computer-client") { () => shutdown }
+  CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-computer-client") { () =>
+    shutdown
+  }
 
   def getRequest(endpoint: String): Future[String] =
     sendRequest(

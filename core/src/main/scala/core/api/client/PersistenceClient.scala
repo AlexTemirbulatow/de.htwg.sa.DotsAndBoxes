@@ -17,7 +17,9 @@ object PersistenceClient:
   private val logger = LoggerFactory.getLogger(getClass.getName.init)
   private val http = Http(system)
 
-  CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-persistence-client") { () => shutdown }
+  CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-persistence-client") { () =>
+    shutdown
+  }
 
   def getRequest(endpoint: String): Future[String] =
     sendRequest(
