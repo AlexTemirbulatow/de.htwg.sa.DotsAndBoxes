@@ -16,12 +16,12 @@ object CoreClient:
   private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
   private implicit val ec: ExecutionContext = system.dispatcher
 
+  private val logger = LoggerFactory.getLogger(getClass.getName.init)
+  private val http = Http(system)
+
   CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-core-client") { () =>
     shutdown.map(_ => Done)
   }
-
-  private val logger = LoggerFactory.getLogger(getClass.getName.init)
-  private val http = Http(system)
 
   def getRequest(endpoint: String): Future[String] =
     sendRequest(
