@@ -1,30 +1,56 @@
 package common.config
 
+import com.typesafe.config.{Config, ConfigFactory}
+
 object ServiceConfig:
-  val MODEL_HOST = "localhost"
-  val MODEL_PORT = 8080
-  val MODEL_BASE_URL = s"http://$MODEL_HOST:$MODEL_PORT/"
+  private val config: Config = ConfigFactory.load()
 
-  val PERSISTENCE_HOST = "localhost"
-  val PERSISTENCE_PORT = 8081
-  val PERSISTENCE_BASE_URL = s"http://$PERSISTENCE_HOST:$PERSISTENCE_PORT/"
-  val FILEIO_FILENAME = "field"
+  val MODEL_HOST               = bindHost("model")
+  val MODEL_PORT               = port("model")
+  val MODEL_BASE_URL           = baseUrl("model")
+  val MODEL_SERVICE_URL        = serviceUrl("model")
 
-  val COMPUTER_HOST = "localhost"
-  val COMPUTER_PORT = 8082
-  val COMPUTER_BASE_URL = s"http://$COMPUTER_HOST:$COMPUTER_PORT/"
-  val COMPUTER_SLEEP_TIME = 1000
+  val PERSISTENCE_HOST         = bindHost("persistence")
+  val PERSISTENCE_PORT         = port("persistence")
+  val PERSISTENCE_BASE_URL     = baseUrl("persistence")
+  val PERSISTENCE_SERVICE_URL  = serviceUrl("persistence")
+  val FILEIO_FILENAME          = "field"
 
-  val CORE_HOST = "localhost"
-  val CORE_PORT = 8083
-  val CORE_BASE_URL = s"http://$CORE_HOST:$CORE_PORT/"
+  val COMPUTER_HOST            = bindHost("computer")
+  val COMPUTER_PORT            = port("computer")
+  val COMPUTER_BASE_URL        = baseUrl("computer")
+  val COMPUTER_SERVICE_URL     = serviceUrl("computer")
+  val COMPUTER_SLEEP_TIME      = 1000
 
-  val TUI_HOST = "localhost"
-  val TUI_PORT = 8084
-  val TUI_BASE_URL = s"http://$TUI_HOST:$TUI_PORT/"
-  val TUI_OBSERVER_URL = s"http://$TUI_HOST:$TUI_PORT/api/tui/update"
+  val CORE_HOST                = bindHost("core")
+  val CORE_PORT                = port("core")
+  val CORE_BASE_URL            = baseUrl("core")
+  val CORE_SERVICE_URL         = serviceUrl("core")
 
-  val GUI_HOST = "localhost"
-  val GUI_PORT = 8085
-  val GUI_BASE_URL = s"http://$GUI_HOST:$GUI_PORT/"
-  val GUI_OBSERVER_URL = s"http://$GUI_HOST:$GUI_PORT/api/gui/update"
+  val TUI_HOST                 = bindHost("tui")
+  val TUI_PORT                 = port("tui")
+  val TUI_BASE_URL             = baseUrl("tui")
+  val TUI_OBSERVER_URL         = observerUrl("tui")
+
+  val GUI_HOST                 = bindHost("gui")
+  val GUI_PORT                 = port("gui")
+  val GUI_BASE_URL             = baseUrl("gui")
+  val GUI_OBSERVER_URL         = observerUrl("gui")
+
+  private def bindHost(service: String): String =
+    config.getString(s"$service.bindHost")
+
+  private def remoteHost(service: String): String =
+    config.getString(s"$service.remoteHost")
+
+  private def port(service: String): Int =
+    config.getInt(s"$service.port")
+
+  private def baseUrl(service: String): String =
+    s"http://${bindHost(service)}:${port(service)}/"
+
+  private def serviceUrl(service: String): String =
+    s"http://${remoteHost(service)}:${port(service)}/"
+
+  private def observerUrl(service: String): String =
+    serviceUrl(service).concat(s"api/$service/update")

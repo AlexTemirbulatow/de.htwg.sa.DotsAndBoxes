@@ -6,7 +6,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import common.config.ServiceConfig.{COMPUTER_BASE_URL, CORE_HOST, CORE_PORT}
+import common.config.ServiceConfig.{CORE_BASE_URL, CORE_HOST, CORE_PORT}
 import core.api.client.{ComputerClient, ModelClient, PersistenceClient}
 import core.api.module.CoreModule.given_ControllerInterface
 import core.api.routes.CoreRoutes
@@ -30,7 +30,7 @@ object CoreHttpServer:
     }
 
     serverBinding.onComplete {
-      case Success(binding)   => logger.info(s"Core Service -- Http Server is running at $COMPUTER_BASE_URL\n")
+      case Success(binding)   => logger.info(s"Core Service -- Http Server is running at $CORE_BASE_URL\n")
       case Failure(exception) => logger.error(s"Core Service -- Http Server failed to start", exception)
     }
     serverBinding
