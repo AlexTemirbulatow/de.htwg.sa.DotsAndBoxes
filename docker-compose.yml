@@ -1,0 +1,92 @@
+services:
+  model:
+    container_name: model
+    build:
+      context: .
+      dockerfile: model/Dockerfile
+    ports:
+      - "${DOTSANDBOXES_MODEL_PORT}:${DOTSANDBOXES_MODEL_PORT}"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/model/field/preConnect"]
+      interval: 5s
+      timeout: 3s
+      retries: 100
+    environment:
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+
+  persistence:
+    container_name: persistence
+    build:
+      context: .
+      dockerfile: persistence/Dockerfile
+    ports:
+      - "${DOTSANDBOXES_PERSISTENCE_PORT}:${DOTSANDBOXES_PERSISTENCE_PORT}"
+    depends_on:
+      - model
+    environment:
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+
+  computer:
+    container_name: computer
+    build:
+      context: .
+      dockerfile: computer/Dockerfile
+    ports:
+      - "${DOTSANDBOXES_COMPUTER_PORT}:${DOTSANDBOXES_COMPUTER_PORT}"
+    depends_on:
+      - model
+    environment:
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+
+  core:
+    container_name: core
+    build:
+      context: .
+      dockerfile: core/Dockerfile
+    ports:
+      - "${DOTSANDBOXES_CORE_PORT}:${DOTSANDBOXES_CORE_PORT}"
+    depends_on:
+      model:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/api/core/preConnect"]
+      interval: 5s
+      timeout: 3s
+      retries: 100
+    environment:
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+
+  tui:
+    container_name: tui
+    build:
+      context: .
+      dockerfile: tui/Dockerfile
+    stdin_open: true
+    tty: true
+    ports:
+      - "${DOTSANDBOXES_TUI_PORT}:${DOTSANDBOXES_TUI_PORT}"
+    depends_on:
+      core:
+        condition: service_healthy
+    environment:
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+
+  gui:
+    container_name: gui
+    build:
+      context: .
+      dockerfile: gui/Dockerfile
+    ports:
+      - "${DOTSANDBOXES_GUI_PORT}:${DOTSANDBOXES_GUI_PORT}"
+    depends_on:
+      core:
+        condition: service_healthy
+    environment:
+      - DISPLAY=host.docker.internal:0
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
