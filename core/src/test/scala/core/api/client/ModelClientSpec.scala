@@ -8,7 +8,7 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import common.config.ServiceConfig.{MODEL_HOST, MODEL_PORT}
+import common.config.ServiceConfig.{MODEL_BASE_URL, MODEL_HOST, MODEL_PORT}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
@@ -54,7 +54,7 @@ class YModelClientSpec extends AnyWordSpec with ScalatestRouteTest with BeforeAn
       val exception = intercept[RuntimeException] {
         Await.result(ModelClient.postRequest("test-endpoint", json), 5.seconds)
       }
-      exception.getMessage shouldBe s"HTTP ERROR: 400 Bad Request - http://$MODEL_HOST:$MODEL_PORT/test-endpoint - postFailure"
+      exception.getMessage shouldBe s"HTTP ERROR: 400 Bad Request - ${MODEL_BASE_URL.concat("test-endpoint")} - postFailure"
     }
     "call CoordinatedShutdown when JVM is shutting down" in {
       val shutdownFuture = CoordinatedShutdown(ModelClient.system).run(CoordinatedShutdown.unknownReason)

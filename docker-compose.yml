@@ -1,0 +1,183 @@
+services:
+  elasticsearch:
+    image: elasticsearch:7.16.2
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.labels.role == elk
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    networks:
+      - elk
+
+  logstash:
+    image: logstash:7.16.2
+    ports:
+      - target: 5000
+        published: 5000
+        protocol: tcp
+        mode: host
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.labels.role == elk
+    configs:
+      - source: logstash_conf
+        target: /usr/share/logstash/pipeline/logstash.conf
+    networks:
+      - elk
+
+  kibana:
+    image: kibana:7.16.2
+    ports:
+      - target: 5601
+        published: 5601
+        protocol: tcp
+        mode: host
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.labels.role == elk
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks:
+      - elk
+
+  model:
+    image: alextem/model:v1.2
+    ports:
+      - "8080:8080"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.labels.role == backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/model/field/preConnect"]
+      interval: 5s
+      timeout: 3s
+      retries: 100
+    environment:
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    networks:
+      - elk
+
+  persistence:
+    image: alextem/persistence:v1.2
+    ports:
+      - "8081:8081"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.labels.role == test
+    environment:
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    networks:
+      - elk
+
+  computer:
+    image: alextem/computer:v1.2
+    ports:
+      - "8082:8082"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.labels.role == test
+    environment:
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    networks:
+      - elk
+
+  core:
+    image: alextem/core:v1.2
+    ports:
+      - "8083:8083"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.labels.role == backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/api/core/preConnect"]
+      interval: 5s
+      timeout: 3s
+      retries: 100
+    environment:
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    networks:
+      - elk
+
+  tui:
+    image: alextem/tui:v1.2
+    stdin_open: true
+    tty: true
+    ports:
+      - "8084:8084"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.labels.role == frontend
+    environment:
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    networks:
+      - elk
+
+  gui:
+    image: alextem/gui:v1.2
+    ports:
+      - "8085:8085"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.labels.role == test
+    environment:
+      - DISPLAY=host.docker.internal:0
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    networks:
+      - elk
+
+volumes:
+  elasticsearch-data:
+  logstash-pipeline:
+
+configs:
+  logstash_conf:
+    file: ./logstash/logstash.conf
+
+networks:
+  elk:

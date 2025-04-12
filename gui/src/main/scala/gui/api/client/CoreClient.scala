@@ -6,7 +6,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.StreamTcpException
-import common.config.ServiceConfig.CORE_BASE_URL
+import common.config.ServiceConfig.CORE_SERVICE_URL
 import java.net.ConnectException
 import org.slf4j.LoggerFactory
 import play.api.libs.json.JsObject
@@ -27,7 +27,7 @@ object CoreClient:
     sendRequest(
       HttpRequest(
         method = HttpMethods.GET,
-        uri = CORE_BASE_URL.concat(endpoint)
+        uri = CORE_SERVICE_URL.concat(endpoint)
       )
     )
 
@@ -35,7 +35,7 @@ object CoreClient:
     sendRequest(
       HttpRequest(
         method = HttpMethods.POST,
-        uri = CORE_BASE_URL.concat(endpoint),
+        uri = CORE_SERVICE_URL.concat(endpoint),
         entity = HttpEntity(ContentTypes.`application/json`, json.toString)
       )
     )

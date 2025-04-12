@@ -8,8 +8,8 @@ val circeVersion = "0.14.1"
 val dotsandboxesLibVersion = "1.0.6"
 val dotsandboxesLibUrl = "https://maven.pkg.github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes.library"
 
-ThisBuild / scalaVersion := scala3Version
 ThisBuild / version := thisVersion
+ThisBuild / scalaVersion := scala3Version
 ThisBuild / resolvers += "Github Packages" at dotsandboxesLibUrl
 ThisBuild / credentials += Credentials(
   "GitHub Package Registry",
@@ -29,6 +29,7 @@ ThisBuild / libraryDependencies ++= Seq(
   "io.circe" %% "circe-parser" % circeVersion,
   "org.scalatestplus" %% "mockito-5-12" % "3.2.19.0" % Test,
   "ch.qos.logback" % "logback-classic" % "1.5.2",
+  "net.logstash.logback" % "logstash-logback-encoder" % "7.4",
   "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
@@ -50,12 +51,6 @@ lazy val common = project
   .in(file("common"))
   .settings(name := "common")
 
-lazy val core = project
-  .in(file("core"))
-  .settings(name := "core")
-  .dependsOn(common, model)
-  .dependsOn(persistence % Test, computer % Test)
-
 lazy val model = project
   .in(file("model"))
   .settings(name := "model")
@@ -73,14 +68,20 @@ lazy val computer = project
   .dependsOn(common)
   .dependsOn(model % Test)
 
-lazy val gui = project
-  .in(file("gui"))
-  .settings(name := "gui")
-  .dependsOn(common)
+lazy val core = project
+  .in(file("core"))
+  .settings(name := "core")
+  .dependsOn(common, model)
+  .dependsOn(persistence % Test, computer % Test)
 
 lazy val tui = project
   .in(file("tui"))
   .settings(name := "tui")
+  .dependsOn(common)
+
+lazy val gui = project
+  .in(file("gui"))
+  .settings(name := "gui")
   .dependsOn(common)
 
 import org.scoverage.coveralls.Imports.CoverallsKeys._

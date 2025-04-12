@@ -5,7 +5,7 @@ import akka.actor.{ActorSystem, CoordinatedShutdown}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshal
-import common.config.ServiceConfig.MODEL_BASE_URL
+import common.config.ServiceConfig.MODEL_SERVICE_URL
 import org.slf4j.LoggerFactory
 import play.api.libs.json.JsObject
 import scala.concurrent.{ExecutionContext, Future}
@@ -25,7 +25,7 @@ object ModelClient:
     sendRequest(
       HttpRequest(
         method = HttpMethods.GET,
-        uri = MODEL_BASE_URL.concat(endpoint)
+        uri = MODEL_SERVICE_URL.concat(endpoint)
       )
     )
 
@@ -33,7 +33,7 @@ object ModelClient:
     sendRequest(
       HttpRequest(
         method = HttpMethods.POST,
-        uri = MODEL_BASE_URL.concat(endpoint),
+        uri = MODEL_SERVICE_URL.concat(endpoint),
         entity = HttpEntity(ContentTypes.`application/json`, json.toString())
       )
     )

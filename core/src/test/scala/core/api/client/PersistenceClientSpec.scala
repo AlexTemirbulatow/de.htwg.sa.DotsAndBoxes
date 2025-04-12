@@ -8,7 +8,7 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import common.config.ServiceConfig.{PERSISTENCE_HOST, PERSISTENCE_PORT}
+import common.config.ServiceConfig.{PERSISTENCE_BASE_URL, PERSISTENCE_HOST, PERSISTENCE_PORT}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
@@ -54,7 +54,7 @@ class YPersistenceClientSpec extends AnyWordSpec with ScalatestRouteTest with Be
       val exception = intercept[RuntimeException] {
         Await.result(PersistenceClient.postRequest("test-endpoint", json), 5.seconds)
       }
-      exception.getMessage shouldBe s"HTTP ERROR: 400 Bad Request - http://$PERSISTENCE_HOST:$PERSISTENCE_PORT/test-endpoint - postFailure"
+      exception.getMessage shouldBe s"HTTP ERROR: 400 Bad Request - ${PERSISTENCE_BASE_URL.concat("test-endpoint")} - postFailure"
     }
     "call CoordinatedShutdown when JVM is shutting down" in {
       val shutdownFuture = CoordinatedShutdown(PersistenceClient.system).run(CoordinatedShutdown.unknownReason)
