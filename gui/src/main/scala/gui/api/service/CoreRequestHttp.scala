@@ -12,34 +12,34 @@ import scala.concurrent.{Await, Future}
 object CoreRequestHttp:
   def fieldData: FieldData =
     decode[FieldData](
-      Await.result(CoreClient.getRequest("api/core/get/fieldData"), 5.seconds)
+      Await.result(CoreClient.getRequest("api/core/get/fieldData"), 10.seconds)
     ) match
       case Right(data) => data
       case Left(error) => throw new RuntimeException(s"Error decoding FieldData: ${error.getMessage}")
 
   def gameBoardData: GameBoardData =
     decode[GameBoardData](
-      Await.result(CoreClient.getRequest("api/core/get/gameBoardData"), 5.seconds)
+      Await.result(CoreClient.getRequest("api/core/get/gameBoardData"), 10.seconds)
     ) match
       case Right(data) => data
       case Left(error) => throw new RuntimeException(s"Error decoding GameBoardData: ${error.getMessage}")
 
   def playerGameData: PlayerGameData =
     decode[PlayerGameData](
-      Await.result(CoreClient.getRequest("api/core/get/playerGameData"), 5.seconds)
+      Await.result(CoreClient.getRequest("api/core/get/playerGameData"), 10.seconds)
     ) match
       case Right(data) => data
       case Left(error) => throw new RuntimeException(s"Error decoding PlayerGameData: ${error.getMessage}")
 
   def fieldSizeData: FieldSizeData =
     decode[FieldSizeData](
-      Await.result(CoreClient.getRequest("api/core/get/fieldSizeData"), 5.seconds)
+      Await.result(CoreClient.getRequest("api/core/get/fieldSizeData"), 10.seconds)
     ) match
       case Right(data) => data
       case Left(error) => throw new RuntimeException(s"Error decoding FieldSizeData: ${error.getMessage}")
 
   def gameEnded: Boolean =
-    Await.result(CoreClient.getRequest(s"api/core/get/gameEnded"), 5.seconds).toBoolean
+    Await.result(CoreClient.getRequest(s"api/core/get/gameEnded"), 10.seconds).toBoolean
 
   def publish(move: Move): Future[String] =
     CoreClient.postRequest("api/core/publish", Json.obj(

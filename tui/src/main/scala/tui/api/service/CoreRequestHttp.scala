@@ -10,7 +10,7 @@ import scala.concurrent.{Await, Future}
 import tui.api.client.CoreClient
 
 object CoreRequestHttp:
-  def fieldString: String = Await.result(CoreClient.getRequest("api/core/"), 5.seconds) match
+  def fieldString: String = Await.result(CoreClient.getRequest("api/core/"), 10.seconds) match
     case Right(field) => field
     case Left(error)  => throw new RuntimeException(s"Error fetching field as String: $error")
 
@@ -21,7 +21,7 @@ object CoreRequestHttp:
       "vec"    -> move.vec,
       "x"      -> move.x,
       "y"      -> move.y
-    )), 5.seconds)
+    )), 10.seconds)
 
   def publish(method: String): Future[Either[String, String]] =
     CoreClient.postRequest("api/core/publish", Json.obj(
@@ -45,7 +45,7 @@ object CoreRequestHttp:
     ))
 
   def playerGameData: PlayerGameData =
-    Await.result(CoreClient.getRequest("api/core/get/playerGameData"), 5.seconds) match
+    Await.result(CoreClient.getRequest("api/core/get/playerGameData"), 10.seconds) match
       case Right(jsonString) => 
         decode[PlayerGameData](jsonString) match
           case Right(data) => data
