@@ -29,6 +29,7 @@ ThisBuild / libraryDependencies ++= Seq(
   "io.circe" %% "circe-parser" % circeVersion,
   "org.scalatestplus" %% "mockito-5-12" % "3.2.19.0" % Test,
   "ch.qos.logback" % "logback-classic" % "1.5.2",
+  "net.logstash.logback" % "logstash-logback-encoder" % "7.4",
   "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
