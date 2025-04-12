@@ -88,7 +88,7 @@ services:
         condition: on-failure
       placement:
         constraints:
-          - node.labels.role == test
+          - node.labels.role == backend
     environment:
       - GITHUB_USERNAME=${GITHUB_USERNAME}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
@@ -105,7 +105,7 @@ services:
         condition: on-failure
       placement:
         constraints:
-          - node.labels.role == test
+          - node.labels.role == backend
     environment:
       - GITHUB_USERNAME=${GITHUB_USERNAME}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
@@ -163,7 +163,7 @@ services:
         condition: on-failure
       placement:
         constraints:
-          - node.labels.role == test
+          - node.labels.role == frontend
     environment:
       - DISPLAY=host.docker.internal:0
       - GITHUB_USERNAME=${GITHUB_USERNAME}
