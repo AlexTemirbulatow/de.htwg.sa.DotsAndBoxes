@@ -1,0 +1,80 @@
+services:
+   model:
+     container_name: model
+     image: alextem/model:v1.0
+     ports:
+       - "${DOTSANDBOXES_MODEL_PORT}:${DOTSANDBOXES_MODEL_PORT}"
+     healthcheck:
+       test: ["CMD", "curl", "-f", "http://localhost:8080/api/model/field/preConnect"]
+       interval: 5s
+       timeout: 3s
+       retries: 100
+     environment:
+       - GITHUB_USERNAME=${GITHUB_USERNAME}
+       - GITHUB_TOKEN=${GITHUB_TOKEN}
+ 
+   persistence:
+     container_name: persistence
+     image: alextem/persistence:v1.0
+     ports:
+       - "${DOTSANDBOXES_PERSISTENCE_PORT}:${DOTSANDBOXES_PERSISTENCE_PORT}"
+     depends_on:
+       - model
+     environment:
+       - GITHUB_USERNAME=${GITHUB_USERNAME}
+       - GITHUB_TOKEN=${GITHUB_TOKEN}
+ 
+   computer:
+     container_name: computer
+     image: alextem/computer:v1.0
+     ports:
+       - "${DOTSANDBOXES_COMPUTER_PORT}:${DOTSANDBOXES_COMPUTER_PORT}"
+     depends_on:
+       - model
+     environment:
+       - GITHUB_USERNAME=${GITHUB_USERNAME}
+       - GITHUB_TOKEN=${GITHUB_TOKEN}
+ 
+   core:
+     container_name: core
+     image: alextem/core:v1.0
+     ports:
+       - "${DOTSANDBOXES_CORE_PORT}:${DOTSANDBOXES_CORE_PORT}"
+     depends_on:
+       model:
+         condition: service_healthy
+     healthcheck:
+       test: ["CMD", "curl", "-f", "http://localhost:8083/api/core/preConnect"]
+       interval: 5s
+       timeout: 3s
+       retries: 100
+     environment:
+       - GITHUB_USERNAME=${GITHUB_USERNAME}
+       - GITHUB_TOKEN=${GITHUB_TOKEN}
+ 
+   tui:
+     container_name: tui
+     image: alextem/tui:v1.0
+     stdin_open: true
+     tty: true
+     ports:
+       - "${DOTSANDBOXES_TUI_PORT}:${DOTSANDBOXES_TUI_PORT}"
+     depends_on:
+       core:
+         condition: service_healthy
+     environment:
+       - GITHUB_USERNAME=${GITHUB_USERNAME}
+       - GITHUB_TOKEN=${GITHUB_TOKEN}
+ 
+   gui:
+     container_name: gui
+     image: alextem/gui:v1.0
+     ports:
+       - "${DOTSANDBOXES_GUI_PORT}:${DOTSANDBOXES_GUI_PORT}"
+     depends_on:
+       core:
+         condition: service_healthy
+     environment:
+       - DISPLAY=host.docker.internal:0
+       - GITHUB_USERNAME=${GITHUB_USERNAME}
+       - GITHUB_TOKEN=${GITHUB_TOKEN}
