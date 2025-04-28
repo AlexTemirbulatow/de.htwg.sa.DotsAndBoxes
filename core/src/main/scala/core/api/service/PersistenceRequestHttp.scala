@@ -14,8 +14,16 @@ object PersistenceRequestHttp:
       "filename"   -> filename
     ))
 
+  def saveDatabase(fieldValue: String): Future[String] =
+    PersistenceClient.postRequest("api/persistence/database/save", Json.obj(
+      "field"      -> fieldValue,
+    ))
+
   def loadFileIO(fileFormat: FileFormat, filename: String): String =
     Await.result(PersistenceClient.postRequest("api/persistence/fileIO/load", Json.obj(
       "fileFormat" -> fileFormat.toString,
       "filename"   -> filename
     )), 5.seconds)
+
+  def loadDatabase: String =
+    Await.result(PersistenceClient.getRequest("api/persistence/database/load"), 5.seconds)
