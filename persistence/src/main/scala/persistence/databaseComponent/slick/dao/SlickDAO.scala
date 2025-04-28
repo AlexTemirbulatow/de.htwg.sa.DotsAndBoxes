@@ -49,7 +49,7 @@ class SlickDAO(using dbConnector: DBConnectorInterface) extends DAOInterface:
       ) returning playerTable.map(_.playerIndex)
     ) += (playerIndex, points, active, gameID)
     dbConnector.db.run(insertAction)
-    
+
   override def read: Unit = ???
 
   override def update: Unit = ???
