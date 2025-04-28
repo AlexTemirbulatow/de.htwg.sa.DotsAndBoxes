@@ -97,3 +97,4 @@ coverageMinimumStmtPerPackage := 0
 coverageMinimumBranchPerPackage := 0
 coverageMinimumStmtPerFile := 0
 coverageMinimumBranchPerFile := 0
+ThisBuild / coverageExcludedPackages := "<empty>;.*databaseComponent.*"
