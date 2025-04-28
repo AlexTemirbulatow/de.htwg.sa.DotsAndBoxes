@@ -36,6 +36,8 @@ ThisBuild / libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % Test,
   "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test,
   "org.wiremock" % "wiremock" % "3.12.1" % Test,
+  "com.typesafe.slick" %% "slick" % "3.6.0" cross CrossVersion.for3Use2_13,
+  "org.postgresql" % "postgresql" % "42.7.3",
   "com.github.AlexTemirbulatow" %% "dotsandboxes" % dotsandboxesLibVersion
 )
 
