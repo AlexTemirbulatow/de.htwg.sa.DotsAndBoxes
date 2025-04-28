@@ -8,9 +8,9 @@ import persistence.databaseComponent.{DAOInterface, GameTableData}
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.Try
+import scala.util.{Failure, Success}
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.TableQuery
-import scala.util.{Success, Failure}
 
 object Slick:
   def apply(dbConnector: DBConnectorInterface): DAOInterface = new SlickDAO(dbConnector)
@@ -19,7 +19,12 @@ object Slick:
     private val logger = LoggerFactory.getLogger(getClass.getName.init)
 
     private val initialGameTableData = GameTableData(
-      "", BoardSize.Medium.toString, PlayerSize.Two.toString, PlayerType.Human.toString, 0, list.zipWithIndex.map((player, index) => (index, player.points))
+      "",
+      BoardSize.Medium.toString,
+      PlayerSize.Two.toString,
+      PlayerType.Human.toString,
+      0,
+      list.zipWithIndex.map((player, index) => (index, player.points))
     )
 
     private def gameTable = TableQuery[GameTable](new GameTable(_))
@@ -34,10 +39,8 @@ object Slick:
       )
     )
     create match
-      case Success(id) => logger.info(s"Persistence Service [Database] -- Initial table successfully created [ID: $id]")
+      case Success(id)        => logger.info(s"Persistence Service [Database] -- Initial table successfully created [ID: $id]")
       case Failure(exception) => logger.error(s"Persistence Service [Database] -- Could not create initial table: ${exception.getMessage}")
-
-    private class abc
 
     override def create: Try[Int] =
       Try {
