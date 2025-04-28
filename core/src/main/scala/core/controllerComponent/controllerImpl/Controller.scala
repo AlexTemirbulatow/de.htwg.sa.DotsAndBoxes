@@ -39,16 +39,16 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
 
   override def save: FieldInterface =
     PersistenceRequestHttp.saveFileIO(FileIOSerializer.serialize(field, fileFormat), fileFormat, FILEIO_FILENAME)
-    PersistenceRequestHttp.saveDatabase(FieldConverter.toJson(field).toString)
+    //PersistenceRequestHttp.saveDatabase(FieldConverter.toJson(field).toString)
     if !gameEnded then notifyObservers(Event.Move)
     field
 
   override def load: FieldInterface =
     val fieldValue: String = PersistenceRequestHttp.loadFileIO(fileFormat, FILEIO_FILENAME)
-    fileFormat match
+    field = fileFormat match
       case FileFormat.JSON => FieldParser.fromJson(fieldValue)
       case FileFormat.XML  => FieldParser.fromXml(fieldValue)
-    field = FieldParser.fromJson(PersistenceRequestHttp.loadDatabase)
+    //field = FieldParser.fromJson(PersistenceRequestHttp.loadDatabase)
     notifyObservers(Event.Move)
     if gameEnded then notifyObservers(Event.End)
     field
