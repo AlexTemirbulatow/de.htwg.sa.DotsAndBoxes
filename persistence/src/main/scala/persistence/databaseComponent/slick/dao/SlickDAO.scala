@@ -1,15 +1,25 @@
 package persistence.databaseComponent.slick.dao
 
-import persistence.databaseComponent.DAOInterface
-import persistence.databaseComponent.slick.schema.{GameTable, PlayerTable}
-import slick.lifted.TableQuery
-import slick.jdbc.PostgresProfile.api._
 import de.github.dotsandboxes.lib._
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration._
+import org.slf4j.LoggerFactory
 import persistence.databaseComponent.slick.base.DBConnectorInterface
+import persistence.databaseComponent.slick.schema.{GameTable, PlayerTable}
+import persistence.databaseComponent.{DAOInterface, GameTableData}
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
+import scala.util.Try
+import slick.jdbc.PostgresProfile.api._
+import slick.lifted.TableQuery
+import scala.util.Success
+import scala.util.Failure
 
 class SlickDAO(using dbConnector: DBConnectorInterface) extends DAOInterface:
+  private val logger = LoggerFactory.getLogger(getClass.getName.init)
+
+  private val initialGameTableData = GameTableData(
+    "", BoardSize.Medium.toString, PlayerSize.Two.toString, PlayerType.Human.toString, 0, list.zipWithIndex.map((player, index) => (index, player.points))
+  )
+
   private def gameTable = TableQuery[GameTable](new GameTable(_))
   private def playerTable = TableQuery[PlayerTable](new PlayerTable(_))
 
@@ -22,24 +32,23 @@ class SlickDAO(using dbConnector: DBConnectorInterface) extends DAOInterface:
         playerTable.schema.createIfNotExists
       )
     )
-    create
+    create match
+      case Success(id) => logger.info(s"Persistence Service [Database] -- Initial table successfully created [ID: $id]")
+      case Failure(exception) => logger.error(s"Persistence Service [Database] -- Could not create initial table: ${exception.getMessage}")
 
-  override def create: Int =
-    val gameID: Int = Await.result(
-      insertGame("", BoardSize.Medium.toString, PlayerSize.Two.toString, 0, PlayerType.Human.toString),
-      5.seconds
-    )
-    list.zipWithIndex.foreach { case (player, index) =>
-      insertPlayer(index, player.points, false, gameID)
+  override def create: Try[Int] =
+    Try {
+      val gameID: Int = Await.result(insertGame(initialGameTableData), 5.seconds)
+      initialGameTableData.playerData.foreach(data => insertPlayer(data._1, data._2, false, gameID))
+      gameID
     }
-    gameID
-
-  private def insertGame(state: String, boardSize: String, playerSize: String, playerIndex: Int, playerType: String): Future[Int] =
+    
+  private def insertGame(gameTableData: GameTableData): Future[Int] =
     val insertAction = (
       gameTable.map(g => 
-        (g.state, g.boardSize, g.playerSize, g.currentPlayerIndex, g.currentPlayerType)
+        (g.state, g.boardSize, g.playerSize, g.playerType, g.currentPlayerIndex)
       ) returning gameTable.map(_.gameID)
-    ) += (state, boardSize, playerSize, playerIndex, playerType)
+    ) += (gameTableData.state, gameTableData.boardSize, gameTableData.playerSize, gameTableData.playerType, gameTableData.currPlayerIndex)
     dbConnector.db.run(insertAction)
 
   private def insertPlayer(playerIndex: Int, points: Int, active: Boolean, gameID: Int): Future[Int] =
@@ -50,8 +59,69 @@ class SlickDAO(using dbConnector: DBConnectorInterface) extends DAOInterface:
     ) += (playerIndex, points, active, gameID)
     dbConnector.db.run(insertAction)
 
-  override def read: Unit = ???
+  override def read: Try[GameTableData] =
+    Try {
+      val gameID: Int = Await.result(getLatestGameID, 5.seconds).get
+      val game = Await.result(dbConnector.db.run(
+        gameTable.filter(_.gameID === gameID).result.headOption
+      ), 5.seconds).get
 
-  override def update: Unit = ???
+      val playerList = Await.result(dbConnector.db.run(
+        playerTable
+          .filter(_.gameID === gameID)
+          .filter(_.active)
+          .sortBy(_.playerIndex)
+          .result
+      ), 5.seconds)
 
-  override def delete: Unit = ???
+      val (state, boardSize, playerSize, currPlayerIndex, currPlayerType) =
+        (game._2, game._3, game._4, game._5, game._6)
+      val playerData = playerList.map(p => (p._1, p._2)).toVector
+
+      GameTableData(state, boardSize, playerSize, currPlayerIndex, currPlayerType, playerData)
+    }
+
+  override def update(gameTableData: GameTableData): Try[Int] = Try {
+    val gameID: Int = Await.result(getLatestGameID, 5.seconds).get
+    Await.result(deactivateAllPlayers(gameID), 5.seconds)
+    updateGame(gameID, gameTableData)
+    gameTableData.playerData.foreach(data => updatePlayer(data._1, data._2, true, gameID))
+    gameID
+  }
+
+  private def updateGame(gameID: Int, gameTableData: GameTableData): Future[Int] =
+    val updateAction = gameTable.filter(_.gameID === gameID)
+      .map(g => (g.state, g.boardSize, g.playerSize, g.playerType, g.currentPlayerIndex))
+      .update((gameTableData.state, gameTableData.boardSize, gameTableData.playerSize, gameTableData.playerType, gameTableData.currPlayerIndex))
+    dbConnector.db.run(updateAction)
+
+  private def updatePlayer(playerIndex: Int, points: Int, active: Boolean, gameID: Int): Future[Int] =
+    val updateAction = playerTable.filter(p => p.playerIndex === playerIndex && p.gameID === gameID)
+      .map(p => (p.points, p.active))
+      .update((points, active))
+    dbConnector.db.run(updateAction)
+
+  private def deactivateAllPlayers(gameID: Int): Future[Int] =
+    val updateAction = playerTable.filter(_.gameID === gameID)
+      .map(_.active)
+      .update(false)
+    dbConnector.db.run(updateAction)
+
+  private def getLatestGameID: Future[Option[Int]] =
+    val lookupAction = gameTable
+      .sortBy(_.gameID.desc)
+      .map(_.gameID)
+      .result
+      .headOption
+    dbConnector.db.run(lookupAction)
+
+  override def delete: Try[Int] = Try {
+    val gameID: Int = Await.result(getLatestGameID, 5.seconds).get
+    Await.result(dbConnector.db.run(
+      DBIO.seq(
+        playerTable.filter(_.gameID === gameID).delete,
+        gameTable.filter(_.gameID === gameID).delete
+      )
+    ), 5.seconds)
+    gameID
+  }

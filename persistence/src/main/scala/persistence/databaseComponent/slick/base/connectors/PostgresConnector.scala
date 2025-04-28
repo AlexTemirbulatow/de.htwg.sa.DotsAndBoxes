@@ -21,7 +21,7 @@ class PostgresConnector extends DBConnectorInterface:
   )
 
   override def connect(setup: DBIOAction[Unit, NoStream, Effect.Schema]): Unit =
-    logger.info("Persistence Service [Database] -- Trying to connect to postgres database...")
+    logger.info("Persistence Service [Database] -- Connecting to postgres database...")
     retry(PERSISTENCE_DB_POSTGRES_CONN_RETRY_ATTEMPTS, setup)(db)
 
   private def retry(retries: Int, setup: DBIOAction[Unit, NoStream, Effect.Schema])(database: => JdbcDatabaseDef): Unit =
@@ -33,6 +33,6 @@ class PostgresConnector extends DBConnectorInterface:
         retry(retries - 1, setup)(database)
       case Failure(exception) => logger.error(s"Persistence Service [Database] -- Could not establish a connection to the postgres database: ${exception.getMessage}")
 
-  protected def closeConnection: Unit =
+  override def disconnect: Unit =
     logger.info("Persistence Service [Database] -- Closing postgres database connection...")
     db.close

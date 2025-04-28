@@ -6,3 +6,4 @@ import slick.jdbc.JdbcBackend.JdbcDatabaseDef
 trait DBConnectorInterface:
   val db: JdbcDatabaseDef
   def connect(setup: DBIOAction[Unit, NoStream, Effect.Schema]): Unit
+  def disconnect: Unit

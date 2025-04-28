@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory
 import persistence.api.routes.{DatabaseRoutes, FileIORoutes}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
+//import persistence.api.module.PersistenceModule.given_DAOInterface
 
 object PersistenceHttpServer:
   private[server] implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
@@ -31,6 +32,7 @@ object PersistenceHttpServer:
       case Success(binding)   => logger.info(s"Persistence Service -- Http Server is running at $PERSISTENCE_BASE_URL\n")
       case Failure(exception) => logger.error(s"Persistence Service -- Http Server failed to start", exception)
     }
+    //given_DAOInterface.init
     serverBinding
 
   private def routes(fileIORoutes: FileIORoutes, dbRoutes: DatabaseRoutes): Route =
