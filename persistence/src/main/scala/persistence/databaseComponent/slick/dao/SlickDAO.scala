@@ -42,12 +42,11 @@ object Slick:
       case Success(id)        => logger.info(s"Persistence Service [Database] -- Initial table successfully created [ID: $id]")
       case Failure(exception) => logger.error(s"Persistence Service [Database] -- Could not create initial table: ${exception.getMessage}")
 
-    override def create: Try[Int] =
-      Try {
-        val gameID: Int = Await.result(insertGame(initialGameTableData), 5.seconds)
-        initialGameTableData.playerData.foreach(data => insertPlayer(data._1, data._2, false, gameID))
-        gameID
-      }
+    override def create: Try[Int] = Try {
+      val gameID: Int = Await.result(insertGame(initialGameTableData), 5.seconds)
+      initialGameTableData.playerData.foreach(data => insertPlayer(data._1, data._2, false, gameID))
+      gameID
+    }
 
     private def insertGame(gameTableData: GameTableData): Future[Int] =
       val insertAction = (
@@ -65,27 +64,26 @@ object Slick:
       ) += (playerIndex, points, active, gameID)
       dbConnector.db.run(insertAction)
 
-    override def read: Try[GameTableData] =
-      Try {
-        val gameID: Int = Await.result(getLatestGameID, 5.seconds).get
-        val game = Await.result(dbConnector.db.run(
-          gameTable.filter(_.gameID === gameID).result.headOption
-        ), 5.seconds).get
+    override def read: Try[GameTableData] = Try {
+      val gameID: Int = Await.result(getLatestGameID, 5.seconds).get
+      val game = Await.result(dbConnector.db.run(
+        gameTable.filter(_.gameID === gameID).result.headOption
+      ), 5.seconds).get
 
-        val playerList = Await.result(dbConnector.db.run(
-          playerTable
-            .filter(_.gameID === gameID)
-            .filter(_.active)
-            .sortBy(_.playerIndex)
-            .result
-        ), 5.seconds)
+      val playerList = Await.result(dbConnector.db.run(
+        playerTable
+          .filter(_.gameID === gameID)
+          .filter(_.active)
+          .sortBy(_.playerIndex)
+          .result
+      ), 5.seconds)
 
-        val (state, boardSize, playerSize, currPlayerIndex, currPlayerType) =
-          (game._2, game._3, game._4, game._5, game._6)
-        val playerData = playerList.map(p => (p._1, p._2)).toVector
+      val (state, boardSize, playerSize, currPlayerIndex, currPlayerType) =
+        (game._2, game._3, game._4, game._5, game._6)
+      val playerData = playerList.map(p => (p._1, p._2)).toVector
 
-        GameTableData(state, boardSize, playerSize, currPlayerIndex, currPlayerType, playerData)
-      }
+      GameTableData(state, boardSize, playerSize, currPlayerIndex, currPlayerType, playerData)
+    }
 
     override def update(gameTableData: GameTableData): Try[Int] = Try {
       val gameID: Int = Await.result(getLatestGameID, 5.seconds).get

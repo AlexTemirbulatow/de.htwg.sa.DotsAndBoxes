@@ -48,7 +48,7 @@ ThisBuild / Test / fork := true
 lazy val root = project
   .in(file("."))
   .settings(name := "dotsandboxes")
-  .aggregate(common, core, model, computer, persistence, gui, tui)
+  .aggregate(common, core, model, computer, persistence, gui, tui, metric)
 
 lazy val common = project
   .in(file("common"))
@@ -85,6 +85,11 @@ lazy val tui = project
 lazy val gui = project
   .in(file("gui"))
   .settings(name := "gui")
+  .dependsOn(common)
+
+lazy val metric = project
+  .in(file("metric"))
+  .settings(name := "metric")
   .dependsOn(common)
 
 import org.scoverage.coveralls.Imports.CoverallsKeys._
