@@ -31,6 +31,7 @@ class TUI:
     case "l" => CoreRequestHttp.publish("load"); None
     case "r" => CoreRequestHttp.restart; None
     case "h" => print(help.concat("\nYour Move <Line><X><Y>: ")); None
+    case "stats" => print(gameStats.concat("\nYour Move <Line><X><Y>: ")); None
     case newGame if newGame.startsWith("NEW: ") =>
       val numbers = newGame.split(": ")(1).split(" ")
       val (boardSizeNum, playerSizeNum, playerTypeNum, computerDifficultyNum): (String, String, String, String) =
@@ -81,13 +82,34 @@ class TUI:
 
   def fieldString: String = CoreRequestHttp.fieldString
 
+  def gameStats: String =
+    val gmStats: GameStats = CoreRequestHttp.gameStats
+    val header =
+      s"""
+        |Game Stats
+        |_________________________
+        |
+        |Total Time Duration: ${gmStats.totalDuration} sec
+        |
+        |""".stripMargin
+    val playerSections = gmStats.playerStats.map { case (playerName, stats) =>
+      s"""$playerName:
+        |    average move duration: ${stats.avgMoveDuration} sec
+        |    minimal move duration: ${stats.minMoveDuration} sec
+        |    maximal move duration: ${stats.maxMoveDuration} sec
+        |    longest move streak:   ${stats.longestMoveStreak}
+        |    total number of moves: ${stats.numOfTotalMoves}
+        |""".stripMargin
+    }.mkString("\n")
+    header + playerSections
+
   def finalStats: String =
     val playerGameData: PlayerGameData = CoreRequestHttp.playerGameData
     "\n" +
-      playerGameData.winner + "\n" +
-      "_________________________" + "\n\n" +
-      playerGameData.stats +
-      "\n"
+    playerGameData.winner + "\n" +
+    "_________________________" + "\n\n" +
+    playerGameData.stats +
+    "\n"
 
   def syntaxErr: String =
     "\nIncorrect syntax. Try again: "
