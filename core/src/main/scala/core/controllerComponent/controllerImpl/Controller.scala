@@ -48,7 +48,7 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
 
   override def load: FieldInterface =
     val fieldValue: String = PersistenceRequestHttp.loadFileIO(fileFormat, FILEIO_FILENAME)
-    fileFormat match
+    field = fileFormat match
       case FileFormat.JSON => FieldParser.fromJson(fieldValue)
       case FileFormat.XML  => FieldParser.fromXml(fieldValue)
     //field = FieldParser.fromJson(PersistenceRequestHttp.loadDatabase)
@@ -74,6 +74,7 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
     if gameEnded then notifyObservers(Event.End)
     field
 
+    
   override def publish(doThis: Move => String, move: Move): Try[FieldInterface] =
     MoveValidator.validate(move, field) match
       case Failure(exception) => Failure(exception)
