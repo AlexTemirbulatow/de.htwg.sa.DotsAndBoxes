@@ -24,13 +24,13 @@ class TUI:
     gameLoop
 
   def analyzeInput(input: String): Option[Move] = input match
-    case "q" => update(Event.Abort); None
-    case "z" => CoreRequestHttp.publish("undo"); None
-    case "y" => CoreRequestHttp.publish("redo"); None
-    case "s" => CoreRequestHttp.publish("save"); None
-    case "l" => CoreRequestHttp.publish("load"); None
-    case "r" => CoreRequestHttp.restart; None
-    case "h" => print(help.concat("\nYour Move <Line><X><Y>: ")); None
+    case "q"     => update(Event.Abort); None
+    case "z"     => CoreRequestHttp.publish("undo"); None
+    case "y"     => CoreRequestHttp.publish("redo"); None
+    case "s"     => CoreRequestHttp.publish("save"); None
+    case "l"     => CoreRequestHttp.publish("load"); None
+    case "r"     => CoreRequestHttp.restart; None
+    case "h"     => print(help.concat("\nYour Move <Line><X><Y>: ")); None
     case "stats" => print(gameStats.concat("\nYour Move <Line><X><Y>: ")); None
     case newGame if newGame.startsWith("NEW: ") =>
       val numbers = newGame.split(": ")(1).split(" ")
