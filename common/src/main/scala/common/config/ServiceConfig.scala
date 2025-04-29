@@ -37,6 +37,11 @@ object ServiceConfig:
   val GUI_BASE_URL             = baseUrl("gui")
   val GUI_OBSERVER_URL         = observerUrl("gui")
 
+  val METRIC_HOST              = bindHost("metric")
+  val METRIC_PORT              = port("metric")
+  val METRIC_BASE_URL          = baseUrl("metric")
+  val METRIC_SERVICE_URL       = serviceUrl("metric")
+
   private def bindHost(service: String): String =
     config.getString(s"$service.bindHost")
 
