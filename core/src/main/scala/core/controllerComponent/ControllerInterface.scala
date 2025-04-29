@@ -12,6 +12,7 @@ trait ControllerInterface extends Observable:
   def playerGameData: PlayerGameData
   def fieldSizeData: FieldSizeData
   def gameEnded: Boolean
+  def gameStats: GameStats
   def put(move: Move): String
   def undo: FieldInterface
   def redo: FieldInterface
@@ -23,3 +24,5 @@ trait ControllerInterface extends Observable:
   def publish(doThis: Move => String, move: Move): Try[FieldInterface]
   def computerMove(field: FieldInterface): Future[FieldInterface]
   override def toString: String
+
+  
