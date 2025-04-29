@@ -74,7 +74,6 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
     if gameEnded then notifyObservers(Event.End)
     field
 
-    
   override def publish(doThis: Move => String, move: Move): Try[FieldInterface] =
     MoveValidator.validate(move, field) match
       case Failure(exception) => Failure(exception)

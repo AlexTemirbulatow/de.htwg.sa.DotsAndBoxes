@@ -64,7 +64,6 @@ class CoreRoutes(val controller: ControllerInterface):
     }
   }
 
-  
   private def handlePublishRequests: Route = post { 
     path("publish") {
       entity(as[String]) { json =>
