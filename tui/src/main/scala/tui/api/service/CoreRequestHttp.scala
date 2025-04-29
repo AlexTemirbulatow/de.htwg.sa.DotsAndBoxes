@@ -53,6 +53,15 @@ object CoreRequestHttp:
       case Left(error) =>
         throw new RuntimeException(s"Error fetching PlayerGameData: $error")
 
+  def gameStats: GameStats =
+    Await.result(CoreClient.getRequest("api/core/get/gameStats"), 5.seconds) match
+      case Right(jsonString) =>
+        decode[GameStats](jsonString) match
+          case Right(gameStats) => gameStats
+          case Left(error) => throw new RuntimeException(s"Error decoding GameStats: ${error.getMessage}") 
+      case Left(error) =>
+        throw new RuntimeException(s"Error fetching GameStats: $error")
+
   def registerTUIObserver(tuiObserverUrl: String): Future[Either[String, String]] =
     CoreClient.postRequest("api/core/registerObserver", Json.obj(
       "url" -> tuiObserverUrl

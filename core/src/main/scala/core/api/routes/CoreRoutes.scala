@@ -55,6 +55,9 @@ class CoreRoutes(val controller: ControllerInterface):
       path("fieldSizeData") { 
         complete(controller.fieldSizeData.asJson.toString)
       } ~
+      path("gameStats") {
+        complete(controller.gameStats.asJson.toString)
+      } ~
       path("gameEnded") { 
         complete(controller.gameEnded.toString)
       }

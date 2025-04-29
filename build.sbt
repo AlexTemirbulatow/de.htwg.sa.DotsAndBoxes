@@ -5,7 +5,7 @@ val akkaVersion = "2.8.5"
 val akkaHttpVersion = "10.5.3"
 val circeVersion = "0.14.1"
 
-val dotsandboxesLibVersion = "1.0.6"
+val dotsandboxesLibVersion = "1.0.7"
 val dotsandboxesLibUrl = "https://maven.pkg.github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes.library"
 
 ThisBuild / version := thisVersion
@@ -36,6 +36,9 @@ ThisBuild / libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % Test,
   "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test,
   "org.wiremock" % "wiremock" % "3.12.1" % Test,
+  "com.typesafe.slick" %% "slick" % "3.6.0" cross CrossVersion.for3Use2_13,
+  "org.postgresql" % "postgresql" % "42.7.3",
+  "com.h2database" % "h2" % "2.3.232",
   "com.github.AlexTemirbulatow" %% "dotsandboxes" % dotsandboxesLibVersion
 )
 
@@ -45,7 +48,7 @@ ThisBuild / Test / fork := true
 lazy val root = project
   .in(file("."))
   .settings(name := "dotsandboxes")
-  .aggregate(common, core, model, computer, persistence, gui, tui)
+  .aggregate(common, core, model, computer, persistence, gui, tui, metric)
 
 lazy val common = project
   .in(file("common"))
@@ -82,6 +85,11 @@ lazy val tui = project
 lazy val gui = project
   .in(file("gui"))
   .settings(name := "gui")
+  .dependsOn(common)
+
+lazy val metric = project
+  .in(file("metric"))
+  .settings(name := "metric")
   .dependsOn(common)
 
 import org.scoverage.coveralls.Imports.CoverallsKeys._

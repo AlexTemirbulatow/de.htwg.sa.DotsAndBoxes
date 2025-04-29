@@ -7,7 +7,6 @@ import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import common.config.ServiceConfig.{COMPUTER_BASE_URL, COMPUTER_HOST, COMPUTER_PORT}
-import computer.api.client.ModelClient
 import computer.api.routes.ComputerRoutes
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}

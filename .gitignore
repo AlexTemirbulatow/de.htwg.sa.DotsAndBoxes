@@ -45,6 +45,9 @@ field.json
 # env
 .env
 
+# database
+*.db
+
 # other
 .history
 .scala_dependencies
