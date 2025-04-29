@@ -26,5 +26,3 @@ object MetricRequestHttp:
     ) match
       case Right(gameStats) => gameStats
       case Left(error)   => throw new RuntimeException(s"Error decoding GameStats: ${error.getMessage}")    
-
-      

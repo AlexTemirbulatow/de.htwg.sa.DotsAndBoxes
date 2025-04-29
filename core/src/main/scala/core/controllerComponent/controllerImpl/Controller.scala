@@ -106,5 +106,3 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
     val currPlayer: Player = currentPlayer
     val moveString = if !gameEnded then "Your Move <Line><X><Y>: " else ""
     s"\n$fieldString\n${currPlayer.playerId}s turn\n[points: ${currPlayer.points}]\n\n$moveString"
-
-    

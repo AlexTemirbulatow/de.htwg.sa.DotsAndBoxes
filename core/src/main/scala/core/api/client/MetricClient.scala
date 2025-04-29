@@ -54,5 +54,3 @@ object MetricClient:
   private def shutdown: Future[Done] =
     logger.info("Core Service -- Shutting Down Metric Client...")
     http.shutdownAllConnectionPools().map(_ => Done)
-
-    

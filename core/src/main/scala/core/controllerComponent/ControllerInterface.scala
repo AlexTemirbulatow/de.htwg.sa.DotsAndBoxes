@@ -24,5 +24,3 @@ trait ControllerInterface extends Observable:
   def publish(doThis: Move => String, move: Move): Try[FieldInterface]
   def computerMove(field: FieldInterface): Future[FieldInterface]
   override def toString: String
-
-  
