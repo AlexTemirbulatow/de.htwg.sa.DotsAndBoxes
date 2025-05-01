@@ -1,10 +1,10 @@
-package persistence.databaseComponent.slick.connector
+package persistence.databaseComponent.slick.base.connector
 
 import akka.Done
 import akka.actor.{ActorSystem, CoordinatedShutdown}
 import common.config.DatabaseConfig._
 import org.slf4j.LoggerFactory
-import persistence.databaseComponent.DBConnectorInterface
+import persistence.databaseComponent.slick.base.DBConnectorInterface
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}

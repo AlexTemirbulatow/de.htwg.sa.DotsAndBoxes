@@ -3,7 +3,8 @@ package persistence.databaseComponent.slick.dao
 import de.github.dotsandboxes.lib._
 import org.slf4j.LoggerFactory
 import persistence.databaseComponent.slick.schema.{GameTable, PlayerTable}
-import persistence.databaseComponent.{DAOInterface, GameTableData, DBConnectorInterface}
+import persistence.databaseComponent.{DAOInterface, GameTableData}
+import persistence.databaseComponent.slick.base.DBConnectorInterface
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.Try

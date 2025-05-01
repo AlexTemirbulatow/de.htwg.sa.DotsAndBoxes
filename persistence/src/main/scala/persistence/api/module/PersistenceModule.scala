@@ -1,7 +1,7 @@
 package persistence.api.module
 
 import persistence.databaseComponent.DAOInterface
-import persistence.databaseComponent.slick.connector
+import persistence.databaseComponent.slick.base.connector
 import persistence.databaseComponent.slick.dao.Slick
 
 object PersistenceModule:
