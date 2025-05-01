@@ -39,6 +39,7 @@ ThisBuild / libraryDependencies ++= Seq(
   "com.typesafe.slick" %% "slick" % "3.6.0" cross CrossVersion.for3Use2_13,
   "org.postgresql" % "postgresql" % "42.7.3",
   "com.h2database" % "h2" % "2.3.232",
+  "org.mongodb.scala" %% "mongo-scala-driver" % "5.4.0" cross CrossVersion.for3Use2_13,
   "com.github.AlexTemirbulatow" %% "dotsandboxes" % dotsandboxesLibVersion
 )
 
