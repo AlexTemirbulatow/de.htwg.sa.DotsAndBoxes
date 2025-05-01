@@ -11,7 +11,7 @@ import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success, Try}
 
-class MongoBDConnector extends DBConnectorInterface:
+class MongoDBConnector extends DBConnectorInterface:
   private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
 
   private val logger = LoggerFactory.getLogger(getClass.getName.init)
