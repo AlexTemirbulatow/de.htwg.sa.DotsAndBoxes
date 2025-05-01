@@ -6,10 +6,10 @@ import common.config.DatabaseConfig._
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.{MongoClient, MongoDatabase, ObservableFuture}
 import org.slf4j.LoggerFactory
+import persistence.databaseComponent.mongoDB.base.DBConnectorInterface
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success, Try}
-import persistence.databaseComponent.mongoDB.base.DBConnectorInterface
 
 class MongoBDConnector extends DBConnectorInterface:
   private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)

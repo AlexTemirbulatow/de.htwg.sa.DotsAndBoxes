@@ -1,8 +1,8 @@
 package persistence.databaseComponent.mongoDB.base
 
 import akka.Done
-import scala.concurrent.Future
 import org.mongodb.scala.MongoDatabase
+import scala.concurrent.Future
 
 trait DBConnectorInterface:
   val db: MongoDatabase
