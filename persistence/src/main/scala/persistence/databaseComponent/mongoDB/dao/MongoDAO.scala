@@ -1,5 +1,8 @@
 package persistence.databaseComponent.mongoDB.dao
 
+import common.config.DatabaseConfig.PERSISTENCE_DB_MONGO_COLLECTION_NAME
+import org.mongodb.scala._
+import org.mongodb.scala.bson.Document
 import org.slf4j.LoggerFactory
 import persistence.databaseComponent.mongoDB.base.DBConnectorInterface
 import persistence.databaseComponent.{DAOInterface, GameTableData}
@@ -15,6 +18,8 @@ object Mongo:
     create match
       case Success(_)         => logger.info(s"Persistence Service [Database] -- Initial collection successfully created")
       case Failure(exception) => logger.error(s"Persistence Service [Database] -- Could not create initial collection: ${exception.getMessage}")
+
+    private val gameCollection: MongoCollection[Document] = dbConnector.db.getCollection(PERSISTENCE_DB_MONGO_COLLECTION_NAME)
 
     override def create: Try[Int] = ???
 
