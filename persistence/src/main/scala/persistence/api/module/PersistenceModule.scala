@@ -1,8 +1,8 @@
 package persistence.api.module
 
 import persistence.databaseComponent.DAOInterface
-import persistence.databaseComponent.slick.base.connectors
 import persistence.databaseComponent.slick.dao.Slick
+import persistence.databaseComponent.slick.connector
 
 object PersistenceModule:
-  given DAOInterface = Slick(new connectors.PostgresConnector)
+  given DAOInterface = Slick(new connector.PostgresConnector)
