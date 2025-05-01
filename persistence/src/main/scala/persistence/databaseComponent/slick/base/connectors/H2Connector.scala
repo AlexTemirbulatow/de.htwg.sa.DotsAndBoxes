@@ -17,7 +17,7 @@ class H2Connector extends DBConnectorInterface:
 
   private val logger = LoggerFactory.getLogger(getClass.getName.init)
 
-  CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-postgres-connection") { () =>
+  CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-h2-connection") { () =>
     disconnect
   }
 
