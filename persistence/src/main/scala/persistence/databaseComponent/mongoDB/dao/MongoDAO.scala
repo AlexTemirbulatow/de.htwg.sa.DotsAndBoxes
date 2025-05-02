@@ -1,17 +1,17 @@
 package persistence.databaseComponent.mongoDB.dao
 
 import common.config.DatabaseConfig.PERSISTENCE_DB_MONGO_COLLECTION_NAME
+import de.github.dotsandboxes.lib._
+import org.mongodb.scala.Document
 import org.mongodb.scala._
 import org.mongodb.scala.bson.Document
+import org.mongodb.scala.model.ReplaceOptions
 import org.slf4j.LoggerFactory
 import persistence.databaseComponent.mongoDB.base.DBConnectorInterface
 import persistence.databaseComponent.{DAOInterface, GameTableData}
-import scala.util.{Failure, Success, Try}
-import org.mongodb.scala.Document
-import de.github.dotsandboxes.lib._
 import scala.concurrent.Await
 import scala.concurrent.duration._
-import org.mongodb.scala.model.ReplaceOptions
+import scala.util.{Failure, Success, Try}
 
 object Mongo:
   def apply(dbConnector: DBConnectorInterface): DAOInterface = new MongoDAO(dbConnector)
