@@ -7,5 +7,5 @@ import persistence.databaseComponent.slick.base.connector.{H2Connector, Postgres
 import persistence.databaseComponent.slick.dao.Slick
 
 object PersistenceModule:
-  given DAOInterface = Slick(new PostgresConnector)
-//given DAOInterface = Mongo(new MongoDBConnector)
+  //given DAOInterface = Slick(new PostgresConnector)
+  given DAOInterface = Mongo(new MongoDBConnector)
