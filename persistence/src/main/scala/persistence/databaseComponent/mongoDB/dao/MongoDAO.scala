@@ -21,9 +21,6 @@ object Mongo:
 
     private val logger = LoggerFactory.getLogger(getClass.getName.init)
 
-    private val initialPlayerDocument: Seq[Document] = list.zipWithIndex.map { case (player, index) =>
-      Document("index" -> index, "points" -> player.points, "active" -> false)
-    }
     private val initialGameDocument = Document(
       "_id"                 -> MONGO_COLLECTION_GAME_ID,
       "state"               -> "",
@@ -31,7 +28,7 @@ object Mongo:
       "playerSize"          -> PlayerSize.Two.toString,
       "playerType"          -> PlayerType.Human.toString,
       "currentPlayerIndex"  -> 0,
-      "playerData"          -> initialPlayerDocument.toList
+      "playerData"          -> list.zipWithIndex.map { case (player, index) => Document("index" -> index, "points" -> player.points, "active" -> false) }
     )
 
     dbConnector.connect
