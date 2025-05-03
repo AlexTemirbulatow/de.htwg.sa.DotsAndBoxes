@@ -3,7 +3,7 @@ package metric.databaseComponent
 import scala.util.Try
 
 trait DAOInterface:
-  def create(timestamp: Long, playerName: String): Try[Int]
+  def create(timestamp: Long, playerName: String): Try[String]
   def getTotalGameDuration: Int
   def getAvgMoveDuration(playerName: String): Int
   def getMinMoveDuration(playerName: String): Int

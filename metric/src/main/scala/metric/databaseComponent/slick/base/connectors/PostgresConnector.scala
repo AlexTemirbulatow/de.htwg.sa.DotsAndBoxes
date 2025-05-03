@@ -14,22 +14,22 @@ class PostgresConnector extends DBConnectorInterface:
   private val logger = LoggerFactory.getLogger(getClass.getName.init)
 
   override val db = Database.forURL(
-    url = METRIC_DB_POSTGRES_URL,
-    user = METRIC_DB_POSTGRES_USER,
-    password = METRIC_DB_POSTGRES_PASS,
-    driver = METRIC_DB_POSTGRES_DRIVER
+    url = PERSISTENCE_DB_POSTGRES_URL,
+    user = PERSISTENCE_DB_POSTGRES_USER,
+    password = PERSISTENCE_DB_POSTGRES_PASS,
+    driver = PERSISTENCE_DB_POSTGRES_DRIVER
   )
 
   override def connect(setup: DBIOAction[Unit, NoStream, Effect.Schema]): Unit =
     logger.info("Metric Service -- Connecting to postgres database...")
-    retry(METRIC_DB_POSTGRES_CONN_RETRY_ATTEMPTS, setup)(db)
+    retry(PERSISTENCE_DB_POSTGRES_CONN_RETRY_ATTEMPTS, setup)(db)
 
   private def retry(retries: Int, setup: DBIOAction[Unit, NoStream, Effect.Schema])(database: => JdbcDatabaseDef): Unit =
     Try(Await.result(database.run(setup), 5.seconds)) match
       case Success(_) => logger.info("Metric Service -- Postgres database connection established")
       case Failure(exception) if retries > 0 =>
-        logger.warn(s"Metric Service -- Postgres database connection failed - retrying... (${METRIC_DB_POSTGRES_CONN_RETRY_ATTEMPTS - retries + 1}/$METRIC_DB_POSTGRES_CONN_RETRY_ATTEMPTS): ${exception.getMessage}")
-        Thread.sleep(METRIC_DB_POSTGRES_CONN_RETRY_WAIT_TIME)
+        logger.warn(s"Metric Service -- Postgres database connection failed - retrying... (${PERSISTENCE_DB_POSTGRES_CONN_RETRY_ATTEMPTS - retries + 1}/$PERSISTENCE_DB_POSTGRES_CONN_RETRY_ATTEMPTS): ${exception.getMessage}")
+        Thread.sleep(PERSISTENCE_DB_POSTGRES_CONN_RETRY_WAIT_TIME)
         retry(retries - 1, setup)(database)
       case Failure(exception) => logger.error(s"Metric Service -- Could not establish a connection to the postgres database: ${exception.getMessage}")
 

@@ -1,17 +1,25 @@
-package persistence.databaseComponent.slick.base.connectors
+package persistence.databaseComponent.slick.base.connector
 
+import akka.Done
+import akka.actor.{ActorSystem, CoordinatedShutdown}
 import common.config.DatabaseConfig._
 import org.slf4j.LoggerFactory
+import persistence.databaseComponent.slick.base.DBConnectorInterface
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success, Try}
 import slick.dbio.{DBIOAction, Effect, NoStream}
 import slick.jdbc.JdbcBackend.{Database, JdbcDatabaseDef}
-import persistence.databaseComponent.slick.base.DBConnectorInterface
 
 class PostgresConnector extends DBConnectorInterface:
+  private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
+
   private val logger = LoggerFactory.getLogger(getClass.getName.init)
+
+  CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-postgres-connection") { () =>
+    disconnect
+  }
 
   override val db = Database.forURL(
     url = PERSISTENCE_DB_POSTGRES_URL,
@@ -33,6 +41,7 @@ class PostgresConnector extends DBConnectorInterface:
         retry(retries - 1, setup)(database)
       case Failure(exception) => logger.error(s"Persistence Service [Database] -- Could not establish a connection to the postgres database: ${exception.getMessage}")
 
-  override def disconnect: Unit =
+  override def disconnect: Future[Done] =
     logger.info("Persistence Service [Database] -- Closing postgres database connection...")
     db.close
+    Future.successful(Done)
