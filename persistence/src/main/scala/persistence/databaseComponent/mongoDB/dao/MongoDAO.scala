@@ -2,8 +2,10 @@ package persistence.databaseComponent.mongoDB.dao
 
 import common.config.DatabaseConfig.PERSISTENCE_DB_MONGO_COLLECTION_NAME
 import de.github.dotsandboxes.lib._
+import org.bson.BsonArray
 import org.bson.BsonValue
 import org.mongodb.scala._
+import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.ReplaceOptions
 import org.mongodb.scala.model.Updates._
@@ -14,8 +16,6 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.jdk.CollectionConverters._
 import scala.util.{Failure, Success, Try}
-import org.bson.BsonArray
-import org.mongodb.scala.bson.BsonDocument
 
 object Mongo:
   def apply(dbConnector: DBConnectorInterface): DAOInterface = new MongoDAO(dbConnector)
