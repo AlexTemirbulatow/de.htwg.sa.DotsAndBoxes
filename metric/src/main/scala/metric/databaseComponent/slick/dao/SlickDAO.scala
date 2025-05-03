@@ -24,9 +24,9 @@ object Slick:
       )
     )
 
-    override def create(timestamp: Long, playerName: String): Try[Int] = Try {
+    override def create(timestamp: Long, playerName: String): Try[String] = Try {
       val moveID: Int = Await.result(insertMove(timestamp, playerName), 5.seconds)
-      moveID
+      moveID.toString
     }
 
     private def insertMove(timestamp: Long, playerName: String): Future[Int] =
