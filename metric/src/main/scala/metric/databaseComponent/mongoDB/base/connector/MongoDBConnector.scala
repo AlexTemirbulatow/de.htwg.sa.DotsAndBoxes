@@ -3,10 +3,10 @@ package metric.databaseComponent.mongoDB.base.connector
 import akka.Done
 import akka.actor.{ActorSystem, CoordinatedShutdown}
 import common.config.DatabaseConfig._
+import metric.databaseComponent.mongoDB.base.DBConnectorInterface
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.{MongoClient, MongoDatabase, ObservableFuture}
 import org.slf4j.LoggerFactory
-import metric.databaseComponent.mongoDB.base.DBConnectorInterface
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success, Try}
