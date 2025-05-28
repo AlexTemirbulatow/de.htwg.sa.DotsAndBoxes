@@ -8,7 +8,7 @@ import scala.concurrent.duration._
 
 class DatabaseVolumeTest extends GatlingSimulationConfig:
   private val USERS: Int = 10
-  private val REPEAT_COUNT = 10000
+  private val REPEAT_COUNT = 15000
 
   override val operations: List[ChainBuilder] = List(
     repeat(REPEAT_COUNT) {
