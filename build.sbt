@@ -4,6 +4,7 @@ val scalatestVersion = "3.2.14"
 val akkaVersion = "2.8.5"
 val akkaHttpVersion = "10.5.3"
 val circeVersion = "0.14.1"
+val jacksonVersion = "2.15.3"
 
 val dotsandboxesLibVersion = "1.0.7"
 val dotsandboxesLibUrl = "https://maven.pkg.github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes.library"
@@ -42,12 +43,11 @@ ThisBuild / libraryDependencies ++= Seq(
   "org.mongodb.scala" %% "mongo-scala-driver" % "5.4.0" cross CrossVersion.for3Use2_13,
   "io.gatling.highcharts" % "gatling-charts-highcharts" % "3.13.5" % Test,
   "io.gatling" % "gatling-test-framework" % "3.13.5" % Test,
+  "com.fasterxml.jackson.core" % "jackson-databind" % jacksonVersion,
+  "com.fasterxml.jackson.core" % "jackson-core" % jacksonVersion,
+  "com.fasterxml.jackson.core" % "jackson-annotations" % jacksonVersion,
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.15.2",
   "com.github.AlexTemirbulatow" %% "dotsandboxes" % dotsandboxesLibVersion
-)
-
-ThisBuild / dependencyOverrides ++= Seq(
-  "com.fasterxml.jackson.core" % "jackson-databind" % "2.10.0",
-  "com.fasterxml.jackson.core" % "jackson-core" % "2.10.0"
 )
 
 ThisBuild / Test / parallelExecution := false
