@@ -4,6 +4,7 @@ val scalatestVersion = "3.2.14"
 val akkaVersion = "2.8.5"
 val akkaHttpVersion = "10.5.3"
 val circeVersion = "0.14.1"
+val jacksonVersion = "2.15.3"
 
 val dotsandboxesLibVersion = "1.0.7"
 val dotsandboxesLibUrl = "https://maven.pkg.github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes.library"
@@ -40,6 +41,8 @@ ThisBuild / libraryDependencies ++= Seq(
   "org.postgresql" % "postgresql" % "42.7.3",
   "com.h2database" % "h2" % "2.3.232",
   "org.mongodb.scala" %% "mongo-scala-driver" % "5.4.0" cross CrossVersion.for3Use2_13,
+  "io.gatling.highcharts" % "gatling-charts-highcharts" % "3.13.5" % Test,
+  "io.gatling" % "gatling-test-framework" % "3.13.5" % Test,
   "com.github.AlexTemirbulatow" %% "dotsandboxes" % dotsandboxesLibVersion
 )
 
@@ -65,6 +68,7 @@ lazy val persistence = project
   .settings(name := "persistence")
   .dependsOn(common)
   .dependsOn(model % Test)
+  .enablePlugins(GatlingPlugin)
 
 lazy val computer = project
   .in(file("computer"))
@@ -92,6 +96,8 @@ lazy val metric = project
   .in(file("metric"))
   .settings(name := "metric")
   .dependsOn(common)
+  .dependsOn(model % Test)
+  .enablePlugins(GatlingPlugin)
 
 import org.scoverage.coveralls.Imports.CoverallsKeys._
 coverallsTokenFile := sys.env.get("COVERALLS_REPO_TOKEN")
