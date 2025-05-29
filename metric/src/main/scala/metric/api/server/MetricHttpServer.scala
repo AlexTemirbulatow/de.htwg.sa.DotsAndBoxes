@@ -6,7 +6,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import common.config.ServiceConfig.METRIC_BASE_URL
+import common.config.ServiceConfig._
 import metric.api.routes.MetricRoutes
 import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}
@@ -20,7 +20,7 @@ object MetricHttpServer:
 
   def run: Future[ServerBinding] =
     val serverBinding = Http()
-      .newServerAt("localhost", 8086)
+      .newServerAt(METRIC_HOST, METRIC_PORT)
       .bind(routes(new MetricRoutes))
 
     CoordinatedShutdown(system).addTask(CoordinatedShutdown.PhaseServiceStop, "shutdown-server") { () =>
