@@ -30,12 +30,12 @@ object LogFileReader:
     )
 
     val warnFlow: Flow[String, String, NotUsed] =
-      Flow[String].filter(_.contains("WARN")).map(line => s"[WARN LOG]: $line")
+      Flow[String].filter(_.contains("WARN"))
 
     val errorFlow: Flow[String, String, NotUsed] =
-      Flow[String].filter(_.contains("ERROR")).map(line => s"[ERROR LOG]: $line")
+      Flow[String].filter(_.contains("ERROR"))
 
-    val mergedSink: Sink[String, ?] = Sink.foreach[String](println)
+    val mergedSink: Sink[String, ?] = Sink.foreach[String](logger.info(_))
 
     val graph = RunnableGraph.fromGraph(GraphDSL.create() { implicit builder: GraphDSL.Builder[NotUsed] =>
       import GraphDSL.Implicits._
