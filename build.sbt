@@ -43,11 +43,15 @@ ThisBuild / libraryDependencies ++= Seq(
   "org.mongodb.scala" %% "mongo-scala-driver" % "5.4.0" cross CrossVersion.for3Use2_13,
   "io.gatling.highcharts" % "gatling-charts-highcharts" % "3.13.5" % Test,
   "io.gatling" % "gatling-test-framework" % "3.13.5" % Test,
+  "com.github.AlexTemirbulatow" %% "dotsandboxes" % dotsandboxesLibVersion
+)
+
+ThisBuild / dependencyOverrides ++= Seq(
   "com.fasterxml.jackson.core" % "jackson-databind" % jacksonVersion,
   "com.fasterxml.jackson.core" % "jackson-core" % jacksonVersion,
   "com.fasterxml.jackson.core" % "jackson-annotations" % jacksonVersion,
-  "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.15.2",
-  "com.github.AlexTemirbulatow" %% "dotsandboxes" % dotsandboxesLibVersion
+  "com.fasterxml.jackson.datatype" % "jackson-datatype-jdk8" % jacksonVersion,
+  "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % jacksonVersion
 )
 
 ThisBuild / Test / parallelExecution := false
