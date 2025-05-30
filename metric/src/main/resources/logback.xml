@@ -10,10 +10,17 @@
     </encoder>
   </appender>
 
-  <logger name="org.mongodb.driver" level="WARN"/>
+  <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <file>logging/logs/application.log</file>
+    <append>true</append>
+    <encoder>
+      <pattern>[%-5level LOG]: [%thread] - %msg%n</pattern>
+    </encoder>
+  </appender>
 
   <root level="INFO">
     <appender-ref ref="STDOUT" />
     <appender-ref ref="LOGSTASH" />
+    <appender-ref ref="FILE" />
   </root>
 </configuration>

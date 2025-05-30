@@ -1,5 +1,8 @@
 package core.controllerComponent.controllerImpl
 
+import akka.actor.ActorSystem
+import akka.stream.Materializer
+import akka.stream.scaladsl.{Flow, Sink, Source}
 import common.config.ServiceConfig.{COMPUTER_SLEEP_TIME, FILEIO_FILENAME}
 import common.model.fieldService.FieldInterface
 import common.model.fieldService.converter.FieldConverter
@@ -14,11 +17,16 @@ import core.controllerComponent.utils.playerStrategy.PlayerStrategy
 import de.github.dotsandboxes.lib._
 import java.time.Instant
 import model.fieldComponent.parser.FieldParser
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.duration._
 import scala.util.{Failure, Success, Try}
 
 class Controller(using var field: FieldInterface, var fileFormat: FileFormat, var computerDifficulty: ComputerDifficulty) extends ControllerInterface:
+  private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
+  private implicit val executionContext: ExecutionContext = system.dispatcher
+  private implicit val materializer: Materializer = Materializer(system)
+
   private val undoManager = new UndoManager
 
   def newField(boardSize: BoardSize, status: Status, playerSize: PlayerSize, playerType: PlayerType): FieldInterface =
@@ -91,16 +99,22 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
         Success(field)
 
   override def computerMove(field: FieldInterface): Future[FieldInterface] =
-    Future {
-      Thread.sleep(COMPUTER_SLEEP_TIME)
-      val move: Move = ComputerRequestHttp.calculateMove(
-        FieldConverter.toJson(field).toString,
-        computerDifficulty
-      )
-      publish(put, move) match
-        case Success(updatedField) => updatedField
-        case Failure(_)            => field
+    val source = Source.single(field)
+    val flow = Flow[FieldInterface].mapAsync(1) { currentField =>
+      akka.pattern.after(COMPUTER_SLEEP_TIME.milliseconds, system.scheduler) {
+        Future {
+          val move: Move = ComputerRequestHttp.calculateMove(
+            FieldConverter.toJson(currentField).toString,
+            computerDifficulty
+          )
+          publish(put, move) match
+            case Success(updatedField) => updatedField
+            case Failure(_)            => currentField
+        }
+      }
     }
+    val sink = Sink.head[FieldInterface]
+    source.via(flow).runWith(sink)
 
   override def toString: String =
     val currPlayer: Player = currentPlayer
