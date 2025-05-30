@@ -10,13 +10,13 @@ lazy val root = (project in file("."))
   .settings(
     name := "dotsandboxes-logging",
     libraryDependencies ++= Seq(
+      "ch.qos.logback" % "logback-classic" % "1.5.2",
+      "net.logstash.logback" % "logstash-logback-encoder" % "7.4",
       "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion cross CrossVersion.for3Use2_13,
       "com.typesafe.akka" %% "akka-stream" % akkaVersion cross CrossVersion.for3Use2_13,
       "com.typesafe.akka" %% "akka-http" % akkaHttpVersion cross CrossVersion.for3Use2_13,
       "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % Test cross CrossVersion.for3Use2_13,
       "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test cross CrossVersion.for3Use2_13,
-      "com.lightbend.akka" %% "akka-stream-alpakka-file" % "6.0.2" cross CrossVersion.for3Use2_13,
-      "ch.qos.logback" % "logback-classic" % "1.5.2",
-      "net.logstash.logback" % "logstash-logback-encoder" % "7.4",
+      "com.lightbend.akka" %% "akka-stream-alpakka-file" % "6.0.2" cross CrossVersion.for3Use2_13
     )
   )
