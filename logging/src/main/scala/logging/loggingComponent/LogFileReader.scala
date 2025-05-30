@@ -19,9 +19,11 @@ object LogFileReader:
 
   private val logger = LoggerFactory.getLogger(getClass.getName.init)
 
+  private val LOGGING_FILE_PATH = "logs/application.log"
+
   def startLiveMonitoring =
     val source: Source[String, NotUsed] = FileTailSource.lines(
-      path = Paths.get("logs/application.log"),
+      path = Paths.get(LOGGING_FILE_PATH),
       maxLineSize = 8192,
       pollingInterval = 250.millis,
       lf = "\n",
