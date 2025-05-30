@@ -11,7 +11,7 @@
   </appender>
 
   <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-    <file>logs/application.log</file>
+    <file>logging/logs/application.log</file>
     <append>true</append>
     <encoder>
       <pattern>[%-5level LOG]: [%thread] - %msg%n</pattern>
