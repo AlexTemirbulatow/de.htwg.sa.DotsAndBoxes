@@ -4,7 +4,6 @@ import akka.actor.ActorSystem
 import akka.stream._
 import akka.stream.alpakka.file.scaladsl.FileTailSource
 import akka.stream.scaladsl._
-import common.config.ServiceConfig.LOGGING_FILE_PATH
 import java.nio.charset.StandardCharsets
 import java.nio.file.Paths
 import scala.concurrent.duration._
@@ -22,7 +21,7 @@ object LogFileReader:
 
   def startLiveMonitoring =
     val source: Source[String, NotUsed] = FileTailSource.lines(
-      path = Paths.get(LOGGING_FILE_PATH),
+      path = Paths.get("logs/application.log"),
       maxLineSize = 8192,
       pollingInterval = 250.millis,
       lf = "\n",
