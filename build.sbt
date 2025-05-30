@@ -1,7 +1,7 @@
 val thisVersion = "1.0.0-SNAPSHOT"
 val scala3Version = "3.6.4"
 val scalatestVersion = "3.2.14"
-val akkaVersion = "2.10.5"
+val akkaVersion = "2.8.5"
 val akkaHttpVersion = "10.5.3"
 val circeVersion = "0.14.1"
 val jacksonVersion = "2.15.3"
@@ -11,7 +11,6 @@ val dotsandboxesLibUrl = "https://maven.pkg.github.com/AlexTemirbulatow/de.htwg.
 
 ThisBuild / version := thisVersion
 ThisBuild / scalaVersion := scala3Version
-ThisBuild / resolvers += "Akka library repository".at("https://repo.akka.io/maven")
 ThisBuild / resolvers += "Github Packages" at dotsandboxesLibUrl
 ThisBuild / credentials += Credentials(
   "GitHub Package Registry",
@@ -32,12 +31,11 @@ ThisBuild / libraryDependencies ++= Seq(
   "org.scalatestplus" %% "mockito-5-12" % "3.2.19.0" % Test,
   "ch.qos.logback" % "logback-classic" % "1.5.2",
   "net.logstash.logback" % "logstash-logback-encoder" % "7.4",
-  "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
-  "com.typesafe.akka" %% "akka-stream" % akkaVersion,
-  "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
-  "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % Test,
-  "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test,
-  "com.lightbend.akka" %% "akka-stream-alpakka-file" % "9.0.2",
+  "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion cross CrossVersion.for3Use2_13,
+  "com.typesafe.akka" %% "akka-stream" % akkaVersion cross CrossVersion.for3Use2_13,
+  "com.typesafe.akka" %% "akka-http" % akkaHttpVersion cross CrossVersion.for3Use2_13,
+  "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % Test cross CrossVersion.for3Use2_13,
+  "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test cross CrossVersion.for3Use2_13,
   "org.wiremock" % "wiremock" % "3.12.1" % Test,
   "com.typesafe.slick" %% "slick" % "3.6.0" cross CrossVersion.for3Use2_13,
   "org.postgresql" % "postgresql" % "42.7.3",
@@ -100,11 +98,6 @@ lazy val metric = project
   .dependsOn(common)
   .dependsOn(model % Test)
   .enablePlugins(GatlingPlugin)
-
-lazy val logging = project
-  .in(file("logging"))
-  .settings(name := "logging")
-  .dependsOn(common)
 
 import org.scoverage.coveralls.Imports.CoverallsKeys._
 coverallsTokenFile := sys.env.get("COVERALLS_REPO_TOKEN")

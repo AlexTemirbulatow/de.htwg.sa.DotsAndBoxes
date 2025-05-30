@@ -42,12 +42,6 @@ object ServiceConfig:
   val METRIC_BASE_URL          = baseUrl("metric")
   val METRIC_SERVICE_URL       = serviceUrl("metric")
 
-  val LOGGING_HOST             = bindHost("logging")
-  val LOGGING_PORT             = port("logging")
-  val LOGGING_BASE_URL         = baseUrl("logging")
-  val LOGGING_SERVICE_URL      = serviceUrl("logging")
-  val LOGGING_FILE_PATH        = config.getString("logging.filePath")
-
   private def bindHost(service: String): String =
     config.getString(s"$service.bindHost")
 
