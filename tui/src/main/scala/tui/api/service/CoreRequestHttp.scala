@@ -54,7 +54,7 @@ object CoreRequestHttp:
         throw new RuntimeException(s"Error fetching PlayerGameData: $error")
 
   def gameStats: GameStats =
-    Await.result(CoreClient.getRequest("api/core/get/gameStats"), 5.seconds) match
+    Await.result(CoreClient.getRequest("api/core/get/gameStats"), 20.seconds) match
       case Right(jsonString) =>
         decode[GameStats](jsonString) match
           case Right(gameStats) => gameStats
