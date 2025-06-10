@@ -27,7 +27,6 @@
     <deliveryStrategy class="com.github.danielwegener.logback.kafka.delivery.AsynchronousDeliveryStrategy" />
     <appendTimestamp>true</appendTimestamp>
     <producerConfig>bootstrap.servers=localhost:9092</producerConfig>
-    <appender-ref ref="STDOUT" />
   </appender>
 
   <root level="INFO">
