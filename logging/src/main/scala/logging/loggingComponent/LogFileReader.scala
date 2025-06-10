@@ -11,6 +11,7 @@ import scala.concurrent.ExecutionContext
 import akka.NotUsed
 import org.slf4j.LoggerFactory
 import akka.actor.CoordinatedShutdown
+import logging.config.Config.LOGGING_FILE_PATH
 
 object LogFileReader:
   private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
@@ -18,8 +19,6 @@ object LogFileReader:
   private implicit val materializer: Materializer = Materializer(system)
 
   private val logger = LoggerFactory.getLogger(getClass.getName.init)
-
-  private val LOGGING_FILE_PATH = "logs/application.log"
 
   def startLiveMonitoring =
     val source: Source[String, NotUsed] = FileTailSource.lines(
