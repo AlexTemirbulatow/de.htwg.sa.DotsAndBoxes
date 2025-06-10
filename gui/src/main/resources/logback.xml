@@ -18,9 +18,22 @@
     </encoder>
   </appender>
 
+  <appender name="kafkaAppender" class="com.github.danielwegener.logback.kafka.KafkaAppender">
+    <encoder>
+        <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+    <topic>logs</topic>
+    <keyingStrategy class="com.github.danielwegener.logback.kafka.keying.NoKeyKeyingStrategy" />
+    <deliveryStrategy class="com.github.danielwegener.logback.kafka.delivery.AsynchronousDeliveryStrategy" />
+    <appendTimestamp>true</appendTimestamp>
+    <producerConfig>bootstrap.servers=localhost:9092</producerConfig>
+    <appender-ref ref="STDOUT" />
+  </appender>
+
   <root level="INFO">
     <appender-ref ref="STDOUT" />
     <appender-ref ref="LOGSTASH" />
     <appender-ref ref="FILE" />
+    <appender-ref ref="kafkaAppender" />
   </root>
 </configuration>
