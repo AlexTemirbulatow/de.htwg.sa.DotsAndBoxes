@@ -22,6 +22,7 @@ ThisBuild / credentials += Credentials(
 ThisBuild / libraryDependencies ++= Seq(
   "org.scalactic" %% "scalactic" % scalatestVersion,
   "org.scalatest" %% "scalatest" % scalatestVersion % Test,
+  "com.github.AlexTemirbulatow" %% "dotsandboxes" % dotsandboxesLibVersion,
   "org.scala-lang.modules" %% "scala-swing" % "3.0.0" cross CrossVersion.for3Use2_13,
   "org.scala-lang.modules" %% "scala-xml" % "2.1.0",
   "com.typesafe.play" %% "play-json" % "2.10.0-RC5",
@@ -43,7 +44,10 @@ ThisBuild / libraryDependencies ++= Seq(
   "org.mongodb.scala" %% "mongo-scala-driver" % "5.4.0" cross CrossVersion.for3Use2_13,
   "io.gatling.highcharts" % "gatling-charts-highcharts" % "3.13.5" % Test,
   "io.gatling" % "gatling-test-framework" % "3.13.5" % Test,
-  "com.github.AlexTemirbulatow" %% "dotsandboxes" % dotsandboxesLibVersion
+  "org.apache.kafka" % "kafka-clients" % "4.0.0",
+  "org.apache.kafka" %% "kafka-streams-scala" % "3.7.0" cross CrossVersion.for3Use2_13,
+  "com.typesafe.akka" %% "akka-stream-kafka" % "4.0.2" cross CrossVersion.for3Use2_13,
+  "com.github.danielwegener" % "logback-kafka-appender" % "0.2.0-RC2"
 )
 
 ThisBuild / Test / parallelExecution := false

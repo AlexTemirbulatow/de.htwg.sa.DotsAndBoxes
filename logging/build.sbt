@@ -17,6 +17,9 @@ lazy val root = (project in file("."))
       "com.typesafe.akka" %% "akka-http" % akkaHttpVersion cross CrossVersion.for3Use2_13,
       "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % Test cross CrossVersion.for3Use2_13,
       "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test cross CrossVersion.for3Use2_13,
-      "com.lightbend.akka" %% "akka-stream-alpakka-file" % "6.0.2" cross CrossVersion.for3Use2_13
+      "com.lightbend.akka" %% "akka-stream-alpakka-file" % "6.0.2" cross CrossVersion.for3Use2_13,
+      "org.apache.kafka" % "kafka-clients" % "4.0.0",
+      "org.apache.kafka" %% "kafka-streams-scala" % "3.7.0" cross CrossVersion.for3Use2_13,
+      "com.typesafe.akka" %% "akka-stream-kafka" % "4.0.2" cross CrossVersion.for3Use2_13
     )
   )
