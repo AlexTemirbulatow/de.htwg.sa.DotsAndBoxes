@@ -47,7 +47,7 @@ object KafkaConsumer:
     }
     .collect { case Some(metric) =>
       val json = metric.asJson.noSpaces
-      logger.info(s"\n\nKafka-Logging-Metric -- level: ${metric.level} -> count: ${metric.count}")
+      logger.info(s"Kafka-Logging-Metric -- level: ${metric.level} -> count: ${metric.count}\n\n")
       new ProducerRecord[String, String](KAFKA_LOGGING_METRIC_TOPIC, metric.level, json)
     }
     .runWith(Producer.plainSink(producerSettings))
