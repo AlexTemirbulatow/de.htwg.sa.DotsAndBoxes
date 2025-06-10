@@ -3,15 +3,9 @@
 
 [![Scala CI](https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/actions/workflows/scala.yml/badge.svg?branch=main)](https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/actions/workflows/scala.yml)
 [![Coverage Status](https://coveralls.io/repos/github/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/badge.svg?branch=main)](https://coveralls.io/github/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes?branch=main)
-<br>
-
-## Usage
-You can compile code with `sbt compile`, run it with `sbt run`, and `sbt console` will start a Scala 3 REPL.
-
-You can run tests with `sbt clean coverage test` and get a coverage report with `sbt coverageReport`
-
-To run the TUI properly, set the terminal to `chcp 65001` and enable `Unicode UTF-8`
 <br><br>
+
+## Rules and Usage
 
 <table>
   <tr>
