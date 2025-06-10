@@ -12,6 +12,9 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
       "ch.qos.logback" % "logback-classic" % "1.5.2",
       "net.logstash.logback" % "logstash-logback-encoder" % "7.4",
+      "io.circe" %% "circe-core" % "0.14.1",
+      "io.circe" %% "circe-generic" % "0.14.1",
+      "io.circe" %% "circe-parser" % "0.14.1",
       "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion cross CrossVersion.for3Use2_13,
       "com.typesafe.akka" %% "akka-stream" % akkaVersion cross CrossVersion.for3Use2_13,
       "com.typesafe.akka" %% "akka-http" % akkaHttpVersion cross CrossVersion.for3Use2_13,
@@ -20,6 +23,6 @@ lazy val root = (project in file("."))
       "com.lightbend.akka" %% "akka-stream-alpakka-file" % "6.0.2" cross CrossVersion.for3Use2_13,
       "org.apache.kafka" % "kafka-clients" % "4.0.0",
       "org.apache.kafka" %% "kafka-streams-scala" % "3.7.0" cross CrossVersion.for3Use2_13,
-      "com.typesafe.akka" %% "akka-stream-kafka" % "4.0.2" cross CrossVersion.for3Use2_13
+      "com.typesafe.akka" %% "akka-stream-kafka" % "4.0.2" cross CrossVersion.for3Use2_13,
     )
   )
