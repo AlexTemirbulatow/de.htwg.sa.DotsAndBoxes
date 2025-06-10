@@ -7,19 +7,20 @@ import common.config.ServiceConfig.{COMPUTER_SLEEP_TIME, FILEIO_FILENAME}
 import common.model.fieldService.FieldInterface
 import common.model.fieldService.converter.FieldConverter
 import common.persistence.fileIOService.serializer.FileIOSerializer
-import core.api.service.MetricRequestHttp
 import core.api.service.{ComputerRequestHttp, MetricRequestHttp, ModelRequestHttp, PersistenceRequestHttp}
 import core.controllerComponent.ControllerInterface
 import core.controllerComponent.utils.command.{PutCommand, UndoManager}
 import core.controllerComponent.utils.moveHandler.MoveValidator
 import core.controllerComponent.utils.moveStrategy.{EdgeState, MidState, MoveStrategy}
 import core.controllerComponent.utils.playerStrategy.PlayerStrategy
+import core.kafka.consumer.KafkaConsumer
+import core.kafka.service.MetricRequestKafka
 import de.github.dotsandboxes.lib._
 import java.time.Instant
 import model.fieldComponent.parser.FieldParser
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 class Controller(using var field: FieldInterface, var fileFormat: FileFormat, var computerDifficulty: ComputerDifficulty) extends ControllerInterface:
@@ -42,7 +43,9 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
   override def playerGameData: PlayerGameData = ModelRequestHttp.playerGameData(field)
   override def fieldSizeData: FieldSizeData = ModelRequestHttp.fieldSizeData(field)
   override def gameEnded: Boolean = ModelRequestHttp.gameData("gameEnded", field).toBoolean
-  override def gameStats: GameStats = MetricRequestHttp.getStats(field.playerList.map(player => player.playerId))
+  override def gameStats: GameStats =
+    MetricRequestHttp.getStats(field.playerList.map(player => player.playerId))
+  //KafkaConsumer.fetchCurrentGameStats
 
   override def put(move: Move): String = undoManager.doStep(field, PutCommand(move, field))
   override def undo: FieldInterface = undoManager.undoStep(field)
@@ -77,6 +80,7 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
 
   override def publish(doThis: => FieldInterface): FieldInterface =
     //MetricRequestHttp.insertMove(Instant.now.toEpochMilli, currentPlayer.playerId)
+    //MetricRequestKafka.insertMove(Instant.now.toEpochMilli, currentPlayer.playerId)
     field = doThis
     notifyObservers(Event.Move)
     if gameEnded then notifyObservers(Event.End)
@@ -87,6 +91,7 @@ class Controller(using var field: FieldInterface, var fileFormat: FileFormat, va
       case Failure(exception) => Failure(exception)
       case Success(_)         =>
         //MetricRequestHttp.insertMove(Instant.now.toEpochMilli, currentPlayer.playerId)
+        //MetricRequestKafka.insertMove(Instant.now.toEpochMilli, currentPlayer.playerId)
         field = FieldParser.fromJson(doThis(move))
         val preStatus = currentStatus
         val movePosition = if isEdge(move) then EdgeState else MidState
