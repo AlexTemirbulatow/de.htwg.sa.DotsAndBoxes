@@ -32,7 +32,7 @@
     </td>
     <td>
       <p align="center">
-        <img src="https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/blob/developer/.github/resources/5_GUI_Dark.png" width="390" height="380" />
+        <img src="https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/blob/main/.github/resources/5_GUI_Dark.png" width="390" height="380" />
     </td>
   </tr>
   <tr>
@@ -73,7 +73,7 @@
     </td>
     <td>
       <p align="center">
-        <img src="https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/blob/developer/.github/resources/5_TUI.png" width="390" height="370" />
+        <img src="https://github.com/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/blob/main/.github/resources/5_TUI.png" width="390" height="370" />
     </td>
   </tr>
 </table>
