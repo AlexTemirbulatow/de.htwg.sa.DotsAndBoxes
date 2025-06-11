@@ -5,6 +5,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes/badge.svg?branch=main&kill_cache=1)](https://coveralls.io/github/AlexTemirbulatow/de.htwg.sa.DotsAndBoxes?branch=main)
 <br><br>
 
+
 ## Rules and Usage
 
 <table>
